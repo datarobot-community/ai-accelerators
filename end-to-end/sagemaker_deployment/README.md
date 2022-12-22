@@ -48,5 +48,6 @@ This folder contains two datasets for making predictions against the model that 
 - *training_data*  
 This folder contains public sample data from Lending Club that will be used to train a simple binary classification model within DataRobot.
 
+
 Author: Alex Yeager \
 Version Date: 12/22/2022
