@@ -44,5 +44,5 @@ For more information about the Python client, reference the [documentation](http
 - **utils.py**: Helper function to load data.    
 - **requirements.txt**: Note: the `snowflake-connector-python` is required for this to run. Creating a virtual environment is recommended.         
 
-Author: Joao Gomes and Chandler McCann 
+Author: Joao Gomes and Chandler McCann.  
 Version Date: 1/8/2023
