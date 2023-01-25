@@ -6,8 +6,7 @@ import snowflake
 import pandas as pd
 from IPython.display import display
 from snowflake.connector.pandas_tools import write_pandas
-# we can skip the import snowfalke step entirely https://stephenallwright.com/python-connector-write-pandas-snowflake/
-#this causes issues if they install snowflake connector and "snowflake" - https://stackoverflow.com/questions/74223900/snowflake-connector-python-package-not-recognized
+
 
 def prepare_demo_tables_in_db(
 	db_user = None,          # username to access snowflake database
