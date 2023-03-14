@@ -1,4 +1,4 @@
-# Create a demand forecasting What-If app with Snowflake
+# Create a demand forecasting What-If app
 
 Author: Andrii Kruchko
 
