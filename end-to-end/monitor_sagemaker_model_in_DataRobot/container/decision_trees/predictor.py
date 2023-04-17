@@ -67,7 +67,7 @@ class ScoringService(object):
         class_names = json.loads(os.environ.get('CLASS_NAMES'))
 
         start_time = time.time()
-        predictions_array = clf.predict_proba(input)
+        predictions_array = clf.predict_proba(input.values)
         prediction = np.take(class_names, np.argmax(predictions_array, axis=1))
         execution_time = time.time() - start_time
 
