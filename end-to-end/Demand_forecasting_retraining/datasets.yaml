@@ -1,0 +1,7 @@
+datasets:
+  dataset1:
+    table_name: ts_demand_forecasting_train
+    url: https://s3.amazonaws.com/datarobot_public_datasets/ai_accelerators/ts_demand_forecasting_train.csv
+  dataset2:
+    table_name: ts_demand_forecasting_calendar
+    url: https://s3.amazonaws.com/datarobot_public_datasets/ai_accelerators/ts_demand_forecasting_calendar.csv
