@@ -1,9 +1,10 @@
 **DataRobot [AI Accelerators](https://www.datarobot.com/accelerators/) are repeatable, code-first workflows designed to help speed up model development, deployment and time to value using the [DataRobot API](https://datarobot-public-api-client.readthedocs-hosted.com/en/latest-release/).**
 
-[DataRobot Python Client Package](https://pypi.org/project/datarobot/).  
+[Install the DataRobot Python Client Package](https://pypi.org/project/datarobot/).  
 <a href="https://pypi.org/project/datarobot/"><img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/upgini"></a>
 <a href="https://pypi.org/project/datarobot/"><img alt="PyPI" src="https://img.shields.io/pypi/v/upgini?label=Release"></a>
 <a href="https://pypistats.org/packages/datarobot"><img alt="Downloads from pypistats" src="https://pepy.tech/badge/upgini"></a>
+
 
 ## 🚀 Getting started
 
