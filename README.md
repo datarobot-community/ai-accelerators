@@ -2,7 +2,7 @@ Please note: The code in these repos is sourced from the DataRobot user communit
 
 | Title | Accelerator Topic | What it's good for | 3rd Party Integration | Extensibility to other Integrations |
 |---|---|---|---|---|
-| [AFD) Mastering many tables in production ML: complete workflow](https://github.com/datarobot-community/ai-accelerators/blob/main/end-to-end/Azure_End_to_End.ipynb) | Automated Feature Discovery workflow | Repeatable end-to-end AFD workflow in Snowflake from data to batch predictions | Snowflake | High, use other data source/destination |
+| [AFD) Mastering many tables in production ML: complete workflow](https://github.com/datarobot-community/ai-accelerators/blob/main/end-to-end/Azure_End_to_End.ipynb) | Automated Feature Discovery workflow | Repeatable end-to-end AFD workflow in Snowflake from data to batch predictions | Snowflake | High, can use any other data source |
 | [Azure Storage End-to-End Workflow with DataRobot](https://github.com/datarobot-community/ai-accelerators/blob/main/end-to-end/Azure_End_to_End.ipynb) | Azure End-to-End | Repeatable end-to-end workflow in Azure from data to batch predictions | Azure | Low, Azure focused |
 | [Creating Custom Blueprints with Composable ML](https://github.com/datarobot-community/ai-accelerators/tree/main/advanced-experimentation/custom_blueprints) | Create custom blueprints | Learn how to create custom blueprints | - | High, advanced use of DataRobot API |
 | [Customizing Lift Charts](https://github.com/datarobot-community/ai-accelerators/tree/main/advanced-experimentation/customizing_lift_charts) | Custom lift charts | Learn how to create a custom lift chart | - | High, advanced use of DataRobot API |
