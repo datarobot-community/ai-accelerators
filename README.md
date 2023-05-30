@@ -1,4 +1,4 @@
-DataRobot [AI Accelerators](https://www.datarobot.com/accelerators/) are repeatable, code-first workflows designed to help speed up model development, deployment and time to value using the DataRobot API. 
+DataRobot [AI Accelerators](https://www.datarobot.com/aiaccelerators/) are repeatable, code-first workflows designed to help speed up model development, deployment and time to value using the DataRobot API. 
 
 ## Get started
 
