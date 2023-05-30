@@ -1,6 +1,11 @@
-DataRobot [AI Accelerators](https://www.datarobot.com/accelerators/) are repeatable, code-first workflows designed to help speed up model development, deployment and time to value using the DataRobot API. 
+**DataRobot [AI Accelerators](https://www.datarobot.com/accelerators/) are repeatable, code-first workflows designed to help speed up model development, deployment and time to value using the [DataRobot API](https://datarobot-public-api-client.readthedocs-hosted.com/en/latest-release/).**
 
-## Get started
+[DataRobot Python Client Package](https://pypi.org/project/datarobot/) 
+<a href="https://pypi.org/project/datarobot/"><img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/upgini"></a>
+<a href="https://pypi.org/project/datarobot/"><img alt="PyPI" src="https://img.shields.io/pypi/v/upgini?label=Release"></a>
+<a href="https://pypistats.org/packages/datarobot"><img alt="Downloads from pypistats" src="https://pepy.tech/badge/upgini"></a>
+
+## 🚀 Getting started
 
 1. Clone this repo
 2. Import the desired accelerator into your preferred notebook (e.g., jupyter, Kaggle, Databricks Notebooks, Google Colab). We recommend using [DR-Notebooks](https://www.datarobot.com/platform/notebooks/).
@@ -8,12 +13,11 @@ DataRobot [AI Accelerators](https://www.datarobot.com/accelerators/) are repeata
 4. Learn and understand the accelerator content. 
 4. You should now be able to modify the accelerator to solve your own problem. The easiest place to start is to replace the input data with your own. 
 
-## Support
-Please report feedback and problems using the issues in this repo.
+## ❔Support
+Please report feedback and problems by opening a Github Issue in this repo.
 Please note: The code in these repos is sourced from the DataRobot user community and is not owned or maintained by DataRobot, Inc. You may need to make edits or updates for this code to function properly in your environment.
 
-## Finding the content you need
-Accelerators cover a range of topic
+## 🤔 Finding the content you need
 | Title | Accelerator Topic | What it's good for | 3rd Party Integration | Extensibility to other Integrations |
 |---|---|---|---|---|
 | [Automated Feature Discovery with Multiple Tables](https://github.com/datarobot-community/ai-accelerators/blob/main/end-to-end/Azure_End_to_End.ipynb) | Automated Feature Discovery workflow | Repeatable end-to-end AFD workflow in Snowflake from data to batch predictions | Snowflake | Horizontal approach that applies to classification/ regression problems with a time-component |
