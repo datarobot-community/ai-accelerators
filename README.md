@@ -1,5 +1,19 @@
+DataRobot [AI Accelerators](https://www.datarobot.com/accelerators/) are repeatable, code-first workflows designed to help speed up model development, deployment and time to value using the DataRobot API. 
+
+## Get started
+
+1. Clone this repo
+2. Import the desired accelerator into your preferred notebook (e.g., jupyter, Kaggle, Databricks Notebooks, Google Colab). We recommend using [DR-Notebooks](https://www.datarobot.com/platform/notebooks/).
+3. Execute the notebook. 
+4. Learn and understand the accelerator content. 
+4. You should now be able to modify the accelerator to solve your own problem. The easiest place to start is to replace the input data with your own. 
+
+## Support
+Please report feedback and problems using the issues in this repo.
 Please note: The code in these repos is sourced from the DataRobot user community and is not owned or maintained by DataRobot, Inc. You may need to make edits or updates for this code to function properly in your environment.
 
+## Finding the content you need
+Accelerators cover a range of topic
 | Title | Accelerator Topic | What it's good for | 3rd Party Integration | Extensibility to other Integrations |
 |---|---|---|---|---|
 | [AFD) Mastering many tables in production ML: complete workflow](https://github.com/datarobot-community/ai-accelerators/blob/main/end-to-end/Azure_End_to_End.ipynb) | Automated Feature Discovery workflow | Repeatable end-to-end AFD workflow in Snowflake from data to batch predictions | Snowflake | High, can use any other data source |
@@ -34,3 +48,8 @@ Please note: The code in these repos is sourced from the DataRobot user communit
 | [Use MLFlow with DataRobot API for tracking experimentation](https://github.com/datarobot-community/ai-accelerators/tree/main/advanced-experimentation/MLFLOW) | Repeatable experiments, meta-data tracking | Repeatable experiments that use MLflow to track key metrics across experiments e.g. model factories with multiple project settings, feature derivation windows | MLFlow | High |
 | [End-to-end workflow with DataRobot and SAP Hana](https://github.com/datarobot-community/ai-accelerators/blob/main/end-to-end/SAP_End_to_End/SAP_End_to_End.ipynb) | SAP End-to-End | Repeatable end-to-end workflow in SAP from data to batch predictions. Includes building out SAP HANA environment | SAP | Low, SAP Focused |
 | [The Self-Join Technique: Machine Learning with Panel Data](https://github.com/datarobot-community/ai-accelerators/blob/main/advanced-experimentation/SelfJoins/self-joins-panel-data.ipynb) | Advanced Feature Eng and Modeling with Panel data/ irregular time-series data | Repeatable workflow to use Automated Feature Discovery to derive time-based features by joining one table to itself multiple times on different panel dimensions. Highly useful in healthcare, manufacturing, B2B/B2C data...any data with repeat observations per subject | - | High - powerful, horizontal approach that applies to all industries |
+
+## Links to YouTubue
+Coming soon!
+## Useful Links
+Coming soon!
