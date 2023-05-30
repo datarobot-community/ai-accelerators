@@ -1,6 +1,6 @@
 **DataRobot [AI Accelerators](https://www.datarobot.com/accelerators/) are repeatable, code-first workflows designed to help speed up model development, deployment and time to value using the [DataRobot API](https://datarobot-public-api-client.readthedocs-hosted.com/en/latest-release/).**
 
-[DataRobot Python Client Package](https://pypi.org/project/datarobot/) 
+[DataRobot Python Client Package](https://pypi.org/project/datarobot/).  
 <a href="https://pypi.org/project/datarobot/"><img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/upgini"></a>
 <a href="https://pypi.org/project/datarobot/"><img alt="PyPI" src="https://img.shields.io/pypi/v/upgini?label=Release"></a>
 <a href="https://pypistats.org/packages/datarobot"><img alt="Downloads from pypistats" src="https://pepy.tech/badge/upgini"></a>
@@ -17,7 +17,7 @@
 Please report feedback and problems by opening a Github Issue in this repo.
 Please note: The code in these repos is sourced from the DataRobot user community and is not owned or maintained by DataRobot, Inc. You may need to make edits or updates for this code to function properly in your environment.
 
-## 🤔 Finding the content you need
+## 🤔 Finding the Accelerator you need
 | Title | Accelerator Topic | What it's good for | 3rd Party Integration | Extensibility to other Integrations |
 |---|---|---|---|---|
 | [Automated Feature Discovery with Multiple Tables](https://github.com/datarobot-community/ai-accelerators/blob/main/end-to-end/Azure_End_to_End.ipynb) | Automated Feature Discovery workflow | Repeatable end-to-end AFD workflow in Snowflake from data to batch predictions | Snowflake | Horizontal approach that applies to classification/ regression problems with a time-component |
