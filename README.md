@@ -54,7 +54,7 @@ Please note: The code in these repos is sourced from the DataRobot user communit
 | [End-to-end workflow with DataRobot and SAP Hana](https://github.com/datarobot-community/ai-accelerators/blob/main/end-to-end/SAP_End_to_End/SAP_End_to_End.ipynb) | SAP End-to-End | Repeatable end-to-end workflow in SAP from data to batch predictions. Includes building out SAP HANA environment | SAP | Low, SAP Focused |
 | [The Self-Join Technique: Machine Learning with Panel Data](https://github.com/datarobot-community/ai-accelerators/blob/main/advanced-experimentation/SelfJoins/self-joins-panel-data.ipynb) | Advanced Feature Eng and Modeling with Panel data/ irregular time-series data | Repeatable workflow to use Automated Feature Discovery to derive time-based features by joining one table to itself multiple times on different panel dimensions. Highly useful in healthcare, manufacturing, B2B/B2C data...any data with repeat observations per subject | - | High - powerful, horizontal approach that applies to all industries |
 
-## Links to YouTubue
+## Links to YouTube
 Coming soon!
 ## Useful Links
 Coming soon!
