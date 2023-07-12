@@ -1,5 +1,0 @@
-jupyter_dr_env_3_0_1
-model
-scoring_output
-!scoring_data/*.csv
-!training_data/*.csv

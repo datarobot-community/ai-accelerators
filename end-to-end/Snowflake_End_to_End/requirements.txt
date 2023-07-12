@@ -1,4 +1,0 @@
-datarobot==3.0.2
-matplotlib==3.4.3
-pandas==1.5.2
-snowflake-connector-python==2.9.0

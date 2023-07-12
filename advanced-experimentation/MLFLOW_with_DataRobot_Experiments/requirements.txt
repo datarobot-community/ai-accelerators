@@ -1,6 +1,0 @@
-datarobot==3.0.1
-matplotlib==3.5.3
-pandas==1.2.5
-numpy==1.21.5
-papermill==2.4.0
-mlflow==1.29.0

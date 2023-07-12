@@ -1,4 +1,0 @@
-datarobot-bp-workshop==0.2.6
-datarobot==3.0.2
-pandas==1.5.3
-seaborn==0.11.2
