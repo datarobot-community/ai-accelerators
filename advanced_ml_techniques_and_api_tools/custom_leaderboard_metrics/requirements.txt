@@ -1,0 +1,6 @@
+datarobot>=3.0.2
+pandas>=1.4.4
+numpy>=1.21.5
+matplotlib>=3.5.3
+scikit-learn>=1.1.2
+adjusttext>=0.7.3.1

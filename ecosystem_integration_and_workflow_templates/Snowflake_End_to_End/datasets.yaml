@@ -1,0 +1,4 @@
+datasets:
+  dataset1:
+    table_name: DR_Demo_E-commerce_churn_train
+    url: https://s3.amazonaws.com/datarobot_public_datasets/ai_accelerators/DR_Demo_E-commerce_churn_train.csv

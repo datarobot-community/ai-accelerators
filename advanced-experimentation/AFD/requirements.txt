@@ -1,6 +1,0 @@
-datarobot==3.0.1
-matplotlib==3.5.3
-pandas==1.2.5
-ipython==8.7.0
-snowflake-connector-python == 2.9.0 
-#dependencies for snowflake-connector-python used here https://github.com/snowflakedb/snowflake-connector-python/blob/main/tested_requirements/requirements_39.reqs
