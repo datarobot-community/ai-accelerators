@@ -5,6 +5,7 @@
 <a href="https://pypi.org/project/datarobot/"><img alt="PyPI" src="https://img.shields.io/pypi/v/upgini?label=Release"></a>
 <a href="https://pypistats.org/packages/datarobot"><img alt="Downloads from pypistats" src="https://pepy.tech/badge/upgini"></a>
 
+Making a change to the README as a contribution workflow test.
 
 ## 🚀 Getting started
 
