@@ -1,0 +1,13 @@
+title: End-to-end Automated Feature Discovery Production Workflow
+file_name: End-to-end Automated Feature Discovery Production Workflow.ipynb
+description: |-
+  This notebook provides a repeatable framework for end-to-end production ML with time-aware feature engineering across multiple tables, training dataset creation, model development, and production deployment.
+languages:
+  - python
+authors: 
+  - João Gomes
+  - Chandler McCann
+authors_email:
+  - joao.gomes@datarobot.com
+  - chandler.mccann@datarobot.com
+tags: []
