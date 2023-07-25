@@ -1,0 +1,12 @@
+title: ModelInsights App In Streamlit
+file_name: ai_accelerator_modelInsights_streamlit_v1.ipynb
+description: |-
+  This notebook shows how to build an app presenting Datarobot predictions and explanation for your business stakeholders.
+  This workflow uses churn prediction use case as an example to build an app using prediction output.
+languages:
+  - python
+authors: 
+  - Disha Dubey
+authors_email:
+  - disha.dubey@datarobot.com
+tags: []
