@@ -1,0 +1,11 @@
+title: Prepare & Leverage Image Data for DataRobot with Databricks
+file_name: Image Data Preparation.ipynb
+description: |-
+  In this notebook, you will import image files using Spark and prepare them into a data frame suitable for ingest into DataRobot.
+languages:
+  - python
+authors: 
+  - Andrew Mathis
+authors_email:
+  - andrew.mathis@datarobot.com
+tags: []

@@ -1,0 +1,11 @@
+title: Hyperparameter optimization workflow
+file_name: HyperParam_Opt_Core_concepts.ipynb
+description: |-
+  This notebook and the functions in 'helpers.py' provide a repeatable framework for executing hyperparameter search via DataRobot's Python client.
+languages:
+  - python
+authors: 
+  - Bogdan Tsal-Tsalko
+authors_email:
+  - bogdan.tsal-tsalko@datarobot.com
+tags: []

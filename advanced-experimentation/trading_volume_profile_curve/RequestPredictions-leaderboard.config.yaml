@@ -1,0 +1,11 @@
+title: Get Leaderboard predictions
+file_name: RequestPredictions-leaderboard.ipynb
+description: |-
+  Obtain predictions from models created in the previous step to generate the "next day curve".
+languages:
+  - python
+authors: 
+  - João Gomes
+authors_email:
+  - joao.gomes@datarobot.com
+tags: []
