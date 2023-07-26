@@ -1,0 +1,11 @@
+title: Build daily trading volume profiles
+file_name: VolumeProfile_starter_code.ipynb
+description: |-
+  This notebook provides a template for using DataRobot time series models to build a daily trading volume profile.
+languages:
+  - python
+authors: 
+  - João Gomes
+authors_email:
+  - joao.gomes@datarobot.com
+tags: []

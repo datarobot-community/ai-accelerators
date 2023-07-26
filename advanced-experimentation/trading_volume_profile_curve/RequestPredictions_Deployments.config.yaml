@@ -1,0 +1,11 @@
+title: Get Leaderboard predictions
+file_name: RequestPredictions_Deployment.ipynb
+description: |-
+  Obtain predictions from the models that have been deployed for a more robust and "production ready" approach than using the Leaderboard.
+languages:
+  - python
+authors: 
+  - João Gomes
+authors_email:
+  - joao.gomes@datarobot.com
+tags: []

@@ -1,0 +1,11 @@
+title: Build a model factory with Python multithreading
+file_name: Model Factory with Python Multithreading.ipynb
+description: |-
+  This is an example config file that can be copied and used for your code examples configurations.
+languages:
+  - python
+authors: 
+  - Pavel Ustinov
+authors_email:
+  - pavel.ustinov@datarobot.com
+tags: []
