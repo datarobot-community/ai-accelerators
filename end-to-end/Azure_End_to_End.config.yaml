@@ -1,0 +1,12 @@
+title: End to end modeling workflow with Azure
+file_name: Azure_End_to_End.ipynb
+description: |-
+  This notebook illustrates an end-to-end data science workflow using DataRobot.
+  The workflow ingests a dataset hosted in an Azure blob container, trains a series of models using DataRobot's AutoML capabilities, deploys a recommended model, and sets up a batch prediction job that writes predictions back to the original container.
+languages:
+  - python
+authors: 
+  - Brent Hinks
+authors_email:
+  - brent.hinks@datarobot.com
+tags: []

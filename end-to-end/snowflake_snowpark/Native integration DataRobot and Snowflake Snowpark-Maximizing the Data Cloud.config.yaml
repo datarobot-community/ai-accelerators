@@ -1,0 +1,11 @@
+title: Integrate DataRobot and Snowpark by maximizing the data cloud
+file_name: Native integration DataRobot and Snowflake Snowpark-Maximizing the Data Cloud.ipynb
+description: |-
+  This notebook showcases the native integration between DataRobot and Snowflake's data cloud, leveraging DataRobot notebooks and Snowflake Snowpark (with Python and Java).
+languages:
+  - python
+authors: 
+  - Atalia Horenshtien
+authors_email:
+  - atalia.horenshtien@datarobot.com
+tags: []

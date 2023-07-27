@@ -1,0 +1,12 @@
+title: "End-to-end demand forecasting: cold start predictions"
+file_name: End_to_end_demand_forecasting_cold_start.ipynb
+description: |-
+  This notebook illustrates an end-to-end demand forecasting workflow in DataRobot.
+  Time series forecasting in DataRobot has a suite of tools and approaches to handle highly complex multiseries problems.
+languages:
+  - python
+authors: 
+  - Andrii Kruchko
+authors_email:
+  - andrii.kruchko@datarobot.com
+tags: []
