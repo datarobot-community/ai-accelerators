@@ -1,0 +1,12 @@
+title: Foo Bar Example
+file_name: GCP DataRobot End To End.ipynb
+description: |-
+  In this notebook, you will build an ML model using a combination of GCP services and DataRobot.
+  It covers an end-to-end workflow that includes sourcing the data through exploratory data analysis, model development, and deployment.
+languages:
+  - python
+authors: 
+  - Luke Shulman
+authors_email:
+  - luke.shulman@datarobot.com
+tags: []

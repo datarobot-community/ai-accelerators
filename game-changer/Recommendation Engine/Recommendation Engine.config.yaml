@@ -1,0 +1,11 @@
+title: Recommendation Engine
+file_name: Recommendation Engine.ipynb
+description: |-
+  This notebook will explore how to use historical user purchase data in order to create a recommendation model which will attempt to guess which products out of a basket of items the customer will be likely to purchase at a given point in time.
+languages:
+  - python
+authors: 
+  - João Gomes
+authors_email:
+  - joao.gomes@datarobot.com
+tags: []
