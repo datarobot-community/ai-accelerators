@@ -1,0 +1,3 @@
+endpoint: https://app.datarobot.com/api/v2
+token: Add DataRobot API Token in settings.yaml file
+openai_key: Add OpenAI Key in settings.yaml file
