@@ -1,0 +1,7 @@
+datarobot>=3.1.0
+pandas>=1.5.2
+numpy>=1.23.5
+scikit-optimize>=0.9.0
+matplotlib>=3.6.2
+pytimeparse>=1.1.8
+hyperopt>=0.2.7
