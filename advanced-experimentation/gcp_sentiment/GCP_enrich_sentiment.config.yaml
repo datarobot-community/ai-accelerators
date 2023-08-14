@@ -8,7 +8,7 @@ languages:
 maintainers:
   - Asli Sabanci Demiroz
   - Shu Li
-authors_email:
+maintainers_email:
   - asli.demiroz@datarobot.com
   - shu.li@datarobot.com
 tags: []

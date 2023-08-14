@@ -6,6 +6,6 @@ languages:
   - java
 maintainers:
   - Pavel Ustinov
-authors_email:
+maintainers_email:
   - pavel.ustinov@datarobot.com
 tags: []

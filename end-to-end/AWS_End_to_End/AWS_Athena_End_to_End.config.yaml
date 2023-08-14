@@ -8,7 +8,7 @@ languages:
 maintainers:
   - Biju Krishnan
   - João Gomes
-authors_email:
+maintainers_email:
   - biju.krishnan@datarobot.com
   - joao.gomes@datarobot.com
 tags: []

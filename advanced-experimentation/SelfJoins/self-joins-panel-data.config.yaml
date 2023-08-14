@@ -8,6 +8,6 @@ languages:
   - python
 maintainers:
   - Andrea Kropp
-authors_email:
+maintainers_email:
   - andrea.kropp@datarobot.com
 tags: []

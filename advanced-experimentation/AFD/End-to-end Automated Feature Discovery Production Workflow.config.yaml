@@ -7,7 +7,7 @@ languages:
 maintainers:
   - João Gomes
   - Chandler McCann
-authors_email:
+maintainers_email:
   - joao.gomes@datarobot.com
   - chandler.mccann@datarobot.com
 tags: []

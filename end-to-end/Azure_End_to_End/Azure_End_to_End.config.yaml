@@ -7,6 +7,6 @@ languages:
   - python
 maintainers:
   - Brent Hinks
-authors_email:
+maintainers_email:
   - brent.hinks@datarobot.com
 tags: []

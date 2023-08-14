@@ -6,6 +6,6 @@ languages:
   - python
 maintainers:
   - Glen Koundry
-authors_email:
+maintainers_email:
   - glen.koundry@datarobot.com
 tags: []

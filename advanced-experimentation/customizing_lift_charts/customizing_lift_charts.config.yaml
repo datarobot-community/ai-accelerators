@@ -6,6 +6,6 @@ languages:
   - python
 maintainers:
   - Taylor Larkin
-authors_email:
+maintainers_email:
   - taylor.larkin@datarobot.com
 tags: []

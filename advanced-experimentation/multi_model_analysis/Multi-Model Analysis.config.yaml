@@ -6,6 +6,6 @@ languages:
   - python
 maintainers:
   - Jake Snyder
-authors_email:
+maintainers_email:
   - jake.snyder@datarobot.com
 tags: []

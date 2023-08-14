@@ -6,6 +6,6 @@ languages:
   - python
 maintainers:
   - Alex Yeager
-authors_email:
+maintainers_email:
   - alex.yeager@datarobot.com
 tags: []

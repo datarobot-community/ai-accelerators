@@ -6,6 +6,6 @@ languages:
   - python
 maintainers:
   - Dennis Whitney
-authors_email:
+maintainers_email:
   - dennis.whitney@datarobot.com
 tags: []

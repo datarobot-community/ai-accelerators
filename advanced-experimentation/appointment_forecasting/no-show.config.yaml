@@ -11,6 +11,6 @@ languages:
   - python
 maintainers:
   - Joseph Blue
-authors_email:
+maintainers_email:
   - joseph.blue@datarobot.com
 tags: []

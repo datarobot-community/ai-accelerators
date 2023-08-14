@@ -7,6 +7,6 @@ languages:
 maintainers:
   - Oleksandr Saienko
   - Mao Shun (AWS)
-authors_email:
+maintainers_email:
   - oleksandr.saienko@datarobot.com
 tags: []

@@ -7,6 +7,6 @@ languages:
   - python
 maintainers:
   - Luke Shulman
-authors_email:
+maintainers_email:
   - luke.shulman@datarobot.com
 tags: []

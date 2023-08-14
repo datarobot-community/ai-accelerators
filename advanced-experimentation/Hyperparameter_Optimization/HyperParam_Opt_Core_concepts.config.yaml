@@ -6,6 +6,6 @@ languages:
   - python
 maintainers:
   - Bogdan Tsal-Tsalko
-authors_email:
+maintainers_email:
   - bogdan.tsal-tsalko@datarobot.com
 tags: []

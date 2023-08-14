@@ -8,7 +8,7 @@ languages:
 maintainers:
   - Austin Chou
   - Arjun Arora
-authors_email:
+maintainers_email:
   - austin.chou@datarobot.com
   - arjun.arora@datarobot.com
 tags: []

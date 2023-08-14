@@ -9,6 +9,6 @@ languages:
   - python
 maintainers:
   - Abdul Khader Jilani
-authors_email:
+maintainers_email:
   - abdul.jilani@datarobot.com
 tags: []

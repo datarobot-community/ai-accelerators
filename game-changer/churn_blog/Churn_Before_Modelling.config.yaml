@@ -9,7 +9,7 @@ languages:
 maintainers:
   - Max Dugan-Knight
   - Jake Snyder
-authors_email:
+maintainers_email:
   - max.dugan-knight@datarobot.com
   - jake.snyder@datarobot.com
 tags: []

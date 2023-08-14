@@ -6,6 +6,6 @@ languages:
   - python
 maintainers:
   - Atalia Horenshtien
-authors_email:
+maintainers_email:
   - atalia.horenshtien@datarobot.com
 tags: []

@@ -6,6 +6,6 @@ languages:
   - python
 maintainers:
   - Andrew Mathis
-authors_email:
+maintainers_email:
   - andrew.mathis@datarobot.com
 tags: []

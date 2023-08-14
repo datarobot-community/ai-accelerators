@@ -7,6 +7,6 @@ languages:
   - python
 maintainers:
   - Andrii Kruchko
-authors_email:
+maintainers_email:
   - andrii.kruchko@datarobot.com
 tags: []

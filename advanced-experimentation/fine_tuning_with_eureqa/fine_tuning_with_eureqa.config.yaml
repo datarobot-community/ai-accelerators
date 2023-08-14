@@ -8,6 +8,6 @@ languages:
   - python
 maintainers:
   - João Gomes
-authors_email:
+maintainers_email:
   - joao.gomes@datarobot.com
 tags: []

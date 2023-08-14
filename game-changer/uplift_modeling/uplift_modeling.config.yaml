@@ -7,6 +7,6 @@ languages:
   - python
 maintainers:
   - Matthias Kullowatz
-authors_email:
+maintainers_email:
   - matthias.kullowatz@datarobot.com
 tags: []

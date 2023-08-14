@@ -6,6 +6,6 @@ languages:
   - python
 maintainers:
   - Chandler McCann
-authors_email:
+maintainers_email:
   - chandler.mccann@datarobot.com
 tags: []
