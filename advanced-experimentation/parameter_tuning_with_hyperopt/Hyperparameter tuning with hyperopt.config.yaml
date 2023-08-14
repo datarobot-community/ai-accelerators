@@ -1,0 +1,13 @@
+title: Hyperparameter optimization workflow
+file_name: Hyperparameter tuning with hyperopt.ipynb
+description: |-
+  This notebook builds on the hyperparameter optimizaton functionality exhibited by Bogdan Tsal-Tsalko in the first of DataRobot's parameter tuning accelerators. This AI Accelerator builds on the native DataRobot hyperparameter tuning by integrating the hyperopt module into DataRobot workflows. The hyperopt module allows for a particular Bayesian approach to parameter tuning, though more generally this notebook should be seen as an example of how to leverage DataRobot's API to integrate with any parameter tuning framework.
+languages:
+  - python
+maintainers:
+  - Matthias Kullowatz
+  - Bogdan Tsal-Tsalko
+maintainers_email:
+  - matthias.kullowatz@datarobot.com
+  - bogdan.tsal-tsalko@datarobot.com
+tags: []
