@@ -4,7 +4,7 @@ description: |-
   In this notebook, you will import image files using Spark and prepare them into a data frame suitable for ingest into DataRobot.
 languages:
   - python
-authors: 
+maintainers:
   - Andrew Mathis
 authors_email:
   - andrew.mathis@datarobot.com

@@ -6,7 +6,7 @@ description: |-
   Specifically, you will register one dataset in the AICatalog and join it back onto itself four times.
 languages:
   - python
-authors: 
+maintainers:
   - Andrea Kropp
 authors_email:
   - andrea.kropp@datarobot.com

@@ -4,7 +4,7 @@ description: |-
   This notebook provides a template for using DataRobot time series models to build a daily trading volume profile.
 languages:
   - python
-authors: 
+maintainers:
   - João Gomes
 authors_email:
   - joao.gomes@datarobot.com

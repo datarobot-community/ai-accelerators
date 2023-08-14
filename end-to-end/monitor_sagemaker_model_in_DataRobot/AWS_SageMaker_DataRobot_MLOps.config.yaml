@@ -4,7 +4,7 @@ description: |-
   This notebook walks you through the steps to train and host a SageMaker model that can be monitored in the DataRobot platform.
 languages:
   - python
-authors: 
+maintainers:
   - Oleksandr Saienko
   - Mao Shun (AWS)
 authors_email:

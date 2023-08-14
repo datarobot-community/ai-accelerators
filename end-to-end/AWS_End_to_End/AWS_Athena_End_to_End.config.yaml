@@ -5,7 +5,7 @@ description: |-
   Then, using this dataset, we'll create a project, deploy the top performing model to a DataRobot prediction server, and make batch predictions with a test dataset.
 languages:
   - python
-authors: 
+maintainers:
   - Biju Krishnan
   - João Gomes
 authors_email:

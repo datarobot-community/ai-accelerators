@@ -7,7 +7,7 @@ description: |-
   This approach of feature engineering can be used as an augmentation to other feature engineering techniques like spectrograms.
 languages:
   - python
-authors: 
+maintainers:
   - Abdul Khader Jilani
 authors_email:
   - abdul.jilani@datarobot.com

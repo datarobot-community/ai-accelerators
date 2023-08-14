@@ -5,7 +5,7 @@ description: |-
   The workflow ingests a dataset hosted in an Azure blob container, trains a series of models using DataRobot's AutoML capabilities, deploys a recommended model, and sets up a batch prediction job that writes predictions back to the original container.
 languages:
   - python
-authors: 
+maintainers:
   - Brent Hinks
 authors_email:
   - brent.hinks@datarobot.com

@@ -5,7 +5,7 @@ description: |-
   Next, this notebook walks through how to select and evaluate the top recommended model from a project, deploy a model in a Docker container with a REST API endpoint, and orchestrate schedule predictions with an MLOps job definition.
 languages:
   - python
-authors: 
+maintainers:
   - Austin Chou
   - Arjun Arora
 authors_email:

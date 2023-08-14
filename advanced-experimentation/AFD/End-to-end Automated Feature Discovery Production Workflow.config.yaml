@@ -4,7 +4,7 @@ description: |-
   This notebook provides a repeatable framework for end-to-end production ML with time-aware feature engineering across multiple tables, training dataset creation, model development, and production deployment.
 languages:
   - python
-authors: 
+maintainers:
   - João Gomes
   - Chandler McCann
 authors_email:

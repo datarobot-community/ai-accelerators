@@ -5,7 +5,7 @@ description: |-
   This modeling approach is used when you want to isolate the impact of a marketing campaign (i.e., the "treatment" or the "intervention") on specific prospective clients.
 languages:
   - python
-authors: 
+maintainers:
   - Matthias Kullowatz
 authors_email:
   - matthias.kullowatz@datarobot.com

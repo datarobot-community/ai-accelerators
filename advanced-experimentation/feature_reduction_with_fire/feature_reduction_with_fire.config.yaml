@@ -6,7 +6,7 @@ description: |-
 
 languages:
   - python
-authors: 
+maintainers:
   - João Gomes
 authors_email:
   - joao.gomes@datarobot.com

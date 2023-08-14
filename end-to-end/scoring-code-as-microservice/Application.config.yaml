@@ -4,7 +4,7 @@ description: |-
   This AI Accelerator explains the step-by-step procedure to embed Scoring Code in a microservice and prepare it as the Docker container for a deployment on customer infrastructure (it can be self- or hyperscaler-managed K8s).
 languages:
   - java
-authors: 
+maintainers:
   - Pavel Ustinov
 authors_email:
   - pavel.ustinov@datarobot.com

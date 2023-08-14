@@ -5,7 +5,7 @@ description: |-
   The model will assign a suspicious activity score to future alerts, improving the effectiveness and efficiency of an AML compliance program by prioritizing alerts based on their ranking order according to the score.
 languages:
   - python
-authors: 
+maintainers:
   - João Gomes
 authors_email:
   - joao.gomes@datarobot.com

@@ -4,7 +4,7 @@ description: |-
   Take in the controller file from the first notebook, deploy the top models in each project, and add a "deployment" column to the controller.
 languages:
   - python
-authors: 
+maintainers:
   - João Gomes
 authors_email:
   - joao.gomes@datarobot.com

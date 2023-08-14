@@ -4,7 +4,7 @@ description: |-
   This notebook demonstrates how to migrate a model from one DataRobot cluster to another of the same version.
 languages:
   - python
-authors: 
+maintainers:
   - João Gomes
 authors_email:
   - joao.gomes@datarobot.com
