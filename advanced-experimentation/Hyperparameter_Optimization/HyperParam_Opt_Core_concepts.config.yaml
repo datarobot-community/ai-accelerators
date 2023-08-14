@@ -4,8 +4,8 @@ description: |-
   This notebook and the functions in 'helpers.py' provide a repeatable framework for executing hyperparameter search via DataRobot's Python client.
 languages:
   - python
-authors: 
+maintainers:
   - Bogdan Tsal-Tsalko
-authors_email:
+maintainers_email:
   - bogdan.tsal-tsalko@datarobot.com
 tags: []

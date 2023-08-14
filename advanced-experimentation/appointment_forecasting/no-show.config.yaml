@@ -1,16 +1,16 @@
 title: End-to-end Automated Feature Discovery Production Workflow
 file_name: End-to-end Automated Feature Discovery Production Workflow.ipynb
 description: |-
-  Many people are guilty of having canceled a doctor’s appointment. 
+  Many people are guilty of having canceled a doctor’s appointment.
   However, although canceling an appointment does not seem too disastrous from the patient’s point of view, no-shows cost outpatient health centers a staggering 14% of anticipated daily revenue (JAOA).
   Missed appointments trickle into lower utilization rates for not only doctors and nurses but also the overhead costs required to run outpatient centers.
   In addition, patients missing their appointments risk facing poorer health outcomes as they are unable to access timely care.
-  While outpatient centers employ solutions such as calling patients ahead of time, these high touch resources investments are often not prioritized for patients with the highest risk of no-shows. 
+  While outpatient centers employ solutions such as calling patients ahead of time, these high touch resources investments are often not prioritized for patients with the highest risk of no-shows.
   Low touch solutions such as automated texts are effective tools for mass reminders but do not offer necessary personalization for patients at the highest risk of no-shows.
 languages:
   - python
-authors: 
+maintainers:
   - Joseph Blue
-authors_email:
+maintainers_email:
   - joseph.blue@datarobot.com
 tags: []

@@ -4,8 +4,8 @@ description: |-
   This notebook outlines how to recreate and customize DataRobot’s lift chart from a DataRobot blueprint (i.e., a modeling pipeline encompassing the combination of data preprocessing steps and machine learning algorithm).
 languages:
   - python
-authors: 
+maintainers:
   - Taylor Larkin
-authors_email:
+maintainers_email:
   - taylor.larkin@datarobot.com
 tags: []

@@ -4,8 +4,8 @@ description: |-
   his notebook demonstrates an end-to-end workflow using DataRobot with SAP as the remote data source.
 languages:
   - python
-authors: 
+maintainers:
   - Dennis Whitney
-authors_email:
+maintainers_email:
   - dennis.whitney@datarobot.com
 tags: []

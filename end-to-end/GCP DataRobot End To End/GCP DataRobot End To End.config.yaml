@@ -5,8 +5,8 @@ description: |-
   It covers an end-to-end workflow that includes sourcing the data through exploratory data analysis, model development, and deployment.
 languages:
   - python
-authors: 
+maintainers:
   - Luke Shulman
-authors_email:
+maintainers_email:
   - luke.shulman@datarobot.com
 tags: []

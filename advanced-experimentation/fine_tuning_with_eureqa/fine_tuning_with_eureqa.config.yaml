@@ -6,8 +6,8 @@ description: |-
   Eureqa now lives as a blueprint within DataRobot.
 languages:
   - python
-authors: 
+maintainers:
   - João Gomes
-authors_email:
+maintainers_email:
   - joao.gomes@datarobot.com
 tags: []

@@ -5,8 +5,8 @@ description: |-
   Leverage Composable ML to build a new blueprint from scratch or swap out certain components for your own code.
 languages:
   - python
-authors: 
+maintainers:
   - João Gomes
-authors_email:
+maintainers_email:
   - joao.gomes@datarobot.com
 tags: []

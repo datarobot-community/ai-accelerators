@@ -5,8 +5,8 @@ description: |-
   You will leverage DataRobot for model training, selection, and MLOps monitoring while using Databricks to facilitate datasource access and utilize the Spark backbone to perform distributed scoring to support large-scale use cases.
 languages:
   - python
-authors: 
+maintainers:
   - João Gomes
-authors_email:
+maintainers_email:
   - joao.gomes@datarobot.com
 tags: []

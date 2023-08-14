@@ -6,8 +6,8 @@ description: |-
   To help make this process easier, this notebook outlines a way to accomplish this leveraging DataRobot's Python client for a supervised, binary classification problem.
 languages:
   - python
-authors: 
+maintainers:
   - Taylor Larkin
-authors_email:
+maintainers_email:
   - taylor.larkin@datarobot.com
 tags: []

@@ -5,8 +5,8 @@ description: |-
   Time series forecasting in DataRobot has a huge suite of tools and approaches to handle highly complex multiseries problems.
 languages:
   - python
-authors: 
+maintainers:
   - Andrii Kruchko
-authors_email:
+maintainers_email:
   - andrii.kruchko@datarobot.com
 tags: []

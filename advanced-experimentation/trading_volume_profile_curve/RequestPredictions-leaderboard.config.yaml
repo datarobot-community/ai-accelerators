@@ -4,8 +4,8 @@ description: |-
   Obtain predictions from models created in the previous step to generate the "next day curve".
 languages:
   - python
-authors: 
+maintainers:
   - João Gomes
-authors_email:
+maintainers_email:
   - joao.gomes@datarobot.com
 tags: []

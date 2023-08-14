@@ -5,8 +5,8 @@ description: |-
   This workflow uses churn prediction use case as an example to build an app using prediction output.
 languages:
   - python
-authors: 
+maintainers:
   - Disha Dubey
-authors_email:
+maintainers_email:
   - disha.dubey@datarobot.com
 tags: []

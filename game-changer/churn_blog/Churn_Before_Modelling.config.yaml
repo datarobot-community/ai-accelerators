@@ -6,10 +6,10 @@ description: |-
   Doing so at the start will determine whether the business can take action based on the trained model and whether your hard work is valuable or not.
 languages:
   - python
-authors: 
+maintainers:
   - Max Dugan-Knight
   - Jake Snyder
-authors_email:
+maintainers_email:
   - max.dugan-knight@datarobot.com
   - jake.snyder@datarobot.com
 tags: []

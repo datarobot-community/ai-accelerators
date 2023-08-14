@@ -4,13 +4,13 @@ description: |-
   This notebook guides you through the process of using Ready Signal to add external control data, such as census and weather data, to improve time series predictions.
 languages:
   - python
-authors: 
+maintainers:
   - Jack Claucherty
   - Jenna King
   - Baylen Springer
   - Matt Schaefer
   - Chen Wang
-authors_email:
+maintainers_email:
   - jack.claucherty@rxa.io
   - jenna.king@rxa.io
   - baylen.springer@readysignal.com

@@ -4,8 +4,8 @@ description: |-
   This is an example config file that can be copied and used for your code examples configurations.
 languages:
   - python
-authors: 
+maintainers:
   - Pavel Ustinov
-authors_email:
+maintainers_email:
   - pavel.ustinov@datarobot.com
 tags: []

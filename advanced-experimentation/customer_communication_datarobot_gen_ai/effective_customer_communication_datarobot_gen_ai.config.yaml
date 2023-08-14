@@ -6,8 +6,8 @@ description: |-
   The generative AI model provides expert advice that is tailored for each individual loan applicant based on the prediction explanations provided by DataRobot.
 languages:
   - python
-authors: 
+maintainers:
   - Abdul Jilani
-authors_email:
+maintainers_email:
   - abdul.jilani@datarobot.com
 tags: []

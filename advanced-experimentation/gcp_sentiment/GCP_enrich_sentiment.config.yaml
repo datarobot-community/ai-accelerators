@@ -5,10 +5,10 @@ description: |-
   The sentiment scores from the Google API helps improve the model performance in predicting the likelihood of churn for each customer, without requiring the user to train their own sentiment models.
 languages:
   - python
-authors: 
+maintainers:
   - Asli Sabanci Demiroz
   - Shu Li
-authors_email:
+maintainers_email:
   - asli.demiroz@datarobot.com
   - shu.li@datarobot.com
 tags: []
