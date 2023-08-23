@@ -1,7 +1,7 @@
 title: Introduction to DataRobotX
 file_name: drx-overview.ipynb
 description: |-
-  In this accelerator leverages the power of DataRobotx to quickly run the AutoML workflow on the Lending Club Dataset.
+  This accelerator leverages the power of DataRobotx to quickly run the AutoML workflow on the Lending Club Dataset.
 languages:
   - python
 maintainers:
