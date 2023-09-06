@@ -1,5 +1,16 @@
 **DataRobot [AI Accelerators](https://www.datarobot.com/aiaccelerators/) are repeatable, code-first workflows designed to help speed up model development, deployment and time to value using the [DataRobot API](https://datarobot-public-api-client.readthedocs-hosted.com/en/latest-release/).**
 
+## 🤔 Finding the Accelerator you need
+| Section | Details |
+|---|---|
+| [Use Cases and Horizontal Approaches](https://github.com/datarobot-community/ai-accelerators/blob/main/use_cases_and_horizontal_approaches) | Applied approaches to specific business challenges and general frameworks for broad classes of machine learning problems |
+| [Generative AI](https://github.com/datarobot-community/ai-accelerators/blob/main/generative_ai) | All things generative + predictive AI |
+| [Ecosystem Integration Templates](https://github.com/datarobot-community/ai-accelerators/blob/main/ecosystem_integration_templates) | Boilerplate templates to for end-to-end API workflows between DataRobot and our ecosystem partners like Snowflake, GCP, Azure, AWS, etc. |
+| [Advanced ML and API Approaches](https://github.com/datarobot-community/ai-accelerators/blob/main/advanced_ml_and_api_approaches) | Advanced usage of the DataRobot API you can inject in to your experiment workflow   |
+
+## DataRobot AI Accelerators YouTube Playlist
+For more tutorials and demonstrations, visit our [DataRobot AI Accelerators YouTube Playlist](https://www.youtube.com/playlist?list=PLe-6XGmzriIhoP4o8q_SapBTQJstLIRTY). More coming soon!
+
 [Install the DataRobot Python Client Package](https://pypi.org/project/datarobot/).
 <a href="https://pypi.org/project/datarobot/"><img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/datarobot"></a>
 <a href="https://pypi.org/project/datarobot/"><img alt="PyPI" src="https://img.shields.io/pypi/v/datarobot?label=Release"></a>
@@ -16,14 +27,3 @@
 ## ❔Support
 Please report feedback and problems by opening a Github Issue in this repo.
 Please note: The code in these repos is sourced from the DataRobot user community and is not owned or maintained by DataRobot, Inc. You may need to make edits or updates for this code to function properly in your environment.
-
-## 🤔 Finding the Accelerator you need
-| Section | Details |
-|---|---|
-| [Use Cases and Horizontal Approaches](https://github.com/datarobot-community/ai-accelerators/blob/main/use_cases_and_horizontal_approaches) | Applied approaches to specific business challenges and general frameworks for broad classes of machine learning problems |
-| [Generative AI](https://github.com/datarobot-community/ai-accelerators/blob/main/generative_ai) | All things generative + predictive AI |
-| [Ecosystem Integration Templates](https://github.com/datarobot-community/ai-accelerators/blob/main/ecosystem_integration_templates) | Boiler-plate templates to for end-to-end API workflows between DataRobot and our ecosystem partners like Snowflake, GCP, Azure, AWS, etc. |
-| [Advanced ML and API Approaches](https://github.com/datarobot-community/ai-accelerators/blob/main/advanced_ml_and_api_approaches) | Advanced usage of the DataRobot API you can inject in to your experiment workflow   |
-
-## DataRobot AI Accelerators YouTube Playlist
-For more tutorials and demonstrations, visit our [DataRobot AI Accelerators YouTube Playlist](https://www.youtube.com/playlist?list=PLe-6XGmzriIhoP4o8q_SapBTQJstLIRTY). More coming soon!
