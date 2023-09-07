@@ -1,7 +1,9 @@
 ## Advanced Machine Learning and API Approaches
 The DataRobot API's flexibility enables our data scientists, engineers and customers to build creative tools, quickly.  Notebooks in this repo are a grab-bag of topics that flex the use of the DataRobot API in different ways, and typically apply across install types and cloud providers. 
 
-## 💥 What's in this section?
+To incorpoarte into your workflow in your specific infrastructure, combine these with templates in the [ecosystem_integration_templates](https://github.com/datarobot-community/ai-accelerators/main/update-structure/ecosystem_integration_templates) folder. If something doesn't work or you have a suggestion, please open a [GitHub issue](https://github.com/datarobot-community/ai-accelerators/issues)  
+
+## 💥 What's in here?
 | Title | Primary Label | What it's good for | Other Labels| Extensibility to other Integrations |
 |---|---|---|---|---|
 | [Hyperparameter Optimization](https://github.com/datarobot-community/ai-accelerators/tree/main/advanced_ml_and_api_approaches/Hyperparameter_Optimization) | Parameter tuning | Learn how to use the API for hyperparameter tuning | - | High, advanced use of DataRobot API |
