@@ -8,8 +8,9 @@
 | [Ecosystem Integration Templates](https://github.com/datarobot-community/ai-accelerators/blob/main/ecosystem_integration_templates) | Boilerplate templates to for end-to-end API workflows between DataRobot and our ecosystem partners like Snowflake, GCP, Azure, AWS, etc. |
 | [Advanced ML and API Approaches](https://github.com/datarobot-community/ai-accelerators/blob/main/advanced_ml_and_api_approaches) | Advanced usage of the DataRobot API you can inject in to your experiment workflow   |
 
-## DataRobot AI Accelerators YouTube Playlist
-For more tutorials and demonstrations, visit our [DataRobot AI Accelerators YouTube Playlist](https://www.youtube.com/playlist?list=PLe-6XGmzriIhoP4o8q_SapBTQJstLIRTY). More coming soon!
+## 📹 Youtube
+Follow our channel @[DataRobot](https://www.youtube.com/@DataRobot/featured).  For more tutorials and demonstrations, checkout the [Generative AI + DataRobot](https://youtube.com/playlist?list=PLe-6XGmzriIiPJUzpz5npbueiadkhE_M2&si=obFGxZFruwiXa1TB)
+and [DataRobot AI Accelerators](https://www.youtube.com/playlist?list=PLe-6XGmzriIhoP4o8q_SapBTQJstLIRTY) playlists. More videos coming soon!
 
 [Install the DataRobot Python Client Package](https://pypi.org/project/datarobot/).
 <a href="https://pypi.org/project/datarobot/"><img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/datarobot"></a>
