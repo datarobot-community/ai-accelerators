@@ -1,57 +1,53 @@
-from sys import displayhook
-import pandas as pd
-import numpy as np
-import datarobot as dr
-import seaborn as sns
-import matplotlib.pyplot as plt
-#from datarobot_bp_workshop import Visualize
-
 import asyncio
-import time
 from datetime import datetime
-from pytimeparse.timeparse import timeparse  #!pip install pytimeparse
-import re
-
 import itertools
+import re
+from sys import displayhook
 import time
 from typing import List
 
 from dask import compute, delayed  # need to install
-from tenacity import retry, retry_if_exception, stop_after_attempt, wait_fixed # need to install
+import datarobot as dr
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from pytimeparse.timeparse import timeparse  # !pip install pytimeparse
+import seaborn as sns
+from tenacity import (  # need to install
+    retry,
+    retry_if_exception,
+    stop_after_attempt,
+    wait_fixed,
+)
+
+# from datarobot_bp_workshop import Visualize
+
 
 ####### advanced tuning ##############
 def error_retry_decision(x) -> bool:
-
     """
     Helper for determining when to retry the block of code
 
     """
 
     if hasattr(x, "status_code"):
-
         if x.status_code == 502:
-
             print("Server error! Waiting and trying again...")
             return True
 
         if x.status_code == 422:
-
             if "message" in x.json.keys():
-
                 if "Unable to add jobs to the queue" in x.json["message"]:
-
                     print(
                         "Unable to add jobs to the queue! Waiting and trying again..."
                     )
                     return True
 
     else:
-
         return False
 
 
 def _delete_model(model: dr.models.model.Model):
-
     """
     Deletes supplied DataRobot model
 
@@ -60,16 +56,13 @@ def _delete_model(model: dr.models.model.Model):
     """
 
     try:
-
         model.delete()
 
     except:
-
         pass
 
 
 def _delete_models(models: List[dr.models.model.Model]):
-
     """
     Delete a batch of models
 
@@ -80,7 +73,6 @@ def _delete_models(models: List[dr.models.model.Model]):
     # Using dask to delete models faster
     jobs = []
     for model in models:
-
         jobs.append(delayed(_delete_model)(model))
 
     jobs = compute(*jobs)
@@ -92,7 +84,6 @@ def _sort_models(
     partition: str = "validation",
     metric: str = None,
 ) -> List[dr.Model]:
-
     """
     Sorts supplied models by a requested metric and partition
 
@@ -105,12 +96,10 @@ def _sort_models(
 
     # If metric isn't specified, set to project metric
     if metric is None:
-
         metric = project.metric
 
     # If unsupervised project, manually create metrics dict
     if project.unsupervised_mode:
-
         metrics = {
             "metric_details": [
                 {"ascending": False, "metric_name": "Synthetic AUC"},
@@ -120,7 +109,6 @@ def _sort_models(
         }
 
     else:
-
         # Pull list of possible metrics
         metrics = project.get_metrics(feature_name=project.target)
 
@@ -149,7 +137,6 @@ def _model_cleanup(
     metric: str = None,
     max_n_models_to_keep: int = 5,
 ):
-
     """
     Sorts supplied models by a requested metric and partition and will keep at most max_n_models_to_keep tuned models
 
@@ -159,7 +146,7 @@ def _model_cleanup(
     max_n_models_to_keep: maximum number of models to keep
 
     """
-    
+
     # Pull updated jobs
     model_jobs = [
         dr.models.job.Job.get(project_id=project.id, job_id=x) for x in model_job_ids
@@ -180,7 +167,6 @@ def _model_cleanup(
     # Finding models to delete (if more than <max_n_models_to_keep>)
     n_models = len(sorted_models)
     if n_models > max_n_models_to_keep:
-
         # Deleting models
         models_to_delete = sorted_models[(max_n_models_to_keep - n_models) :]
         print(f"Deleting {len(models_to_delete)} of {n_models} models...")
@@ -200,7 +186,6 @@ def tuning_hyperparameters(
     metric: str = None,
     max_n_models_to_keep: int = 5,
 ):
-
     """
     Brute force builds a model for each hyperparameter combination with the ability to delete worst performing models
     Note that if a hyperparameter is shared among tasks, the passed value will be applied to all hyperparameters with a matching name
@@ -229,15 +214,12 @@ def tuning_hyperparameters(
     # For each hyperparameter combo, try running the model
     model_job_ids = []
     for hyperparameter_combo in hyperparameter_combos:
-
         try:
-
             # Start tuning
             tune = model.start_advanced_tuning_session()
 
             # Go through each hyperparameter
             for key in hyperparameter_combo.keys():
-
                 # Get id from parameter name
                 # This allows you to tune, even when a parameter name is shared
                 param_ids = [
@@ -248,7 +230,6 @@ def tuning_hyperparameters(
 
                 # Cycle through parameter IDs (in case there's multiple for a parameter name
                 for param_id in param_ids:
-
                     tune.set_parameter(
                         parameter_name=key,
                         parameter_id=param_id,
@@ -263,15 +244,12 @@ def tuning_hyperparameters(
 
         # If job was already ran, collect the job id
         except dr.errors.JobAlreadyRequested as error:
-
             if error.json["previousJob"]["status"] == "ABORTED":
-
                 print(
                     f"Combination {hyperparameter_combo} did not complete successfully. Consider running this combination via the GUI."
                 )
 
             else:
-
                 model_job_ids.append(error.json["previousJob"]["id"])
 
     print(f"Waiting for {len(model_job_ids)} models...")
@@ -282,13 +260,16 @@ def tuning_hyperparameters(
 
     # Cleaning things up
     _model_cleanup(
-        project = project,
+        project=project,
         model_job_ids=model_job_ids,
         partition=partition,
         metric=metric,
         max_n_models_to_keep=max_n_models_to_keep,
     )
+
+
 ######## Bayeisan Optimization ###########
+
 
 def get_top_of_leaderboard(project, metric="AUC", verbose=True):
     """
@@ -375,6 +356,7 @@ def get_top_of_leaderboard(project, metric="AUC", verbose=True):
         #     Visualize.show_dr_blueprint(dr.Blueprint.get(project.id, m['bp_id']))
 
     return leaderboard_top
+
 
 #### BO Tasks #####
 # Review Advanced tuning hyperparameters as table
@@ -489,9 +471,7 @@ def get_models_like(project, mod):  # added project
     )
 
 
-def get_all_parameters(
-    models, validation_type="crossValidation"
-):  
+def get_all_parameters(models, validation_type="crossValidation"):
     """
     Extract all tunable hyperparameters for tuned models along with their performance
 
@@ -540,7 +520,7 @@ def get_tuned_parameters(project, model, validation_type):
     param_search = all_parameters.groupby("parameter_name_type").apply(
         lambda x: pd.Series({"is_tuned": len(set(x.default_value)) != 1})
     )
-  
+
     param_search.reset_index(inplace=True)
 
     list_of_target_parameters = param_search[

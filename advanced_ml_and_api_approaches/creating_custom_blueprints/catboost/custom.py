@@ -1,10 +1,11 @@
-from typing import List, Optional
-import pickle
-import pandas as pd
-import numpy as np
 from pathlib import Path
-from sklearn.preprocessing import LabelEncoder
+import pickle
+from typing import List, Optional
+
 from catboost_pipeline import catboost_pipeline
+import numpy as np
+import pandas as pd
+from sklearn.preprocessing import LabelEncoder
 
 
 def fit(
@@ -16,10 +17,8 @@ def fit(
     **kwargs,
 ) -> None:
 
-
     estimator = catboost_pipeline(X)
     estimator.fit(X, y)
-
 
     output_dir_path = Path(output_dir)
     if output_dir_path.exists() and output_dir_path.is_dir():
