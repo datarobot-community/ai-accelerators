@@ -1,6 +1,6 @@
+---
 title: Use self-joins with panel data to improve model accuracy
-file_name: self-joins-panel-data
-  .ipynb
+file_name: self-joins-panel-data.ipynb
 description: |-
   This notebook shows you how to use the self-join technique multiple times using a single dataset.
   Specifically, you will register one dataset in the AICatalog and join it back onto itself four times.
