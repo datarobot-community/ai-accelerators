@@ -1,12 +1,12 @@
+from typing import List, Optional
 
-from sklearn.pipeline import Pipeline
-from sklearn.compose import ColumnTransformer
-from sklearn.impute import SimpleImputer
+from catboost import CatBoostClassifier
+from feature_selection import DataSelector
 import numpy as np
 import pandas as pd
-from catboost import CatBoostClassifier
-from typing import List, Optional
-from feature_selection import DataSelector
+from sklearn.compose import ColumnTransformer
+from sklearn.impute import SimpleImputer
+from sklearn.pipeline import Pipeline
 
 
 class CatBoostClassifier_wrapper:
@@ -27,11 +27,9 @@ class CatBoostClassifier_wrapper:
         text_features = DataSelector.TxtSelector(data)
         self.model = CatBoostClassifier(
             allow_writing_files=False,
-            #train_dir="catboost_info", 
-            iterations=50
-            ).fit(
-            X, y, cat_features=cat_features, text_features=text_features
-        )
+            # train_dir="catboost_info",
+            iterations=50,
+        ).fit(X, y, cat_features=cat_features, text_features=text_features)
         return self.model
 
     def predict_proba(self, data: pd.DataFrame):

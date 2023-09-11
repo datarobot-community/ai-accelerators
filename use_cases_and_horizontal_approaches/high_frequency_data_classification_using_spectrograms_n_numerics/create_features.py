@@ -1,9 +1,9 @@
+from helpers import create_spectrogram_image, generate_base64_image
 import librosa
+from librosa import decompose, feature
 import numpy as np
 import pandas as pd
-from librosa import decompose, feature
 from statsmodels.stats import descriptivestats
-from helpers import generate_base64_image, create_spectrogram_image
 
 
 class Featurizer:
@@ -20,15 +20,19 @@ class Featurizer:
         self.sr = sr
         self.n_fft = n_fft
         self.freqs = freqs
-        
+
         self.features = {}
         self.spec_features = {}
-        
+
         if array is not None:
             self.S = np.abs(librosa.stft(array, n_fft=self.n_fft))
-            self.spec_features.update({"spectrogram": generate_base64_image(
-                                                        create_spectrogram_image(self.S, self.sr))})
-
+            self.spec_features.update(
+                {
+                    "spectrogram": generate_base64_image(
+                        create_spectrogram_image(self.S, self.sr)
+                    )
+                }
+            )
 
     def _calc_vector_features(self, vec, suffix=None):
         """
@@ -95,17 +99,15 @@ class Featurizer:
             self.features.update(mfcc)
 
         # Spectral Centroid
-        feat_spectral_centroid = feature.spectral_centroid(
-            S=self.S, freq=self.freqs
-        )[0]
+        feat_spectral_centroid = feature.spectral_centroid(S=self.S, freq=self.freqs)[0]
         feat_spectral_centroid = self._calc_vector_features(
             feat_spectral_centroid, suffix="spec_centroid_"
         )
         self.features.update(feat_spectral_centroid)
 
-        feat_spectral_bandwidth = feature.spectral_bandwidth(
-            S=self.S, freq=self.freqs
-        )[0]
+        feat_spectral_bandwidth = feature.spectral_bandwidth(S=self.S, freq=self.freqs)[
+            0
+        ]
         feat_spectral_bandwidth = self._calc_vector_features(
             feat_spectral_bandwidth, suffix="spec_bandwidth_"
         )
@@ -127,9 +129,7 @@ class Featurizer:
         )
         self.features.update(feat_spectral_bandwidth_4)
 
-        feat_spectral_rolloff = feature.spectral_rolloff(
-            S=self.S, freq=self.freqs
-        )[0]
+        feat_spectral_rolloff = feature.spectral_rolloff(S=self.S, freq=self.freqs)[0]
         feat_spectral_rolloff = self._calc_vector_features(
             feat_spectral_rolloff, suffix="feat_spectral_rolloff_"
         )
@@ -153,30 +153,43 @@ class Featurizer:
 
         return self.features
 
-    
     def _create_all_spectrograms(self):
         # now lets get array features
-        array_melspectrogram = feature.melspectrogram(S=self.S, sr=self.sr, n_fft=self.n_fft)
-        self.spec_features.update({"spectrogram_mel": generate_base64_image(
-                                                            create_spectrogram_image(
-                                                                array_melspectrogram, self.sr))})
+        array_melspectrogram = feature.melspectrogram(
+            S=self.S, sr=self.sr, n_fft=self.n_fft
+        )
+        self.spec_features.update(
+            {
+                "spectrogram_mel": generate_base64_image(
+                    create_spectrogram_image(array_melspectrogram, self.sr)
+                )
+            }
+        )
 
         h, p = decompose.hpss(S=self.S)
-        self.spec_features.update({"spectrogram_harmonic": generate_base64_image(
-                                                            create_spectrogram_image(h, self.sr))})
-        self.spec_features.update({"spectrogram_percussive": generate_base64_image(
-                                                            create_spectrogram_image(p, self.sr))})
+        self.spec_features.update(
+            {
+                "spectrogram_harmonic": generate_base64_image(
+                    create_spectrogram_image(h, self.sr)
+                )
+            }
+        )
+        self.spec_features.update(
+            {
+                "spectrogram_percussive": generate_base64_image(
+                    create_spectrogram_image(p, self.sr)
+                )
+            }
+        )
 
         return self.spec_features
 
-    
     def _extract_chroma_features(self):
         chroma = feature.chroma_stft(S=self.S, sr=self.sr, n_fft=self.n_fft)
         feat = {"chroma_" + str(i): np.mean(chroma[i]) for i in range(len(chroma))}
-        
+
         return feat
 
-    
     def _extract_mfcc_feature_means(self, number_of_mfcc=8):
         mfcc_alt = librosa.feature.mfcc(S=self.S, n_mfcc=number_of_mfcc)
         feat_1 = {
@@ -184,9 +197,7 @@ class Featurizer:
         }
 
         if min(self.S.shape[1], 9) >= 3:
-            delta = librosa.feature.delta(
-                mfcc_alt, width=min(self.S.shape[1], 9)
-            )
+            delta = librosa.feature.delta(mfcc_alt, width=min(self.S.shape[1], 9))
             feat_2 = {
                 "feat_mfcc_delta_" + str(i): np.mean(delta[i])
                 for i in range(len(delta))
@@ -201,7 +212,5 @@ class Featurizer:
                 for i in range(len(accelerate))
             }
             feat_1.update(feat_3)
-        
-        return feat_1
 
-    
+        return feat_1

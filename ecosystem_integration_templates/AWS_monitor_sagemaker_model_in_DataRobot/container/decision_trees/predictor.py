@@ -9,13 +9,13 @@ import os
 import pickle
 import signal
 import sys
-import traceback
 import time
-import flask
-import pandas as pd
-import numpy as np
+import traceback
+
 from datarobot.mlops.mlops import MLOps
-import os
+import flask
+import numpy as np
+import pandas as pd
 
 prefix = "/opt/ml/"
 model_path = os.path.join(prefix, "model")
@@ -23,6 +23,7 @@ model_path = os.path.join(prefix, "model")
 
 # A singleton for holding the model. This simply loads the model and holds it.
 # It has a predict function that does a prediction based on the model and the input data.
+
 
 class ScoringService(object):
     model = None  # Where we keep the model when it's loaded
@@ -32,18 +33,20 @@ class ScoringService(object):
     def get_mlops(cls):
         """MLOPS: initialize mlops library"""
         # Get environment parameters
-        MLOPS_DEPLOYMENT_ID = os.environ.get('MLOPS_DEPLOYMENT_ID')
-        MLOPS_MODEL_ID = os.environ.get('MLOPS_MODEL_ID')
-        MLOPS_SQS_QUEUE = os.environ.get('MLOPS_SQS_QUEUE')
+        MLOPS_DEPLOYMENT_ID = os.environ.get("MLOPS_DEPLOYMENT_ID")
+        MLOPS_MODEL_ID = os.environ.get("MLOPS_MODEL_ID")
+        MLOPS_SQS_QUEUE = os.environ.get("MLOPS_SQS_QUEUE")
         # If deployment ID is not set, it will be read from MLOPS_DEPLOYMENT_ID environment variable.
         # If model ID is not set, it will be ready from MLOPS_MODEL_ID environment variable.
         if cls.mlops == None:
-            cls.mlops = MLOps() \
-                .set_async_reporting(False) \
-                .set_deployment_id(MLOPS_DEPLOYMENT_ID) \
-                .set_model_id(MLOPS_MODEL_ID) \
-                .set_sqs_spooler(MLOPS_SQS_QUEUE) \
+            cls.mlops = (
+                MLOps()
+                .set_async_reporting(False)
+                .set_deployment_id(MLOPS_DEPLOYMENT_ID)
+                .set_model_id(MLOPS_MODEL_ID)
+                .set_sqs_spooler(MLOPS_SQS_QUEUE)
                 .init()
+            )
 
         return cls.mlops
 
@@ -64,7 +67,7 @@ class ScoringService(object):
                 one prediction per row in the dataframe"""
         clf = cls.get_model()
 
-        class_names = json.loads(os.environ.get('CLASS_NAMES'))
+        class_names = json.loads(os.environ.get("CLASS_NAMES"))
 
         start_time = time.time()
         predictions_array = clf.predict_proba(input.values)
@@ -73,14 +76,16 @@ class ScoringService(object):
 
         # MLOPS: report the number of predictions in the request and the execution time.
         ml_ops = cls.get_mlops()
-        ml_ops.report_deployment_stats(predictions_array.shape[0], execution_time * 1000)
+        ml_ops.report_deployment_stats(
+            predictions_array.shape[0], execution_time * 1000
+        )
 
         # MLOPS: report features, predictions, and class names
         ml_ops.report_predictions_data(
             features_df=input,
             predictions=predictions_array.tolist(),
             class_names=class_names,
-            association_ids=None
+            association_ids=None,
         )
 
         return prediction
@@ -94,7 +99,9 @@ app = flask.Flask(__name__)
 def ping():
     """Determine if the container is working and healthy. In this sample container, we declare
     it healthy if we can load the model successfully."""
-    health = ScoringService.get_model() is not None  # You can insert a health check here
+    health = (
+        ScoringService.get_model() is not None
+    )  # You can insert a health check here
 
     status = 200 if health else 404
     return flask.Response(response="\n", status=status, mimetype="application/json")
@@ -115,7 +122,9 @@ def transformation():
         data = pd.read_csv(s)
     else:
         return flask.Response(
-            response="This predictor only supports CSV data", status=415, mimetype="text/plain"
+            response="This predictor only supports CSV data",
+            status=415,
+            mimetype="text/plain",
         )
 
     print("Invoked with {} records".format(data.shape[0]))
