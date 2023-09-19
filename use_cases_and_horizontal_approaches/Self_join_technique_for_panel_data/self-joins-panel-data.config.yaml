@@ -1,15 +1,14 @@
-description: 'This notebook shows you how to use the self-join technique multiple
-  times using a single dataset.
-
-  Specifically, you will register one dataset in the AICatalog and join it back onto
-  itself four times.'
+---
+description: "This notebook shows you how to use the self-join technique multiple times using a single\
+  \ dataset.\nSpecifically, you will register one dataset in the AICatalog and join it back onto itself\
+  \ four times."
 file_name: self-joins-panel-data.ipynb
 languages:
-- python
+  - python
 maintainers:
-- Andrea Kropp
+  - Andrea Kropp
 maintainers_email:
-- andrea.kropp@datarobot.com
+  - andrea.kropp@datarobot.com
 smoke_test:
   run_smoke_test: false
 tags: []

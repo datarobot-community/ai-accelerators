@@ -1,16 +1,15 @@
-description: 'This notebook illustrates and end-to-end data science workflow using
-  features of both DataRobot and Databricks.
-
-  You will leverage DataRobot for model training, selection, and MLOps monitoring
-  while using Databricks to facilitate datasource access and utilize the Spark backbone
-  to perform distributed scoring to support large-scale use cases.'
+---
+description: "This notebook illustrates and end-to-end data science workflow using features of both DataRobot\
+  \ and Databricks.\nYou will leverage DataRobot for model training, selection, and MLOps monitoring while\
+  \ using Databricks to facilitate datasource access and utilize the Spark backbone to perform distributed\
+  \ scoring to support large-scale use cases."
 file_name: Databricks_End_To_End.ipynb
 languages:
-- python
+  - python
 maintainers:
-- "Jo\xE3o Gomes"
+  - João Gomes
 maintainers_email:
-- joao@datarobot.com
+  - joao@datarobot.com
 smoke_test:
   run_smoke_test: false
 tags: []

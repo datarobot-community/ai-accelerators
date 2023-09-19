@@ -1,16 +1,15 @@
-description: 'This notebook illustrates an end-to-end data science workflow using
-  DataRobot.
-
-  The workflow ingests a dataset hosted in an Azure blob container, trains a series
-  of models using DataRobot''s AutoML capabilities, deploys a recommended model, and
-  sets up a batch prediction job that writes predictions back to the original container.'
+---
+description: "This notebook illustrates an end-to-end data science workflow using DataRobot.\nThe workflow\
+  \ ingests a dataset hosted in an Azure blob container, trains a series of models using DataRobot's AutoML\
+  \ capabilities, deploys a recommended model, and sets up a batch prediction job that writes predictions\
+  \ back to the original container."
 file_name: Azure_End_to_End.ipynb
 languages:
-- python
+  - python
 maintainers:
-- Brent Hinks
+  - Brent Hinks
 maintainers_email:
-- brent.hinks@datarobot.com
+  - brent.hinks@datarobot.com
 smoke_test:
   run_smoke_test: false
 tags: []

@@ -1,13 +1,13 @@
-description: This demand forecasting what-if app allows you to adjust certain known
-  in advance (KA) variable values to see how changes in those factors might affect
-  the forecasted demand.
+---
+description: This demand forecasting what-if app allows you to adjust certain known in advance (KA) variable
+  values to see how changes in those factors might affect the forecasted demand.
 file_name: demand_forecasting_app.py
 languages:
-- python
+  - python
 maintainers:
-- Andrii Kruchko
+  - Andrii Kruchko
 maintainers_email:
-- andrii.kruchko@datarobot.com
+  - andrii.kruchko@datarobot.com
 smoke_test:
   run_smoke_test: false
 tags: []
