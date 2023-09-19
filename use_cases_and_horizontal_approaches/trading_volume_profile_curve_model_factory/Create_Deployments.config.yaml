@@ -1,12 +1,13 @@
----
-title: Create a deployment
+description: Take in the controller file from the first notebook, deploy the top models
+  in each project, and add a "deployment" column to the controller.
 file_name: Create_Deployments.ipynb
-description: |-
-  Take in the controller file from the first notebook, deploy the top models in each project, and add a "deployment" column to the controller.
 languages:
-  - python
+- python
 maintainers:
-  - João Gomes
+- "Jo\xE3o Gomes"
 maintainers_email:
-  - joao@datarobot.com
+- joao@datarobot.com
+smoke_test:
+  run_smoke_test: false
 tags: []
+title: Create a deployment

@@ -1,14 +1,19 @@
----
-title: Fine-tune models with Eureqa
+description: 'Eureqa is a symbolic regression algorithm that searches the space of
+  mathematical expressions to find the best fit for a given dataset, while minimizing
+  both error and complexity.
+
+  Eureqa came out of Cornell''s AI Lab in 2009, developed into a company called Nutonian,
+  and then was acquired by DataRobot in 2017.
+
+  Eureqa now lives as a blueprint within DataRobot.'
 file_name: fine_tuning_with_eureqa.ipynb
-description: |-
-  Eureqa is a symbolic regression algorithm that searches the space of mathematical expressions to find the best fit for a given dataset, while minimizing both error and complexity.
-  Eureqa came out of Cornell's AI Lab in 2009, developed into a company called Nutonian, and then was acquired by DataRobot in 2017.
-  Eureqa now lives as a blueprint within DataRobot.
 languages:
-  - python
+- python
 maintainers:
-  - João Gomes
+- "Jo\xE3o Gomes"
 maintainers_email:
-  - joao@datarobot.com
+- joao@datarobot.com
+smoke_test:
+  run_smoke_test: false
 tags: []
+title: Fine-tune models with Eureqa

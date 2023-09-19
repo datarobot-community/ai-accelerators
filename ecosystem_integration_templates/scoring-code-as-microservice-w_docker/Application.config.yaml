@@ -1,12 +1,14 @@
----
-title: Deploy Scoring Code as a microservice
+description: This AI Accelerator explains the step-by-step procedure to embed Scoring
+  Code in a microservice and prepare it as the Docker container for a deployment on
+  customer infrastructure (it can be self- or hyperscaler-managed K8s).
 file_name: Application.java
-description: |-
-  This AI Accelerator explains the step-by-step procedure to embed Scoring Code in a microservice and prepare it as the Docker container for a deployment on customer infrastructure (it can be self- or hyperscaler-managed K8s).
 languages:
-  - java
+- java
 maintainers:
-  - Pavel Ustinov
+- Pavel Ustinov
 maintainers_email:
-  - pavel.ustinov@datarobot.com
+- pavel.ustinov@datarobot.com
+smoke_test:
+  run_smoke_test: false
 tags: []
+title: Deploy Scoring Code as a microservice

@@ -1,12 +1,13 @@
----
-title: Migrate a model to a new cluster
+description: This notebook demonstrates how to migrate a model from one DataRobot
+  cluster to another of the same version.
 file_name: Model_Migration_Example.ipynb
-description: |-
-  This notebook demonstrates how to migrate a model from one DataRobot cluster to another of the same version.
 languages:
-  - python
+- python
 maintainers:
-  - João Gomes
+- "Jo\xE3o Gomes"
 maintainers_email:
-  - joao@datarobot.com
+- joao@datarobot.com
+smoke_test:
+  run_smoke_test: false
 tags: []
+title: Migrate a model to a new cluster

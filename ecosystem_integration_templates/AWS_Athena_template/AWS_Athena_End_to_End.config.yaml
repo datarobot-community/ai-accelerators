@@ -1,15 +1,18 @@
----
-title: DataRobot AutoML end-to-end with Amazon Athena
+description: 'This example notebook outlines how to read in an Amazon Athena table
+  and upload it to DataRobot''s AI Catalog.
+
+  Then, using this dataset, we''ll create a project, deploy the top performing model
+  to a DataRobot prediction server, and make batch predictions with a test dataset.'
 file_name: Amazon_S3_End_to_End.ipynb
-description: |-
-  This example notebook outlines how to read in an Amazon Athena table and upload it to DataRobot's AI Catalog.
-  Then, using this dataset, we'll create a project, deploy the top performing model to a DataRobot prediction server, and make batch predictions with a test dataset.
 languages:
-  - python
+- python
 maintainers:
-  - Biju Krishnan
-  - João Gomes
+- Biju Krishnan
+- "Jo\xE3o Gomes"
 maintainers_email:
-  - biju.krishnan@datarobot.com
-  - joao@datarobot.com
+- biju.krishnan@datarobot.com
+- joao@datarobot.com
+smoke_test:
+  run_smoke_test: false
 tags: []
+title: DataRobot AutoML end-to-end with Amazon Athena

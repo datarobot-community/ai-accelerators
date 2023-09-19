@@ -1,12 +1,14 @@
----
-title: Retail Industry - Predicting Factory Order Quantities for New Products
+description: The notebook covers basic exploratory data analysis, running machine
+  learning experiments in DataRobot and reviewing the results of those experiments
+  to extract business insights and evaluate model accuracy.
 file_name: Retail Industry - Predicting Factory Order Quantities for New Products.ipynb
-description: |-
-  The notebook covers basic exploratory data analysis, running machine learning experiments in DataRobot and reviewing the results of those experiments to extract business insights and evaluate model accuracy.
 languages:
-  - python
+- python
 maintainers:
-  - Andrea Kropp
+- Andrea Kropp
 maintainers_email:
-  - andrea.kropp@datarobot.com
+- andrea.kropp@datarobot.com
+smoke_test:
+  run_smoke_test: false
 tags: []
+title: Retail Industry - Predicting Factory Order Quantities for New Products
