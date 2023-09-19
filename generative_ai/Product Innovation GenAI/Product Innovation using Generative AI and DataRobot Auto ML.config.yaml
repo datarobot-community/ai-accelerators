@@ -1,12 +1,13 @@
----
-title: Automate product feedback reports using generative AI
+description: This notebook builds an automated system to process review text and use
+  Generative AI to produce targeted reports for product design and manufacturing teams.
 file_name: Product Innovation using Generative AI and DataRobot Auto ML.ipynb
-description: |-
-  This notebook builds an automated system to process review text and use Generative AI to produce targeted reports for product design and manufacturing teams.
 languages:
-  - python
+- python
 maintainers:
-  - João Gomes
+- "Jo\xE3o Gomes"
 maintainers_email:
-  - joao@datarobot.com
+- joao@datarobot.com
+smoke_test:
+  run_smoke_test: false
 tags: []
+title: Automate product feedback reports using generative AI

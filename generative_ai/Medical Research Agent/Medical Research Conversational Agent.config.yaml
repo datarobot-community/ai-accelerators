@@ -1,12 +1,16 @@
----
-title: Conversational agent on medical research papers
+description: This accelerator aims to provide instructions on how to build this type
+  of system using DataRobot's generative AI solution framework. The accelerator shows
+  how you can build a pipeline to create a knowledge base with only trusted research
+  papers, and build a conversational agent that can answer questions from medical
+  professionals.
 file_name: Medical Research Conversational Agent.ipynb
-description: |-
-  This accelerator aims to provide instructions on how to build this type of system using DataRobot's generative AI solution framework. The accelerator shows how you can build a pipeline to create a knowledge base with only trusted research papers, and build a conversational agent that can answer questions from medical professionals.
 languages:
-  - python
+- python
 maintainers:
-  - João Gomes
+- "Jo\xE3o Gomes"
 maintainers_email:
-  - joao@datarobot.com
+- joao@datarobot.com
+smoke_test:
+  run_smoke_test: false
 tags: []
+title: Conversational agent on medical research papers

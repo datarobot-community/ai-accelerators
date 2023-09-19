@@ -1,12 +1,13 @@
----
-title: Use MLFlow with the DataRobot API for experimentation and logging
+description: This notebook provides a framework that showcases the integration of
+  MLFlow and Papermill to track machine learning experiments with DataRobot.
 file_name: experiment_notebook.ipynb
-description: |-
-  This notebook provides a framework that showcases the integration of MLFlow and Papermill to track machine learning experiments with DataRobot.
 languages:
-  - python
+- python
 maintainers:
-  - João Gomes
+- "Jo\xE3o Gomes"
 maintainers_email:
-  - joao@datarobot.com
+- joao@datarobot.com
+smoke_test:
+  run_smoke_test: false
 tags: []
+title: Use MLFlow with the DataRobot API for experimentation and logging

@@ -1,15 +1,23 @@
----
-title: Use feature engineering and Visual AI with acoustic data
+description: 'This example notebook shows how to generate image features in addition
+  to aggregate numeric features for high frequency data sources.
+
+  While similar to the Gramian Angular Field (GAF) approach of converting temporal
+  signals to images (GAF notebook), this notebook converts audio wav files into the
+  frequency domain to generate spectrograms.
+
+  Statistical numeric features computed from the converted signal add additional descriptors
+  of the signal to aid classification of the audio source.
+
+  Converting high frequency data into image representations enables use of well-established
+  computer vision techniques for complex data understanding.'
 file_name: high_frequency_classification_spectrograms_n_numerics.ipynb
-description: |-
-  This example notebook shows how to generate image features in addition to aggregate numeric features for high frequency data sources.
-  While similar to the Gramian Angular Field (GAF) approach of converting temporal signals to images (GAF notebook), this notebook converts audio wav files into the frequency domain to generate spectrograms.
-  Statistical numeric features computed from the converted signal add additional descriptors of the signal to aid classification of the audio source.
-  Converting high frequency data into image representations enables use of well-established computer vision techniques for complex data understanding.
 languages:
-  - python
+- python
 maintainers:
-  - Kyle Lindgren
+- Kyle Lindgren
 maintainers_email:
-  - kyle.lindgren@datarobot.com
+- kyle.lindgren@datarobot.com
+smoke_test:
+  run_smoke_test: false
 tags: []
+title: Use feature engineering and Visual AI with acoustic data

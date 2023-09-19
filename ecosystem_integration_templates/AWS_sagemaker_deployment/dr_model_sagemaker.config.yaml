@@ -1,12 +1,15 @@
----
-title: End to end ML workflow with a deployment in AWS SageMaker
+description: In this AI Accelerator notebook, you will build an AI/ML model within
+  DataRobot which will then be deployed and hosted within AWS SageMaker. This will
+  include uploading data for model training, model development, and exporting from
+  DataRobot into SageMaker.
 file_name: dr_model_sagemaker.ipynb
-description: |-
-  In this AI Accelerator notebook, you will build an AI/ML model within DataRobot which will then be deployed and hosted within AWS SageMaker. This will include uploading data for model training, model development, and exporting from DataRobot into SageMaker.
 languages:
-  - python
+- python
 maintainers:
-  - Alex Yeager
+- Alex Yeager
 maintainers_email:
-  - alex.yeager@datarobot.com
+- alex.yeager@datarobot.com
+smoke_test:
+  run_smoke_test: false
 tags: []
+title: End to end ML workflow with a deployment in AWS SageMaker

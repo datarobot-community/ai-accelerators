@@ -1,14 +1,20 @@
----
-title: Model Selection via Custom Metrics
+description: 'When it comes to evaluating machine learning model performance, DataRobot
+  provides many of the standard metrics out-of-the box, either on the Leaderboard
+  or as a model insight.
+
+  However, depending on the industry, you may need to sort the Leaderboard by a specific
+  metric that is not natively supported by DataRobot, or by return-on-investment (ROI).
+
+  To help make this process easier, this notebook outlines a way to accomplish this
+  leveraging DataRobot''s Python client for a supervised, binary classification problem.'
 file_name: custom_metrics.ipynb
-description: |-
-  When it comes to evaluating machine learning model performance, DataRobot provides many of the standard metrics out-of-the box, either on the Leaderboard or as a model insight.
-  However, depending on the industry, you may need to sort the Leaderboard by a specific metric that is not natively supported by DataRobot, or by return-on-investment (ROI).
-  To help make this process easier, this notebook outlines a way to accomplish this leveraging DataRobot's Python client for a supervised, binary classification problem.
 languages:
-  - python
+- python
 maintainers:
-  - Taylor Larkin
+- Taylor Larkin
 maintainers_email:
-  - taylor.larkin@datarobot.com
+- taylor.larkin@datarobot.com
+smoke_test:
+  run_smoke_test: false
 tags: []
+title: Model Selection via Custom Metrics

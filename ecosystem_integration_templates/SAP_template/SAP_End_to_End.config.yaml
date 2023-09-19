@@ -1,12 +1,13 @@
----
-title: End-to-End modeling workflow with SAP
+description: his notebook demonstrates an end-to-end workflow using DataRobot with
+  SAP as the remote data source.
 file_name: SAP_End_to_End.ipynb
-description: |-
-  his notebook demonstrates an end-to-end workflow using DataRobot with SAP as the remote data source.
 languages:
-  - python
+- python
 maintainers:
-  - Dennis Whitney
+- Dennis Whitney
 maintainers_email:
-  - dennis.whitney@datarobot.com
+- dennis.whitney@datarobot.com
+smoke_test:
+  run_smoke_test: false
 tags: []
+title: End-to-End modeling workflow with SAP
