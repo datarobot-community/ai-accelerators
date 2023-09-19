@@ -1,15 +1,14 @@
-description: 'You can extend model ensembling, which provides improved accuracy and
-  robustness, to feature selection.
-
-  Within DataRobot, this approach is based on aggregating ranks of features using
-  Feature Impact from several blueprints from the Leaderboard.'
+---
+description: "You can extend model ensembling, which provides improved accuracy and robustness, to feature\
+  \ selection.\nWithin DataRobot, this approach is based on aggregating ranks of features using Feature\
+  \ Impact from several blueprints from the Leaderboard."
 file_name: feature_reduction_with_fire.ipynb
 languages:
-- python
+  - python
 maintainers:
-- "Jo\xE3o Gomes"
+  - João Gomes
 maintainers_email:
-- joao@datarobot.com
+  - joao@datarobot.com
 smoke_test:
   run_smoke_test: false
 tags: []

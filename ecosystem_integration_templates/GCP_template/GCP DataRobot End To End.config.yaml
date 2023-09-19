@@ -1,15 +1,14 @@
-description: 'In this notebook, you will build an ML model using a combination of
-  GCP services and DataRobot.
-
-  It covers an end-to-end workflow that includes sourcing the data through exploratory
-  data analysis, model development, and deployment.'
+---
+description: "In this notebook, you will build an ML model using a combination of GCP services and DataRobot.\n\
+  It covers an end-to-end workflow that includes sourcing the data through exploratory data analysis,\
+  \ model development, and deployment."
 file_name: GCP DataRobot End To End.ipynb
 languages:
-- python
+  - python
 maintainers:
-- Luke Shulman
+  - Luke Shulman
 maintainers_email:
-- luke.shulman@datarobot.com
+  - luke.shulman@datarobot.com
 smoke_test:
   run_smoke_test: false
 tags: []

@@ -1,13 +1,13 @@
-description: This notebook shares three Python functions which can pull out various
-  accuracy metrics, feature impact, and feature effects from multiple models and plot
-  them in one chart.
+---
+description: This notebook shares three Python functions which can pull out various accuracy metrics,
+  feature impact, and feature effects from multiple models and plot them in one chart.
 file_name: Multi-Model Analysis.ipynb
 languages:
-- python
+  - python
 maintainers:
-- Jake Snyder
+  - Jake Snyder
 maintainers_email:
-- jake.snyder@datarobot.com
+  - jake.snyder@datarobot.com
 smoke_test:
   run_smoke_test: false
 tags: []

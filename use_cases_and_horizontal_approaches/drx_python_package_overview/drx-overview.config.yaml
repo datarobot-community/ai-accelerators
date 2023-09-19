@@ -1,12 +1,13 @@
-description: This accelerator leverages the power of DataRobotx to quickly run the
-  AutoML workflow on the Lending Club Dataset.
+---
+description: This accelerator leverages the power of DataRobotx to quickly run the AutoML workflow on
+  the Lending Club Dataset.
 file_name: drx-overview.ipynb
 languages:
-- python
+  - python
 maintainers:
-- "Jo\xE3o Gomes"
+  - João Gomes
 maintainers_email:
-- joao@datarobot.com
+  - joao@datarobot.com
 smoke_test:
   run_smoke_test: false
 tags: []

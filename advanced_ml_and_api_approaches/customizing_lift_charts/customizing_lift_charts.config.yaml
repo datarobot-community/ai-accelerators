@@ -1,13 +1,14 @@
-description: "This notebook outlines how to recreate and customize DataRobot\u2019\
-  s lift chart from a DataRobot blueprint (i.e., a modeling pipeline encompassing\
-  \ the combination of data preprocessing steps and machine learning algorithm)."
+---
+description: This notebook outlines how to recreate and customize DataRobot’s lift chart from a DataRobot
+  blueprint (i.e., a modeling pipeline encompassing the combination of data preprocessing steps and machine
+  learning algorithm).
 file_name: customizing_lift_charts.ipynb
 languages:
-- python
+  - python
 maintainers:
-- Taylor Larkin
+  - Taylor Larkin
 maintainers_email:
-- taylor.larkin@datarobot.com
+  - taylor.larkin@datarobot.com
 smoke_test:
   run_smoke_test: false
 tags: []

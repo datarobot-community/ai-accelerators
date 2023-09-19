@@ -1,18 +1,17 @@
-description: 'In this notebook, we demo the usage of the Google Cloud Natural Language
-  API for sentiment analysis to enrich a customer churn dataset.
-
-  The sentiment scores from the Google API helps improve the model performance in
-  predicting the likelihood of churn for each customer, without requiring the user
-  to train their own sentiment models.'
+---
+description: "In this notebook, we demo the usage of the Google Cloud Natural Language API for sentiment\
+  \ analysis to enrich a customer churn dataset.\nThe sentiment scores from the Google API helps improve\
+  \ the model performance in predicting the likelihood of churn for each customer, without requiring the\
+  \ user to train their own sentiment models."
 file_name: GCP_enrich_sentiment.ipynb
 languages:
-- python
+  - python
 maintainers:
-- Asli Sabanci Demiroz
-- Shu Li
+  - Asli Sabanci Demiroz
+  - Shu Li
 maintainers_email:
-- asli.demiroz@datarobot.com
-- shu.li@datarobot.com
+  - asli.demiroz@datarobot.com
+  - shu.li@datarobot.com
 smoke_test:
   run_smoke_test: false
 tags: []

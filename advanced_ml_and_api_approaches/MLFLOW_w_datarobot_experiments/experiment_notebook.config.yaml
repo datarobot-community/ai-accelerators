@@ -1,12 +1,13 @@
-description: This notebook provides a framework that showcases the integration of
-  MLFlow and Papermill to track machine learning experiments with DataRobot.
+---
+description: This notebook provides a framework that showcases the integration of MLFlow and Papermill
+  to track machine learning experiments with DataRobot.
 file_name: experiment_notebook.ipynb
 languages:
-- python
+  - python
 maintainers:
-- "Jo\xE3o Gomes"
+  - João Gomes
 maintainers_email:
-- joao@datarobot.com
+  - joao@datarobot.com
 smoke_test:
   run_smoke_test: false
 tags: []

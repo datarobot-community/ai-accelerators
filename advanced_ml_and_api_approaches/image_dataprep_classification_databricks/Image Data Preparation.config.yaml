@@ -1,12 +1,13 @@
-description: In this notebook, you will import image files using Spark and prepare
-  them into a data frame suitable for ingest into DataRobot.
+---
+description: In this notebook, you will import image files using Spark and prepare them into a data frame
+  suitable for ingest into DataRobot.
 file_name: Image Data Preparation.ipynb
 languages:
-- python
+  - python
 maintainers:
-- Andrew Mathis
+  - Andrew Mathis
 maintainers_email:
-- andrew.mathis@datarobot.com
+  - andrew.mathis@datarobot.com
 smoke_test:
   run_smoke_test: false
 tags: []

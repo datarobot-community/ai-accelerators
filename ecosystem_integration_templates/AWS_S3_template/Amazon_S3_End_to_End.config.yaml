@@ -1,18 +1,17 @@
-description: 'This example notebook outlines how to read in PARQUET files from an
-  Amazon S3 bucket into a pandas dataframe using AWS Wrangler Python library and upload
-  it to DataRobot''s AI Catalog.
-
-  Then, using this dataset, we''ll create a project, deploy the top performing model
-  to a DataRobot prediction server, and make batch predictions with a test dataset.'
+---
+description: "This example notebook outlines how to read in PARQUET files from an Amazon S3 bucket into\
+  \ a pandas dataframe using AWS Wrangler Python library and upload it to DataRobot's AI Catalog.\nThen,\
+  \ using this dataset, we'll create a project, deploy the top performing model to a DataRobot prediction\
+  \ server, and make batch predictions with a test dataset."
 file_name: Amazon_S3_End_to_End.ipynb
 languages:
-- python
+  - python
 maintainers:
-- Biju Krishnan
-- "Jo\xE3o Gomes"
+  - Biju Krishnan
+  - João Gomes
 maintainers_email:
-- biju.krishnan@datarobot.com
-- joao@datarobot.com
+  - biju.krishnan@datarobot.com
+  - joao@datarobot.com
 smoke_test:
   run_smoke_test: false
 tags: []

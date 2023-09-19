@@ -1,21 +1,21 @@
-description: This notebook guides you through the process of using Ready Signal to
-  add external control data, such as census and weather data, to improve time series
-  predictions.
+---
+description: This notebook guides you through the process of using Ready Signal to add external control
+  data, such as census and weather data, to improve time series predictions.
 file_name: DataRobot_RXA.ipynb
 languages:
-- python
+  - python
 maintainers:
-- Jack Claucherty
-- Jenna King
-- Baylen Springer
-- Matt Schaefer
-- Chen Wang
+  - Jack Claucherty
+  - Jenna King
+  - Baylen Springer
+  - Matt Schaefer
+  - Chen Wang
 maintainers_email:
-- jack.claucherty@rxa.io
-- jenna.king@rxa.io
-- baylen.springer@readysignal.com
-- matt.schaefer@readysignal.com
-- chen.wang@datarobot.com
+  - jack.claucherty@rxa.io
+  - jenna.king@rxa.io
+  - baylen.springer@readysignal.com
+  - matt.schaefer@readysignal.com
+  - chen.wang@datarobot.com
 smoke_test:
   run_smoke_test: false
 tags: []

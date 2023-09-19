@@ -1,20 +1,16 @@
-description: 'This example notebook shows how to generate advanced features other
-  than traditional aggregated features used for high frequency data use cases.
-
-  The notebook uses Gramian Angular Fields to generate features from high frequency
-  time series datasets like sensor readings.
-
-  These GAF features can be used with DataRobot Visual AI.
-
-  This approach of feature engineering can be used as an augmentation to other feature
-  engineering techniques like spectrograms.'
+---
+description: "This example notebook shows how to generate advanced features other than traditional aggregated\
+  \ features used for high frequency data use cases.\nThe notebook uses Gramian Angular Fields to generate\
+  \ features from high frequency time series datasets like sensor readings.\nThese GAF features can be\
+  \ used with DataRobot Visual AI.\nThis approach of feature engineering can be used as an augmentation\
+  \ to other feature engineering techniques like spectrograms."
 file_name: high_frequency_data_classification_using_gramian_angular_fields.ipynb
 languages:
-- python
+  - python
 maintainers:
-- Abdul Khader Jilani
+  - Abdul Khader Jilani
 maintainers_email:
-- abdul.jilani@datarobot.com
+  - abdul.jilani@datarobot.com
 smoke_test:
   run_smoke_test: false
 tags: []

@@ -1,17 +1,16 @@
-description: 'This use case aims to develop a machine learning model that utilizes
-  historical data, including customer and transactional information, to identify alerts
-  that resulted in the generation of a Suspicious Activity Report (SAR).
-
-  The model will assign a suspicious activity score to future alerts, improving the
-  effectiveness and efficiency of an AML compliance program by prioritizing alerts
-  based on their ranking order according to the score.'
+---
+description: "This use case aims to develop a machine learning model that utilizes historical data, including\
+  \ customer and transactional information, to identify alerts that resulted in the generation of a Suspicious\
+  \ Activity Report (SAR).\nThe model will assign a suspicious activity score to future alerts, improving\
+  \ the effectiveness and efficiency of an AML compliance program by prioritizing alerts based on their\
+  \ ranking order according to the score."
 file_name: Anti-Money Laundering (AML) Alert Scoring.ipynb
 languages:
-- python
+  - python
 maintainers:
-- "Jo\xE3o Gomes"
+  - João Gomes
 maintainers_email:
-- joao@datarobot.com
+  - joao@datarobot.com
 smoke_test:
   run_smoke_test: false
 tags: []
