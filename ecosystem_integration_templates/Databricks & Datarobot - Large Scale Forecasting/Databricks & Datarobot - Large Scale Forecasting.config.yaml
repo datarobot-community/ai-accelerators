@@ -10,3 +10,5 @@ maintainers:
 maintainers_email:
   - austin.chou@datarobot.com 
 tags: []
+smoke_test:
+  run_smoke_test: false
