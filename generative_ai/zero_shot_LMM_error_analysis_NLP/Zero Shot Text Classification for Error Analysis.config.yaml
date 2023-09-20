@@ -4,11 +4,15 @@ description: This notebook outlines how to use zero-shot text classification wit
 file_name: Zero Shot Test Classification for Error Analysis.ipynb
 languages:
   - python
-maintainers:
+authors:
   - Glen Koundry
-maintainers_email:
+authors_email:
   - glen.koundry@datarobot.com
 smoke_test:
   run_smoke_test: false
+maintainers:
+  - Chandler McCann
+maintainers_email:
+  - chandler.mccann@datarobot.com
 tags: []
 title: Zero-shot text classification for error analysis

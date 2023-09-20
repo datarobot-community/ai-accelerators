@@ -7,13 +7,17 @@ description: "This notebook focuses on working with Snowflake as a data source a
 file_name: Snowflake - End-to-end Ecommerce Churn.ipynb
 languages:
   - python
-maintainers:
+authors:
   - Austin Chou
   - Arjun Arora
-maintainers_email:
+authors_email:
   - austin.chou@datarobot.com
   - arjun.arora@datarobot.com
 smoke_test:
   run_smoke_test: false
+maintainers:
+  - Austin Chou
+maintainers_email:
+  - austin.chou@datarobot.com
 tags: []
 title: End-to-end modeling and production workflow with DataRobot and Snowflake

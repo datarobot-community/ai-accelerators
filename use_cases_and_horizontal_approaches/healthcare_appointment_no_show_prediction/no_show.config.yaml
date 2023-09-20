@@ -12,11 +12,15 @@ description: "Many people are guilty of having canceled a doctor’s appointment
 file_name: End-to-end Automated Feature Discovery Production Workflow.ipynb
 languages:
   - python
-maintainers:
+authors:
   - Joseph Blue
-maintainers_email:
+authors_email:
   - joseph.blue@datarobot.com
 smoke_test:
   run_smoke_test: false
+maintainers:
+  - Chandler McCann
+maintainers_email:
+  - chandler.mccann@datarobot.com
 tags: []
 title: End-to-end Automated Feature Discovery Production Workflow

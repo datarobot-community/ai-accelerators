@@ -5,11 +5,15 @@ description: "This notebook illustrates an end-to-end demand forecasting workflo
 file_name: End_to_end_demand_forecasting.py
 languages:
   - python
-maintainers:
+authors:
   - Andrii Kruchko
-maintainers_email:
+authors_email:
   - andrii.kruchko@datarobot.com
 smoke_test:
   run_smoke_test: false
+maintainers:
+  - Chandler McCann
+maintainers_email:
+  - chandler.mccann@datarobot.com
 tags: []
 title: End-to-end demand forecasting workflow

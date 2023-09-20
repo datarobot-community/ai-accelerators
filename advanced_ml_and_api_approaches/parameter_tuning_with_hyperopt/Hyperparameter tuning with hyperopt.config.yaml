@@ -10,10 +10,8 @@ languages:
   - python
 maintainers:
   - Matthias Kullowatz
-  - Bogdan Tsal-Tsalko
 maintainers_email:
   - matthias.kullowatz@datarobot.com
-  - bogdan.tsal-tsalko@datarobot.com
 smoke_test:
   run_smoke_test: false
 tags: []
