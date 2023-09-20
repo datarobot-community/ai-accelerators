@@ -1,0 +1,12 @@
+---
+title: End-to-end time series workflow with DataRobot and Databricks
+file_name: Databricks & Datarobot - Large Scale Forecasting.ipynb
+description: |-
+  This accelerator is developed for use with Databricks to help users leverage the power of DataRobot for time-series modeling within their Databricks ecosystem.
+languages:
+  - python
+maintainers:
+  - Austin Chou 
+maintainers_email:
+  - austin.chou@datarobot.com 
+tags: []
