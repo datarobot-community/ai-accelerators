@@ -8,12 +8,16 @@ description: This notebook builds on the hyperparameter optimizaton functionalit
 file_name: Hyperparameter tuning with hyperopt.ipynb
 languages:
   - python
+authors:
+  - Bogdan Tsal-Tsalko
+  - Matthias Kullowatz
+authors_email:
+  - bogdan.tsal-tsalko@datarobot.com
+  - matthias.kullowatz@datarobot.com
 maintainers:
   - Matthias Kullowatz
-  - Bogdan Tsal-Tsalko
 maintainers_email:
   - matthias.kullowatz@datarobot.com
-  - bogdan.tsal-tsalko@datarobot.com
 smoke_test:
   run_smoke_test: false
 tags: []

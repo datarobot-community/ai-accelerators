@@ -4,11 +4,15 @@ description: This demand forecasting what-if app allows you to adjust certain kn
 file_name: demand_forecasting_app.py
 languages:
   - python
-maintainers:
+authors:
   - Andrii Kruchko
-maintainers_email:
+authors_email:
   - andrii.kruchko@datarobot.com
 smoke_test:
   run_smoke_test: false
+maintainers:
+  - Chandler McCann
+maintainers_email:
+  - chandler.mccann@datarobot.com
 tags: []
 title: Create a demand forecasting What-If app

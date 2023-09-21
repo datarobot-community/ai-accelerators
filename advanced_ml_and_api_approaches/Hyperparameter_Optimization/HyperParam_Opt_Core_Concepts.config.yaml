@@ -4,11 +4,15 @@ description: This notebook and the functions in 'helpers.py' provide a repeatabl
 file_name: HyperParam_Opt_Core_concepts.ipynb
 languages:
   - python
-maintainers:
+authors:
   - Bogdan Tsal-Tsalko
-maintainers_email:
+authors_email:
   - bogdan.tsal-tsalko@datarobot.com
 smoke_test:
   run_smoke_test: false
+maintainers:
+  - Chandler McCann
+maintainers_email:
+  - chandler.mccann@datarobot.com
 tags: []
 title: Hyperparameter optimization workflow

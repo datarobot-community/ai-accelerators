@@ -5,13 +5,17 @@ description: "This example notebook outlines how to read in an Amazon Athena tab
 file_name: Amazon_S3_End_to_End.ipynb
 languages:
   - python
-maintainers:
+authors:
   - Biju Krishnan
   - João Gomes
-maintainers_email:
+authors_email:
   - biju.krishnan@datarobot.com
   - joao@datarobot.com
 smoke_test:
   run_smoke_test: false
+maintainers:
+  - João Gomes
+maintainers_email:
+  - joao@datarobot.com
 tags: []
 title: DataRobot AutoML end-to-end with Amazon Athena

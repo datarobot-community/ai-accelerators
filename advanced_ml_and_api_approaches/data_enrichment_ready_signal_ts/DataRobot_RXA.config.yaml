@@ -4,13 +4,13 @@ description: This notebook guides you through the process of using Ready Signal 
 file_name: DataRobot_RXA.ipynb
 languages:
   - python
-maintainers:
+authors:
   - Jack Claucherty
   - Jenna King
   - Baylen Springer
   - Matt Schaefer
   - Chen Wang
-maintainers_email:
+authors_email:
   - jack.claucherty@rxa.io
   - jenna.king@rxa.io
   - baylen.springer@readysignal.com
@@ -18,5 +18,9 @@ maintainers_email:
   - chen.wang@datarobot.com
 smoke_test:
   run_smoke_test: false
+maintainers:
+  - Chen Wang
+maintainers_email:
+  - chen.wang@datarobot.com
 tags: []
 title: Predict lumber prices with Ready Signal and time series forecasts
