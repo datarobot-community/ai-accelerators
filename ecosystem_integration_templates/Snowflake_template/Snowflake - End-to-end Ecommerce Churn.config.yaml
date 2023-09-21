@@ -1,9 +1,10 @@
 ---
-title: End-to-end modeling and production workflow with DataRobot and Snowflake
+description: "This notebook focuses on working with Snowflake as a data source and walks through how to\
+  \ use the Python API client to connect to DataRobot, import data from Snowflake into the AI Catalog,\
+  \ and create a project and run Autopilot.\nNext, this notebook walks through how to select and evaluate\
+  \ the top recommended model from a project, deploy a model in a Docker container with a REST API endpoint,\
+  \ and orchestrate schedule predictions with an MLOps job definition."
 file_name: Snowflake - End-to-end Ecommerce Churn.ipynb
-description: |-
-  This notebook focuses on working with Snowflake as a data source and walks through how to use the Python API client to connect to DataRobot, import data from Snowflake into the AI Catalog, and create a project and run Autopilot.
-  Next, this notebook walks through how to select and evaluate the top recommended model from a project, deploy a model in a Docker container with a REST API endpoint, and orchestrate schedule predictions with an MLOps job definition.
 languages:
   - python
 maintainers:
@@ -12,4 +13,7 @@ maintainers:
 maintainers_email:
   - austin.chou@datarobot.com
   - arjun.arora@datarobot.com
+smoke_test:
+  run_smoke_test: false
 tags: []
+title: End-to-end modeling and production workflow with DataRobot and Snowflake

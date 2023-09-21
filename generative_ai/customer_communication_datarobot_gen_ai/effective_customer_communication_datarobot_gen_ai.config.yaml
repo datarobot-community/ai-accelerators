@@ -1,14 +1,18 @@
 ---
-title: Improve customer communication using generative AI and DataRobot
+description: "This notebook aims to provide an example of how generative AI models like GPT-3 can be used\
+  \ to augment predictions and provide customer friendly subject matter expert responses.\nThe example\
+  \ chosen for this notebook shows how a generative AI model can provide positive user communication to\
+  \ adverse events like loan rejection that is predicted by the model.\nThe generative AI model provides\
+  \ expert advice that is tailored for each individual loan applicant based on the prediction explanations\
+  \ provided by DataRobot."
 file_name: effective_customer_communication_datarobot_gen_ai.ipynb
-description: |-
-  This notebook aims to provide an example of how generative AI models like GPT-3 can be used to augment predictions and provide customer friendly subject matter expert responses.
-  The example chosen for this notebook shows how a generative AI model can provide positive user communication to adverse events like loan rejection that is predicted by the model.
-  The generative AI model provides expert advice that is tailored for each individual loan applicant based on the prediction explanations provided by DataRobot.
 languages:
   - python
 maintainers:
   - Abdul Jilani
 maintainers_email:
   - abdul.jilani@datarobot.com
+smoke_test:
+  run_smoke_test: false
 tags: []
+title: Improve customer communication using generative AI and DataRobot

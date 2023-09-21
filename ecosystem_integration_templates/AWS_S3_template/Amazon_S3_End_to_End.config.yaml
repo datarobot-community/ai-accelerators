@@ -1,9 +1,9 @@
 ---
-title: DataRobot AutoML end-to-end with Amazon Athena
+description: "This example notebook outlines how to read in PARQUET files from an Amazon S3 bucket into\
+  \ a pandas dataframe using AWS Wrangler Python library and upload it to DataRobot's AI Catalog.\nThen,\
+  \ using this dataset, we'll create a project, deploy the top performing model to a DataRobot prediction\
+  \ server, and make batch predictions with a test dataset."
 file_name: Amazon_S3_End_to_End.ipynb
-description: |-
-  This example notebook outlines how to read in PARQUET files from an Amazon S3 bucket into a pandas dataframe using AWS Wrangler Python library and upload it to DataRobot's AI Catalog.
-  Then, using this dataset, we'll create a project, deploy the top performing model to a DataRobot prediction server, and make batch predictions with a test dataset.
 languages:
   - python
 maintainers:
@@ -12,4 +12,7 @@ maintainers:
 maintainers_email:
   - biju.krishnan@datarobot.com
   - joao@datarobot.com
+smoke_test:
+  run_smoke_test: false
 tags: []
+title: DataRobot AutoML end-to-end with Amazon Athena

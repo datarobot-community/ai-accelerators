@@ -1,12 +1,15 @@
 ---
-title: Customize lift charts
+description: This notebook outlines how to recreate and customize DataRobot’s lift chart from a DataRobot
+  blueprint (i.e., a modeling pipeline encompassing the combination of data preprocessing steps and machine
+  learning algorithm).
 file_name: customizing_lift_charts.ipynb
-description: |-
-  This notebook outlines how to recreate and customize DataRobot’s lift chart from a DataRobot blueprint (i.e., a modeling pipeline encompassing the combination of data preprocessing steps and machine learning algorithm).
 languages:
   - python
 maintainers:
   - Taylor Larkin
 maintainers_email:
   - taylor.larkin@datarobot.com
+smoke_test:
+  run_smoke_test: false
 tags: []
+title: Customize lift charts

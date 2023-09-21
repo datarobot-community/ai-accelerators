@@ -1,13 +1,14 @@
 ---
-title: Create custom blueprints
+description: "You may wish to customize DataRobot's blueprints by inserting your own custom code.\nLeverage\
+  \ Composable ML to build a new blueprint from scratch or swap out certain components for your own code."
 file_name: create_custom_blueprint.ipynb
-description: |-
-  You may wish to customize DataRobot's blueprints by inserting your own custom code.
-  Leverage Composable ML to build a new blueprint from scratch or swap out certain components for your own code.
 languages:
   - python
 maintainers:
   - João Gomes
 maintainers_email:
   - joao@datarobot.com
+smoke_test:
+  run_smoke_test: false
 tags: []
+title: Create custom blueprints

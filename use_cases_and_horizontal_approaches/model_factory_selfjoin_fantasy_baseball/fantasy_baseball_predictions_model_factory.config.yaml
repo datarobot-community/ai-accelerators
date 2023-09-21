@@ -1,12 +1,15 @@
 ---
-title: Predictions for fantasy baseball
+description: This notebook will teach you how to query a rich dataset of MLB players from Fangraphs' API,
+  set up a project with automated time-aware feature engineering, update the player data without building
+  a new project, and how to loop over a project creation function to build many DataRobot projects automatically.
 file_name: fantasy_baseball_predictions_model_factory.ipynb
-description: |-
-  This notebook will teach you how to query a rich dataset of MLB players from Fangraphs' API, set up a project with automated time-aware feature engineering, update the player data without building a new project, and how to loop over a project creation function to build many DataRobot projects automatically.
 languages:
   - python
 maintainers:
   - Matthias Kullowatz
 maintainers_email:
   - matthias.kullowatz@datarobot.com
+smoke_test:
+  run_smoke_test: false
 tags: []
+title: Predictions for fantasy baseball

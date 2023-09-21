@@ -1,8 +1,7 @@
 ---
-title: Integrate Amazon SageMaker with DataRobot MLOps
+description: This notebook walks you through the steps to train and host a SageMaker model that can be
+  monitored in the DataRobot platform.
 file_name: AWS_SageMaker_DataRobot_MLOps.ipynb
-description: |-
-  This notebook walks you through the steps to train and host a SageMaker model that can be monitored in the DataRobot platform.
 languages:
   - python
 maintainers:
@@ -10,4 +9,7 @@ maintainers:
   - Mao Shun (AWS)
 maintainers_email:
   - oleksandr.saienko@datarobot.com
+smoke_test:
+  run_smoke_test: false
 tags: []
+title: Integrate Amazon SageMaker with DataRobot MLOps

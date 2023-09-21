@@ -1,8 +1,7 @@
 ---
-title: Predict lumber prices with Ready Signal and time series forecasts
+description: This notebook guides you through the process of using Ready Signal to add external control
+  data, such as census and weather data, to improve time series predictions.
 file_name: DataRobot_RXA.ipynb
-description: |-
-  This notebook guides you through the process of using Ready Signal to add external control data, such as census and weather data, to improve time series predictions.
 languages:
   - python
 maintainers:
@@ -17,4 +16,7 @@ maintainers_email:
   - baylen.springer@readysignal.com
   - matt.schaefer@readysignal.com
   - chen.wang@datarobot.com
+smoke_test:
+  run_smoke_test: false
 tags: []
+title: Predict lumber prices with Ready Signal and time series forecasts

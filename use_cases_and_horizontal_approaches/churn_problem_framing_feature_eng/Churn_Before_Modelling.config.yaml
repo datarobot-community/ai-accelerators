@@ -1,10 +1,9 @@
 ---
-title: Churn Before Modeling
+description: "Customer retention is central to any successful business and machine learning is frequently\
+  \ proposed as a way of addressing churn.\nIt is tempting to dive right into a churn dataset, but improving\
+  \ outcomes requires correctly framing the problem.\nDoing so at the start will determine whether the\
+  \ business can take action based on the trained model and whether your hard work is valuable or not."
 file_name: Churn_Before_Modelling.ipynb
-description: |-
-  Customer retention is central to any successful business and machine learning is frequently proposed as a way of addressing churn.
-  It is tempting to dive right into a churn dataset, but improving outcomes requires correctly framing the problem.
-  Doing so at the start will determine whether the business can take action based on the trained model and whether your hard work is valuable or not.
 languages:
   - python
 maintainers:
@@ -13,4 +12,7 @@ maintainers:
 maintainers_email:
   - max.dugan-knight@datarobot.com
   - jake.snyder@datarobot.com
+smoke_test:
+  run_smoke_test: false
 tags: []
+title: Churn Before Modeling

@@ -1,12 +1,14 @@
 ---
-title: Smart cluster labeling using Generative AI
+description: This accelerator shows how you can use cluster insights provided by DataRobot with ChatGPT
+  to provide business- or domain-specific labels to the clusters using OpenAI and DataRobot APIs.
 file_name: smart_cluster_labeling.ipynb
-description: |-
-  This accelerator shows how you can use cluster insights provided by DataRobot with ChatGPT to provide business- or domain-specific labels to the clusters using OpenAI and DataRobot APIs.
 languages:
   - python
 maintainers:
   - Abdul Jilani
 maintainers_email:
   - abdul.jilani@datarobot.com
+smoke_test:
+  run_smoke_test: false
 tags: []
+title: Smart cluster labeling using Generative AI
