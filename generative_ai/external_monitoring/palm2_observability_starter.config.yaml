@@ -1,0 +1,14 @@
+---
+title: Enable observability for PaLM 2
+file_name: palm2_observability_starter.ipynb
+description: |-
+  This accelerator aims to show how you can easily enable observability in your PaLM 2-based generative AI Solutions using DataRobot's LLMOps feature tools
+languages:
+  - python
+maintainers:
+  - Abdul Jilani
+maintainers_email:
+  - abdul.jilani@datarobot.com
+tags: []
+smoke_test:
+  run_smoke_test: false

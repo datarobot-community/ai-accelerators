@@ -1,0 +1,14 @@
+---
+title: Observability Starter for AWS Bedrock models
+file_name: bedrock_titan_observability_starter.ipynb
+description: |-
+  This accelerator shows how you can easily enable observability in your AWS Bedrock based Generative AI Solutions with DataRobot's LLMOps feature tools.
+languages:
+  - python
+maintainers:
+  - Abdul Jilani
+maintainers_email:
+  - abdul.jilani@datarobot.com
+tags: []
+smoke_test:
+  run_smoke_test: false
