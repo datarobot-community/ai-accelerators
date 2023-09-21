@@ -6,9 +6,9 @@ description: |-
 languages:
   - python
 maintainers:
-  - Austin Chou 
+  - Austin Chou
 maintainers_email:
-  - austin.chou@datarobot.com 
+  - austin.chou@datarobot.com
 tags: []
 smoke_test:
   run_smoke_test: false
