@@ -10,8 +10,10 @@ languages:
   - python
 authors:
   - Bogdan Tsal-Tsalko
+  - Matthias Kullowatz
 authors_email:
   - bogdan.tsal-tsalko@datarobot.com
+  - matthias.kullowatz@datarobot.com
 maintainers:
   - Matthias Kullowatz
 maintainers_email:
