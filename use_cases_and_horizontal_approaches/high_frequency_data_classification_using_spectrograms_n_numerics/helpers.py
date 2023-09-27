@@ -34,7 +34,6 @@ def create_spectrogram_image(
     resize_height: int = 224,
     log: bool = True,
 ) -> Image:
-
     fig, ax = plt.subplots()
     plt.axis("off")
     plt.margins(0)
@@ -62,7 +61,6 @@ def create_spectrogram_image(
 
 
 def plot_feature_impacts(model, top_n=100):
-
     feature_impacts = model.get_or_request_feature_impact()
     percent_tick_fmt = mtick.PercentFormatter(xmax=1.0)
 

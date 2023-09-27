@@ -84,7 +84,6 @@ def add_make_predictions_button(
     run_id: str,
     params=["Uploaded data"],
 ):
-
     if st.button(
         "Make predictions",
         on_click=clear_cache,
@@ -295,7 +294,6 @@ def plot_predictions_agg_group(data, date_col, group_id, group_val, cols_to_plot
 
 
 def plot_predictions_series(data, date_col, series_id, series_name, cols_to_plot):
-
     data_agg = data[data[series_id] == series_name][[date_col] + cols_to_plot].copy()
     data_agg.set_index(date_col, inplace=True)
 

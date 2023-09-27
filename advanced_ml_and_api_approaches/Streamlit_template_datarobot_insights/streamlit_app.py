@@ -82,7 +82,6 @@ columns = [
 
 # ----------------------------------Code to show different visualizations in the app
 with st.container():
-
     with st.expander("Make your criteria selections"):
         threshold = st.slider(
             "Select churn interval", min_value=0.00, max_value=1.00, value=(0.0, 1.00)
