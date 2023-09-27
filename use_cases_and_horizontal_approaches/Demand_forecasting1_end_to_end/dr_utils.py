@@ -103,7 +103,6 @@ def create_dataset_from_data_source(
 
 
 def make_series_stats(data, date_col, series_id, target, freq=1):
-
     data_tmp = data.copy()
     data_tmp.sort_values([series_id, date_col], inplace=True)
     data_tmp["gap"] = data_tmp.groupby(series_id)[date_col].diff()
@@ -199,7 +198,6 @@ def save_project_meta(file_to_save, results):
 
 
 def run_projects(data, params, description=None, file_to_save=None):
-
     if params.get("cluster_id") is None:
         proj = run_project(data, params)
         results = {
@@ -404,7 +402,6 @@ def make_deployments(projects_dct, file_to_save=None, feature_drift_enabled=Fals
     """
     deployments_dct = projects_dct.copy()
     for cl, vals in deployments_dct.items():
-
         project = vals["project"]
 
         if vals["project_type"] == "segmented":
@@ -524,7 +521,6 @@ def make_predictions_from_deployment(
     passthrough_columns_set="all",
     passthrough_columns=None,
 ):
-
     job = dr.BatchPredictionJob.score(
         deployment=deployment.id,
         intake_settings=intake_settings,
@@ -553,7 +549,6 @@ def create_preds_job_definitions(
     passthrough_columns_set="all",
     passthrough_columns=None,
 ):
-
     for pid, vals in deployments.items():
         print(
             str(dt.now()),
@@ -591,7 +586,6 @@ def create_preds_job_definition(
     passthrough_columns_set="all",
     passthrough_columns=None,
 ):
-
     job_specs = {
         "deployment_id": deployment.id,
         "num_concurrent": 16,
@@ -679,7 +673,6 @@ def get_series_accuracy(project, model, compute_all_series=False):
 def make_train_preds_from_model(
     project, model, data_subsets=["allBacktests", "holdout"]
 ):
-
     pred_jobs = []
     preds_lst = []
 
@@ -1000,7 +993,6 @@ def plot_stability_scores(project, model, metric=None):
 
 
 def plot_feature_impacts(model, top_n=100):
-
     feature_impacts = model.get_or_request_feature_impact()
     percent_tick_fmt = mtick.PercentFormatter(xmax=1.0)
 

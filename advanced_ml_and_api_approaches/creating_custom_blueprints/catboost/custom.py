@@ -16,7 +16,6 @@ def fit(
     row_weights: Optional[np.ndarray] = None,
     **kwargs,
 ) -> None:
-
     estimator = catboost_pipeline(X)
     estimator.fit(X, y)
 

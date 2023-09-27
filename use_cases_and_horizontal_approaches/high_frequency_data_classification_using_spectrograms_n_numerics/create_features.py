@@ -84,7 +84,6 @@ class Featurizer:
         return features
 
     def _create_all_spectral_features(self):
-
         """
         Create all spectral features
         Requires a spectrogram at with at least 3 rows

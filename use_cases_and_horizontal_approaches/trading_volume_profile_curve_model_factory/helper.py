@@ -44,7 +44,6 @@ def prepare_data(data, modelling_choice, aggregation_dictionary=None):
     # Now we aggregate according to the slice size
 
     if aggregation_dictionary == None:
-
         aggregation_dictionary = {
             "date": "first",
             "minute": "min",
@@ -96,7 +95,6 @@ def prepare_data(data, modelling_choice, aggregation_dictionary=None):
     neighbours = []
 
     for n in range(interest_radius):
-
         # n slices fwd
         suffix = "_fwd_" + str(n + 1)
         fwd = (
@@ -194,7 +192,6 @@ def run_ts_project(source_data, project_name, target, calendar, kia_columns):
 
 
 def run_ts_project_with_dictionary(source_data, project_name, datetime_dict):
-
     # Grab TS settings from dictionary
     target = datetime_dict["target"]
     kia_columns = datetime_dict["KIA"]
@@ -259,7 +256,6 @@ def run_ts_project_with_dictionary(source_data, project_name, datetime_dict):
 
 
 def run_all_projects(prepared_data, slices, modelling_choice, datetime_dict):
-
     # this function just loops through all the time windows (specified by slices)
     # and collects all the projects created in a dataframe
 
@@ -274,7 +270,6 @@ def run_all_projects(prepared_data, slices, modelling_choice, datetime_dict):
         percentage_str = "sum"
 
     for i, s in slices.iterrows():
-
         df_filtered = prepared_data[prepared_data["minute_min"] == s[0]]
 
         project_name = (
