@@ -1,0 +1,21 @@
+---
+title: Optimizing Customer Support workflows with Gen AI
+file_name: Optimizing Customer Support workflows with Gen AI.ipynb
+description: |-
+  In this accelerator, we will illustrate how to use Generative AI models to cater to Level 1 requests, allowing support teams to focus on more pressing and high visibility requests.
+languages:
+  - python
+maintainers:
+  - Abdul Jilani
+maintainers_email:
+  - abdul.jilani@datarobot.com
+smoke_test:
+  run_smoke_test: true
+  user_permissions:
+    - ENABLE_NOTEBOOKS_FILESYSTEM_MANAGEMENT
+    - ENABLE_PROXY_MODELS
+    - ENABLE_PUBLIC_NETWORK_ACCESS_FOR_ALL_CUSTOM_MODELS
+    - ENABLE_CUSTOM_MODEL_RUNTIME_PARAMETERS
+    - ENABLE_MLOPS_TEXT_GENERATION_TARGET_TYPE
+    - ENABLE_CUSTOM_INFERENCE_MODEL
+tags: []
