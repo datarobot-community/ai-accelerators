@@ -4,13 +4,17 @@ title:
   - Observability Starter for AWS Bedrock models
   - Observability starter for Azure OpenAI models
   - Enable observability for PaLM 2
+  - Observability Starter for HuggingFace Models
+  - Observability Starter for Langchain LLMChain based solutions
 file_name:
   - anthropic_claude_observability_starter.ipynb
   - bedrock_titan_observability_starter.ipynb
   - gpt_observability_starter.ipynb
   - palm2_observability_starter.ipynb
+  - huggingface_observability_starter.ipynb
+  - llmchain_observability.ipynb
 description: |-
-  These accelerators shows how you can easily enable observability in your Anthropic AI, PaLM 2, Azure OpenAI, or AWS Bedrock based Generative AI Solutions with DataRobot's LLMOps feature tools.
+  These accelerators shows how you can easily enable observability in your Anthropic AI, PaLM 2, Azure OpenAI, AWS Bedrock, Huggingface or LLMChain based Generative AI Solutions with DataRobot's LLMOps feature tools.
 languages:
   - python
 maintainers:
