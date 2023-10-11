@@ -5,8 +5,9 @@ This folder consists of starter python code that DataRobot users can use to enab
 * GPT4 by OpenAI: <a href='gpt_observability_starter.ipynb'>Ready</a>
 * Titan by AWS Bedrock: <a href='bedrock_titan_observability_starter.ipynb'>Ready</a>
 * Claude by Anthropic: <a href='anthropic_claude_observability_starter.ipynb'>Ready</a>
+* Huggingface: <a href='huggingface_observability_starter.ipynb'>Ready</a>
+* LLMChain: <a href='llmchain_observability.ipynb'>Ready</a>
 * MPT-7B-Instruct by Mosaic: WIP
 * Llama 2 by Meta: WIP
 * StableLM by Stability.ai: WIP 
 * Cohere: WIP
-* Huggingface/Langchain: WIP
