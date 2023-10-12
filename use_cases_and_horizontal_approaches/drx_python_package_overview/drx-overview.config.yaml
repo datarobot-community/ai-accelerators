@@ -7,7 +7,7 @@ languages:
 maintainers:
   - João Gomes
 maintainers_email:
-  - joao@datarobot.com
+  - joao.gomes@datarobot.com
 smoke_test:
   run_smoke_test: false
 tags: []
