@@ -1,0 +1,16 @@
+---
+title: Using Custom Metrics to effectively monitor Generative AI
+file_name: Using Custom Metrics to effectively monitor Generative AI.ipynb
+description: |-
+  This accelerator aims to illustrate how businesses can use DataRobot to effectively and holistically monitor generative AI solutions, using the metrics relevant to them.
+languages:
+  - python
+maintainers:
+  - Abdul Jilani
+maintainers_email:
+  - abdul.jilani@datarobot.com
+smoke_test:
+  run_smoke_test: false
+  user_permissions:
+    - ENABLE_PUBLIC_NETWORK_ACCESS_FOR_ALL_CUSTOM_MODELS
+tags: []
