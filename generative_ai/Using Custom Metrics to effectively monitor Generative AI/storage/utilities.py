@@ -23,7 +23,9 @@ toxicity_check = pipeline(
 service_url = context.endpoint.split("/api")[0]
 mlops_client = MLOpsClient(service_url=service_url, api_key=context.token, verify=True)
 
-CM_API_URL = "https://app.datarobot.com/api/v2/deployments/{}/customMetrics/{}/fromJSON/"
+CM_API_URL = (
+    "https://app.datarobot.com/api/v2/deployments/{}/customMetrics/{}/fromJSON/"
+)
 CM_API_KEY = context.token  # os.environ['DR_API_TOKEN']
 CM_HEADERS = {
     "Authorization": "Bearer {}".format(CM_API_KEY),
@@ -58,10 +60,14 @@ def create_external_llm_deployment(name="External Deployment"):
         prediction_environment_id=pred_env_id,
     )
 
-    mlops_client.update_deployment_settings(deployment_id, target_drift=False, feature_drift=True)
+    mlops_client.update_deployment_settings(
+        deployment_id, target_drift=False, feature_drift=True
+    )
     model_id = mlops_client.get_deployment(deployment_id)["model"]["id"]
 
-    dr.Deployment.get(deployment_id).update_predictions_data_collection_settings(enabled=True)
+    dr.Deployment.get(deployment_id).update_predictions_data_collection_settings(
+        enabled=True
+    )
     return deployment_id, model_id
 
 
@@ -95,7 +101,9 @@ def create_custom_metric(
         "isModelSpecific": False,
     }
     metric_id = mlops_client.create_custom_metric(deployment_id, definition)
-    dr.Deployment.get(deployment_id).update_predictions_data_collection_settings(enabled=True)
+    dr.Deployment.get(deployment_id).update_predictions_data_collection_settings(
+        enabled=True
+    )
     return metric_id
 
 
