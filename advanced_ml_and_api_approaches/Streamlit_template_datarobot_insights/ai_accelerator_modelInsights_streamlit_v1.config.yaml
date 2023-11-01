@@ -6,9 +6,9 @@ file_name: ai_accelerator_modelInsights_streamlit_v1.ipynb
 languages:
   - python
 maintainers:
-  - Disha Dubey
+  - João Gomes
 maintainers_email:
-  - disha.dubey@datarobot.com
+  - joao@datarobot.com
 smoke_test:
   run_smoke_test: false
 tags: []
