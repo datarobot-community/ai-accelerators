@@ -13,12 +13,8 @@ import numpy as np
 import pandas as pd
 from pytimeparse.timeparse import timeparse  # !pip install pytimeparse
 import seaborn as sns
-from tenacity import (  # need to install
-    retry,
-    retry_if_exception,
-    stop_after_attempt,
-    wait_fixed,
-)
+from tenacity import retry, stop_after_attempt, wait_fixed
+from tenacity import retry_if_exception  # need to install
 
 # from datarobot_bp_workshop import Visualize
 
