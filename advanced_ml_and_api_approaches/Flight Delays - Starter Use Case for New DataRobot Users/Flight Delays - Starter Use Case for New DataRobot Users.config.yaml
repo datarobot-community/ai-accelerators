@@ -1,0 +1,16 @@
+---
+title: Flight Delays - Starter Use Case for New DataRobot Users.ipynb
+file_name: Flight Delays - Starter Use Case for New DataRobot Users.ipynb
+description: |-
+  The intended audience for this notebooks is DataRobot trial users. This notebook matches the guided Flight Delays walkthough tutorial inside the trial experience as closely as possible. We would suggest that you complete the Flight Delays sample use case in the graphical user interface first and then return to this notebook.
+languages:
+  - python
+maintainers:
+  - Andrea Kropp
+maintainers_email:
+  - andrea.kropp@datarobot.com
+smoke_test:
+  run_smoke_test: true
+  user_permissions:
+    - ENABLE_PUBLIC_NETWORK_ACCESS_FOR_ALL_CUSTOM_MODELS
+tags: []
