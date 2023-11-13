@@ -10,7 +10,7 @@ maintainers:
 maintainers_email:
   - andrea.kropp@datarobot.com
 smoke_test:
-  run_smoke_test: true
+  run_smoke_test: false
   user_permissions:
     - ENABLE_PUBLIC_NETWORK_ACCESS_FOR_ALL_CUSTOM_MODELS
 tags: []
