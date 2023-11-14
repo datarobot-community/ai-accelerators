@@ -1,0 +1,16 @@
+---
+title: Custom Model End-to-End With Compliance Docs
+file_name: Custom Model End-to-End With Compliance Docs.ipynb
+description: |-
+  This accelerator outlines how to create, deploy, and monitor a custom inference model with DataRobot's Python client. You can use the Custom Model Workshop to upload a model artifact to create, test, and deploy custom inference models to DataRobot’s centralized deployment hub.
+languages:
+  - python
+maintainers:
+  - Luke Shulman
+maintainers_email:
+  - luke.shulman@datarobot.com
+smoke_test:
+  run_smoke_test: true
+  user_permissions:
+    - ENABLE_PUBLIC_NETWORK_ACCESS_FOR_ALL_CUSTOM_MODELS
+tags: []
