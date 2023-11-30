@@ -1,0 +1,15 @@
+---
+title: Use the JITR Bot to generate context-aware responses
+file_name: JITR-bot.ipynb
+description: |-
+  Retrieval Augmented Generation (RAG) has become an industry standard method for interfacing with large language models by making them 'context aware'. However, there are a number of situations where a text generation problem is not solved by interacting with large vector database containing many documents. These problems require context but where the context is not known before query time and is often unrelated to existing vector stores. Usually, they are questions about single documents where desirable behavior is to allow the document to be specified at runtime. Rather than follow the standard RAG approach of querying an existing vector store, this accelerator creates a deployment that accepts a file as an argument so that it can provide context aware answers 'on the fly'. DataRobot calls this approach "Just In Time Retrieval", or JITR for short. 
+languages:
+  - python
+maintainers:
+  - Marshall Krassenstein
+maintainers_email:
+  - marshall.krassenstein@datarobot.com
+smoke_test:
+  run_smoke_test: false
+  user_permissions: []
+tags: []
