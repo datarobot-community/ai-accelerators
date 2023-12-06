@@ -10,6 +10,9 @@ maintainers:
 maintainers_email:
   - marshall.krassenstein@datarobot.com
 smoke_test:
-  run_smoke_test: false
-  user_permissions: []
+  run_smoke_test: true
+  user_permissions:
+    - ENABLE_NOTEBOOKS_FILESYSTEM_MANAGEMENT
+    - ENABLE_PROXY_MODELS
+    - ENABLE_CUSTOM_MODEL_RUNTIME_PARAMETERS
 tags: []
