@@ -19,8 +19,8 @@ authors_email:
 smoke_test:
   run_smoke_test: false
 maintainers:
-  - Chen Wang
+  - João Gomes
 maintainers_email:
-  - chen.wang@datarobot.com
+  - joao@datarobot.com
 tags: []
 title: Predict lumber prices with Ready Signal and time series forecasts
