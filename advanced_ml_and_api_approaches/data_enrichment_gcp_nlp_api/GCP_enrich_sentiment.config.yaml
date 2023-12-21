@@ -7,10 +7,8 @@ file_name: GCP_enrich_sentiment.ipynb
 languages:
   - python
 maintainers:
-  - Asli Sabanci Demiroz
   - Shu Li
 maintainers_email:
-  - asli.demiroz@datarobot.com
   - shu.li@datarobot.com
 smoke_test:
   run_smoke_test: false
