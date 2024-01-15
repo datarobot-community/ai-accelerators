@@ -1,0 +1,15 @@
+---
+title: Financial planning and analysis workflow
+file_name: FP&A.ipynb
+description: |-
+  This notebook illustrates an end-to-end demand Financial planning and analysis workflow in DataRobot. Time series forecasting in DataRobot has a huge suite of tools and approaches to handle highly complex multiseries problems.
+languages:
+  - python
+maintainers:
+  - Jeremy Pernicek
+maintainers_email:
+  - jeremy.pernicek@datarobot.com
+smoke_test:
+  run_smoke_test: false
+  user_permissions: []
+tags: []
