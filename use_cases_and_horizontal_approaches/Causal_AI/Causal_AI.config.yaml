@@ -1,0 +1,16 @@
+---
+title: Causal AI with DataRobot
+file_name: Causal_AI.ipynb
+description: |-
+  This AI Accelerator illustrates how to use DataRobot for Causal AI, with Inverse Propensity of Treatment Weighting.
+languages:
+  - python
+maintainers:
+  - Andrew Mathis
+maintainers_email:
+  - andrew.mathis@datarobot.com
+smoke_test:
+  run_smoke_test: true
+  user_permissions:
+    - ENABLE_NOTEBOOKS_FILESYSTEM_MANAGEMENT
+tags: []
