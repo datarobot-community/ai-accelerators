@@ -1,0 +1,15 @@
+---
+title: Predictiion of Model Performance Degradation and Service Failure
+file_name: Prediction of Model Performance Degradation and Service Failure.ipynb
+description: |-
+  The notebook demonstrates how to leverage DataRobot MLOps functionality to predict if a machine learning model is likely to degrade within a specific time period and if infrastructure failures may occur. 
+languages:
+  - python
+maintainers:
+  - Vitalii Peretiatko
+maintainers_email:
+  - vitalii.peretiatko@datarobot.com
+smoke_test:
+  run_smoke_test: false
+  user_permissions: []
+tags: []
