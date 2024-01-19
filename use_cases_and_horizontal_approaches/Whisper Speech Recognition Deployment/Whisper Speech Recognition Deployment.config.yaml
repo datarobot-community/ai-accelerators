@@ -1,0 +1,14 @@
+---
+title: Implementing a Speech Recognition capability in DataRobot
+file_name: Whisper Speech Recognition Deployment.ipynb
+description: |-
+  This accelerator demonstrates the use of DataRobot custom models functionality to deploy a speech recognition capability to DataRobot based on the OpenAI Whisper models (currently uses the "base" model). This allows the capability to leverage the DataRobot environment and resources, on cloud or on prem.
+languages:
+  - python
+maintainers:
+  - Anthony Smith
+maintainers_email:
+  - anthony.smith@datarobot.com
+smoke_test:
+  run_smoke_test: false
+tags: []
