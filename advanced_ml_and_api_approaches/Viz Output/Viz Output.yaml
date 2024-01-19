@@ -1,0 +1,15 @@
+---
+title: Exporting Model Insights and Visuals
+file_name: Viz Output.ipynb
+description: |-
+  This notebook presents some examples for taking a datarobot project and exporting its model insights as both machine readable files and plots in various file formats.
+languages:
+  - python
+maintainers:
+  - Kyle Dettman
+maintainers_email:
+  - kyle.dettman@datarobot.com
+smoke_test:
+  run_smoke_test: false
+  user_permissions: []
+tags: []
