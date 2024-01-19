@@ -1,0 +1,14 @@
+---
+title: Integrating Speech Recognition and Machine Learning
+file_name: Speech Recognition.ipynb
+description: |-
+  This notebook presents a workflow for transcribing audio files using OpenAI's Whisper model. Whisper is a state-of-the-art speech recognition system designed to handle a wide range of audio types and accents. It is highly effective for converting spoken language in audio files into written text.
+languages:
+  - python
+maintainers:
+  - Jeremy Pernicek
+maintainers_email:
+  - jeremy.pernicek@datarobot.com
+smoke_test:
+  run_smoke_test: false
+tags: []
