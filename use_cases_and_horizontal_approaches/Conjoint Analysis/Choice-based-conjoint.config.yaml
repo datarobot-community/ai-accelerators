@@ -1,0 +1,17 @@
+---
+title: Conjoint Analysis
+file_name: Choice-based-conjoint.ipynb
+description: |-
+  This notebook outlines how to run a Choice-based-conjoint analysis as part of the broader Conjoint Analysis topic, with the focus being on the modelling aspect to derive preference scores. With DataRobot's SHAP values, this adds additional value of interpretability over the traditional method that is used being a linear regression coefficient scores where negative coefficients makes it hard to interpret.
+languages:
+  - python
+maintainers:
+  - Eu Jin Lok
+  - Belén Sánchez Hidalgo
+maintainers_email:
+  - eu.jin.lok@datarobot.com
+  - belen.sanchez@datarobot.com
+smoke_test:
+  run_smoke_test: false
+  user_permissions: []
+tags: []
