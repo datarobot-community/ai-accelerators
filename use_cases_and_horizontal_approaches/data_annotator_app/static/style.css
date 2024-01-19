@@ -1,0 +1,65 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+}
+
+.content {
+    width: 800px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.image-content {
+    text-align: center;
+}
+
+.side-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+    flex-grow: 1;
+    justify-content: space-between;
+    margin-left: 20px;
+    margin-top: 240px; /* half the height of the image */
+}
+
+.side-bar button {
+    height: 50px;
+    font-size: 18px;
+    width: 100%;
+}
+
+#changeLabelButton {
+    background-color: blue;
+    color: white;
+}
+
+#nextButton,
+#previousButton,
+#deleteButton {
+    background-color: green;
+    color: white;
+}
+
+#usePredictedButton {
+    background-color: blue;
+    color: white;
+}
+
+#doneButton {
+    background-color: purple;
+    color: white;
+}
+
+.progress-bar {
+    height: 20px;
+    background-color: green;
+}

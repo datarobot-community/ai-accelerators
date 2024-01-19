@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+        <div class="content">
+        <div class="image-content">
+            <h1>Start annotating!</h1>
+            <p><b>Current label:</b> {{ data.label }}</p>
+            {% if data.prediction != null %}
+                <p><b>Predicted label:</b> {{ data.prediction }}</p>
+            {% endif %}
+            <p><b>Image path:</b> {{ data.image_path }}</p>
+            <img src="{{ data.image_path }}" width="640" height="480">
+            <div class="progress-bar" style="width:{{ progress.current / progress.total * 100 }}%"></div>
+            <p>{{ progress.current }}/{{ progress.total }}</p>
+        </div>
+        <div class="side-bar">
+            <select name="new_label" form="changeLabelForm">
+                {% for label in labels %}
+                <option value="{{ label }}" {% if label == data.label %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+            <form id="changeLabelForm" action="/" method="post">
+                <input type="hidden" name="action" value="change_label">
+                <button id="changeLabelButton" type="submit">Update Label</button>
+            </form>
+            {% if data.prediction != null %}
+                <form action="/" method="post">
+                    <input type="hidden" name="action" value="use_predicted">
+                    <button id="usePredictedButton" type="submit">Use Predicted Label</button>
+                </form>
+            {% endif %}
+            <form action="/" method="post">
+                <input type="hidden" name="action" value="next">
+                <button id="nextButton" type="submit">Next</button>
+            </form>
+            <form action="/" method="post">
+                <input type="hidden" name="action" value="previous">
+                <button id="previousButton" type="submit">Back</button>
+            </form>
+            <form action="/" method="post">
+                <input type="hidden" name="action" value="delete">
+                <button id="deleteButton" type="submit">Delete</button>
+            </form>
+            <form action="/" method="post">
+                <input type="hidden" name="action" value="done">
+                <button id="doneButton" type="submit">Save</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
