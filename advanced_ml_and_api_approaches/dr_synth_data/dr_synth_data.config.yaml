@@ -1,0 +1,19 @@
+---
+title: Synthetic data capability
+file_name: dr_synth_data.ipynb
+description: |-
+  An example that uses python to create fake training data sets to model
+languages:
+  - python
+maintainers:
+  - Jean Roberts
+  - David Abbott
+  - Alan Roberts
+maintainers_email:
+  - jean.roberts@datarobot.com
+  - david.abbott@datarobot.com
+  - alan.roberts@datarobot.com
+smoke_test:
+  run_smoke_test: false
+  user_permissions: []
+tags: []
