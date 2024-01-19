@@ -1,0 +1,14 @@
+---
+title: Prediction Intervals via Conformal Inference
+file_name: prediction_intervals_via_conformal_inference.ipynb
+description: |-
+  This AI Accelerator demonstrates various ways for generating prediction intervals for any DataRobot model
+languages:
+  - python
+maintainers:
+  - Taylor Larkin
+maintainers_email:
+  - taylor.larkin@datarobot.com
+smoke_test:
+  run_smoke_test: false
+tags: []
