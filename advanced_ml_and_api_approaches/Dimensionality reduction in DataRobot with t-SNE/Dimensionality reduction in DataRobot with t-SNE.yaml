@@ -1,0 +1,15 @@
+---
+title: Dimensionality reduction in DataRobot with t-SNE
+file_name: Dimensionality reduction in DataRobot with t-SNE.ipynb
+description: |-
+  t-SNE (t-Distributed Stochastic Neighbor Embedding) is a powerful technique for dimensionality reduction that can effectively visualize high-dimensional data in a lower-dimensional space. Dimensionality reduction can improve machine learning results by reducing computational complexity of the algorithms, preventing overfitting, and focusing on the most relevant features in the dataset. 
+languages:
+  - python
+maintainers:
+  - Jess Lin
+maintainers_email:
+  - jessica.lin@datarobot.com
+smoke_test:
+  run_smoke_test: false
+  user_permissions: []
+tags: []
