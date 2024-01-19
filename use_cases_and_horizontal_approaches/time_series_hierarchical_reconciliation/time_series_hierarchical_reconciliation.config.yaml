@@ -1,0 +1,14 @@
+---
+title: Time Series Hierarchical Reconciliation
+file_name: time_series_hierarchical_reconciliation.ipynb
+description: |-
+  This AI Accelerator demonstrates how to reconcile (e.g., post-processing to sum appropriately) independent time series forecasts with a hierarchical structure
+languages:
+  - python
+maintainers:
+  - Taylor Larkin
+maintainers_email:
+  - taylor.larkin@datarobot.com
+smoke_test:
+  run_smoke_test: false
+tags: []
