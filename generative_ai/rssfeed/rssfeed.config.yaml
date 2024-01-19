@@ -1,0 +1,21 @@
+---
+title: Summarize RSS Feed using generative AI
+file_name: rssfeed.ipynb
+description: |-
+  This accelerator takes the latest update of an RSS feed from CNN, downloads the articles as txt files, 
+  embeds the txt files into a vector database, Google Bison summarizes the txt files, and provides a summary
+  of these txt articles in a simple webpage front end.
+languages:
+  - python
+maintainers:
+  - Jean Roberts
+  - Dennis Whitney
+  - Alan Roberts
+maintainers_email:
+  - jean.roberts@datarobot.com
+  - dennis.whitney@datarobot.com
+  - alan.roberts@datarobot.com
+smoke_test:
+  run_smoke_test: false
+  user_permissions: []
+tags: []
