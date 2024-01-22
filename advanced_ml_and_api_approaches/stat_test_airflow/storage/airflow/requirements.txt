@@ -1,0 +1,9 @@
+# Astro Runtime includes the following pre-installed providers packages: https://docs.astronomer.io/astro/runtime-image-architecture#provider-packages
+apache-airflow-providers-slack
+airflow-provider-datarobot
+#datarobotx
+datarobot-bp-workshop
+matplotlib
+statsmodels
+scipy
+scikit-learn

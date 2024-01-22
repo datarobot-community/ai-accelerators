@@ -1,0 +1,15 @@
+---
+title: Statistical tests with DataRobot and Apache Airflow integration
+file_name: stat_test_airflow.ipynb
+description: |-
+  An example workflow to conduct statistical tests at different stages of model development, and integrate with Apache Airflow to create a pipeline in creating model documentation with the statistical test results.
+languages:
+  - python
+maintainers:
+  - Shu Li
+maintainers_email:
+  - shu.li@datarobot.com
+smoke_test:
+  run_smoke_test: false
+  user_permissions: []
+tags: []
