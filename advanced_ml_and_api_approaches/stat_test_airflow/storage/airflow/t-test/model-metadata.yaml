@@ -1,0 +1,22 @@
+---
+name: statistical_tests
+type: training
+targetType: transform
+typeSchema:
+  input_requirements:
+    - field: data_types
+      condition: IN
+      value:
+        - NUM
+    - field: number_of_columns
+      condition: NOT_LESS_THAN
+      value: 1
+hyperparameters:
+  - name: column_name
+    type: string
+    default: column_name
+  - name: mu
+    type: float
+    min: -9999999
+    max: 9999999
+    default: 0
