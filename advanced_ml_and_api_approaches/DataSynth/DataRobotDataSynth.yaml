@@ -1,0 +1,15 @@
+---
+title: DataRobot DataSynth
+file_name: DataRobotDataSynth.py
+description: |-
+  This accelerator shows an app to create synthetic training data
+languages:
+  - python
+maintainers:
+  - John Edwards
+maintainers_email:
+  - john.edwards@datarobot.com
+smoke_test:
+  run_smoke_test: false
+  user_permissions: []
+tags: []
