@@ -1,4 +1,4 @@
-# Object Detection on Video with DataRobot Visual AI
+# Object Classification on Video with DataRobot Visual AI
 
 **Author:** Pavel Ustinov
 
