@@ -1,0 +1,19 @@
+sources:
+  - name: DataRobot
+    handler:
+      openapi:
+        source: https://app.datarobot.com/api/v2/openapi.yaml
+        operationHeaders:
+          Content-Type: application/json
+          Authorization: Bearer <your token goes here>
+
+transforms:
+  - rename:
+      renames:
+        - from:
+            type: Query
+            field: AppController_(.*)
+          to:
+            type: Query
+            field: $1
+          useRegExpForFields: true

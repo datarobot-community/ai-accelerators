@@ -1,0 +1,23 @@
+{
+  "name": "datarobotapi",
+  "version": "1.0.0",
+  "private": true,
+  "repository": "https://github.com/datarobot/denniswhitney-super-duper-repo.git",
+  "author": "Dennis Whitney <dennis.whitney@datarobot.com>",
+  "license": "MIT",
+  "description": "Connects the DataRobot OpenAPI spec to GraphQL",
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start-datarobot-source": "concurrently --kill-others \"yarn workspace mesh-datarobot-source start\""
+  },
+  "dependencies": {
+    "@graphql-mesh/cli": "^0.88.5",
+    "concurrently": "^8.2.2",
+    "graphql": "^16.8.1"
+  }
+}

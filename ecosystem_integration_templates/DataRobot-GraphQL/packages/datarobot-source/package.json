@@ -1,0 +1,20 @@
+{
+  "name": "mesh-datarobot-source",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Dennis Whitney,dennis.whitney@datarobot.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "mesh dev",
+    "build": "echo \"noop\";"
+  },
+  "dependencies": {
+    "@graphql-mesh/cli": "^0.87.2",
+    "@graphql-mesh/openapi": "^0.95.3",
+    "@graphql-mesh/transform-filter-schema": "^0.95.0",
+    "@graphql-mesh/transform-rename": "^0.95.0",
+    "graphql": "^16.7.1",
+    "mesh": "^7.0.3",
+    "tslib": "^2.6.1"
+  }
+}
