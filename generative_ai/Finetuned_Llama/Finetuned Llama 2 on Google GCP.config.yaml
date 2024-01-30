@@ -1,0 +1,16 @@
+---
+description: There are a wide variety of open source models. For example, there has been a lot of interest
+  in LLama and variations such as Alpaca or Vicuna, Falcon, Mistral etc. Hosting these is a challenge
+  as they require GPUs which are expensive so often customers want to compare cloud providers to find
+  the best hosting option to meet their own needs. In this example we will work with Google Cloud Platform.
+file_name: Finetuned Llama 2 on Google GCP.ipynb
+languages:
+  - python
+maintainers:
+  - Mark Steadman
+maintainers_email:
+  - mark@datarobot.com
+smoke_test:
+  run_smoke_test: false
+tags: []
+title: Finetuned Llama 2 on Google GCP
