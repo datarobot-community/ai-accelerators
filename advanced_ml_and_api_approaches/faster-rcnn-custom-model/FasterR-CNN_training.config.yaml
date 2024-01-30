@@ -1,0 +1,18 @@
+---
+description: This repo includes two notebooks in support of accelerating object detection use cases 1
+  FasterR-CNN_training.ipynb - create a scratch detection FasterR-CNN network, including data preprocess,
+  training, and evaluation and 2 object_detection_custom_model.ipynb - leverage the broad capabilities
+  of DataRobot ML Production by deploying the model trained in 1. into a custom model enviroment.
+file_name:
+  - FasterR-CNN_training.ipynb
+  - object_detection_custom_model.ipynb
+languages:
+  - python
+maintainers:
+  - Kyle Lindgren
+maintainers_email:
+  - kyle.lindgren@datarobot.com
+smoke_test:
+  run_smoke_test: false
+tags: []
+title: DataRobot-Hosted Object Detection
