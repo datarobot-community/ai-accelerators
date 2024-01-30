@@ -1,0 +1,11 @@
+matplotlib==3.6.3
+numpy==1.24.1
+opencv-python-headless==4.7.0.72
+Pillow==9.3.0
+pydantic==1.9.0
+torch-utils==0.1.2
+torch==1.13.1
+torchvision==0.14.1
+tqdm==4.64.1
+datarobot==3.1.0
+typing-extensions==4.3.0
