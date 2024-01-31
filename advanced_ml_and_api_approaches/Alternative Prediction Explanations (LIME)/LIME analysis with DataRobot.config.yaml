@@ -1,0 +1,16 @@
+---
+description: This notebook demonstrates how to apply the Local Interpretable Model-agnostic Explanations
+  (LIME) algorithm for explaining predictions made by a model built with DataRobot. LIME serves as another
+  method in your toolbox to explain model predictions, complementing the built-in DataRobot capabilities
+  of XEMP and SHAP prediction explanations which are available through the DataRobot UI or API.
+file_name: LIME analysis with DataRobot.ipynb
+languages:
+  - python
+maintainers:
+  - Austin Chou
+maintainers_email:
+  - austin.chou@datarobot.com
+smoke_test:
+  run_smoke_test: false
+tags: []
+title: Running LIME with DataRobot Models
