@@ -1,0 +1,14 @@
+---
+description: This notebook presents an example workflow to create `one-way` and `two-way` `partial dependence
+  plots (PDP)`, and `Individual Conditional Expectations (ICE)` insights using DataRobot
+file_name: PDP and ICE.ipynb
+languages:
+  - python
+maintainers:
+  - Aditi Vyas
+maintainers_email:
+  - aditi.vyas@datarobot.com
+smoke_test:
+  run_smoke_test: false
+tags: []
+title: PDP and ICE
