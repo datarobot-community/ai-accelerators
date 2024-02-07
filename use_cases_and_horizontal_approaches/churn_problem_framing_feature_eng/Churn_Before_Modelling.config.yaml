@@ -7,10 +7,8 @@ file_name: Churn_Before_Modelling.ipynb
 languages:
   - python
 maintainers:
-  - Max Dugan-Knight
   - Jake Snyder
 maintainers_email:
-  - max.dugan-knight@datarobot.com
   - jake.snyder@datarobot.com
 smoke_test:
   run_smoke_test: false
