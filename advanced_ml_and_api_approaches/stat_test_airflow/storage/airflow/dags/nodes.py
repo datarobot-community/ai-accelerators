@@ -55,7 +55,9 @@ if version.parse(dr.__version__) < version.parse("2.29.0"):
     dr.DatetimeModel.get_feature_effect = get_feature_effect  # type: ignore
 
 
-def calculate_metrics(predictions_data: pd.DataFrame, parameters: Dict[str, Any]) -> Dict[str, Any]:
+def calculate_metrics(
+    predictions_data: pd.DataFrame, parameters: Dict[str, Any]
+) -> Dict[str, Any]:
     df_predictions = predictions_data
     start_dtm = df_predictions.loc[:, parameters["datetime_column"]].min()[:10]
     end_dtm = df_predictions.loc[:, parameters["datetime_column"]].max()[:10]
@@ -83,7 +85,9 @@ def calculate_metrics(predictions_data: pd.DataFrame, parameters: Dict[str, Any]
     gAUC = (somersd_stat + 1) / 2
     accuracy = metrics.accuracy_score(actual_sign, predict_sign)
     signs_without_0 = [
-        signs for signs in zip(actual_sign, predict_sign) if signs[0] != 0 and signs[1] != 0  # noqa
+        signs
+        for signs in zip(actual_sign, predict_sign)
+        if signs[0] != 0 and signs[1] != 0  # noqa
     ]
 
     hit_ratio = metrics.accuracy_score(
@@ -326,10 +330,14 @@ def test_feature_impact(dr_models: Dict[str, Any], parameters: Dict[str, Any]):
 
         fi = model.get_or_request_feature_impact()
 
-        df = pd.DataFrame.from_records(fi).sort_values("impactNormalized", ascending=True)
+        df = pd.DataFrame.from_records(fi).sort_values(
+            "impactNormalized", ascending=True
+        )
 
         if parameters["features_to_exclude"]:
-            parameters["features_to_exclude"].extend(["Unnamed: 0", parameters["datetime_column"]])
+            parameters["features_to_exclude"].extend(
+                ["Unnamed: 0", parameters["datetime_column"]]
+            )
         else:
             parameters["features_to_exclude"] = [
                 "Unnamed: 0",
@@ -342,7 +350,8 @@ def test_feature_impact(dr_models: Dict[str, Any], parameters: Dict[str, Any]):
 
     with concurrent.futures.ThreadPoolExecutor() as executor:
         futures = [
-            executor.submit(compute_feature_impact, s, dr_models, parameters) for s in dr_models
+            executor.submit(compute_feature_impact, s, dr_models, parameters)
+            for s in dr_models
         ]
         for _, future in zip(dr_models, futures):
             result_s, df = future.result()
@@ -383,7 +392,9 @@ def test_partial_dependence(dr_models: Dict[str, Any], parameters: Dict[str, Any
     test_results: Dict[str, Any] = {}
 
     if parameters["features_to_exclude"]:
-        parameters["features_to_exclude"].extend(["Unnamed: 0", parameters["datetime_column"]])
+        parameters["features_to_exclude"].extend(
+            ["Unnamed: 0", parameters["datetime_column"]]
+        )
     else:
         parameters["features_to_exclude"] = [
             "Unnamed: 0",
@@ -391,7 +402,9 @@ def test_partial_dependence(dr_models: Dict[str, Any], parameters: Dict[str, Any
         ]
 
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        futures = [executor.submit(compute_partial_dependence, s, dr_models) for s in dr_models]
+        futures = [
+            executor.submit(compute_partial_dependence, s, dr_models) for s in dr_models
+        ]
         for _, future in zip(dr_models, futures):
             s, pdp = future.result()
 
@@ -412,8 +425,12 @@ def test_partial_dependence(dr_models: Dict[str, Any], parameters: Dict[str, Any
                 f_name = feature["feature_name"]
 
                 if f_name not in parameters["features_to_exclude"]:
-                    pdp_df = pd.DataFrame.from_dict(feature["partial_dependence"]["data"])
-                    pdp_df = pdp_df.loc[~pdp_df["label"].isin(["nan", "=Other Unseen="])]
+                    pdp_df = pd.DataFrame.from_dict(
+                        feature["partial_dependence"]["data"]
+                    )
+                    pdp_df = pdp_df.loc[
+                        ~pdp_df["label"].isin(["nan", "=Other Unseen="])
+                    ]
 
                     try:
                         pdp_df["label"] = pd.to_numeric(pdp_df.label).round(2)
@@ -642,10 +659,14 @@ def test_goodness_of_fit(
 
         for i in range(bin_count):
             mean_probs_cl1[i] = np.nanmean(predicts[predict_bin == i])
-            exp_events_cl1[i] = np.nansum(predict_bin == i) * np.array(mean_probs_cl1[i])
+            exp_events_cl1[i] = np.nansum(predict_bin == i) * np.array(
+                mean_probs_cl1[i]
+            )
             obs_events_cl1[i] = np.nansum(actuals[predict_bin == i])
             mean_probs_cl0[i] = np.nanmean(1 - predicts[predict_bin == i])
-            exp_events_cl0[i] = np.nansum(predict_bin == i) * np.array(mean_probs_cl0[i])
+            exp_events_cl0[i] = np.nansum(predict_bin == i) * np.array(
+                mean_probs_cl0[i]
+            )
             obs_events_cl0[i] = np.nansum(1 - actuals[predict_bin == i])
 
         chi_square, p_value = chisquare(obs_events_cl1, exp_events_cl1)
@@ -669,11 +690,15 @@ def test_discriminatory_power(
         df_predictions = predictions[s]
 
         actuals = df_predictions.loc[:, parameters["target_column"]].values
-        predictions_np = df_predictions.loc[:, f"{parameters['target_column']}_PREDICTION"].values
+        predictions_np = df_predictions.loc[
+            :, f"{parameters['target_column']}_PREDICTION"
+        ].values
         actual_sign = np.sign(actuals)
         predict_sign = np.sign(predictions_np)  # type: ignore
 
-        labels = [int(x) for x in np.unique(np.concatenate([actual_sign, predict_sign]))]
+        labels = [
+            int(x) for x in np.unique(np.concatenate([actual_sign, predict_sign]))
+        ]
         confusion_matrix = pd.DataFrame(
             metrics.confusion_matrix(actual_sign, predict_sign, labels=labels),
             index=labels,
@@ -744,7 +769,9 @@ def test_outcomes_analysis(
                 out_of_sample_dict[k] = outsample_result[k]
 
         # Create the DataFrame
-        results_summary = pd.DataFrame.from_records([in_sample_dict, out_of_sample_dict])
+        results_summary = pd.DataFrame.from_records(
+            [in_sample_dict, out_of_sample_dict]
+        )
 
     return results_summary
 
@@ -780,7 +807,10 @@ def test_heteroskedasticity(
         )
 
         feature_data = df_predictions.drop(
-            columns=[parameters["target_column"], f"{parameters['target_column']}_PREDICTION"]
+            columns=[
+                parameters["target_column"],
+                f"{parameters['target_column']}_PREDICTION",
+            ]
         )
 
         value_min_pct = 0.60
@@ -791,7 +821,9 @@ def test_heteroskedasticity(
         x_lt = sm.add_constant(data_continuous, prepend=False)
 
         # perform Bresuch-Pagan test
-        stat_breuschpagan = het_breuschpagan(residuals.values, np.array(x_lt.values, dtype=float))
+        stat_breuschpagan = het_breuschpagan(
+            residuals.values, np.array(x_lt.values, dtype=float)
+        )
 
         breuschpagan_summary = {
             "Test": "Bresuch-Pagan",
@@ -820,7 +852,9 @@ def test_box_tidwell(training_data: Dict[str, pd.DataFrame], params: Dict[str, A
             )
         x_lt = sm.add_constant(data_continuous, prepend=False)
         y_lt = training_data[s][params["target_column"]]
-        logit_results = GLM(y_lt, x_lt, family=families.Binomial(), missing="drop").fit()
+        logit_results = GLM(
+            y_lt, x_lt, family=families.Binomial(), missing="drop"
+        ).fit()
 
         results_summary = logit_results.summary()
 
@@ -857,7 +891,9 @@ def test_cooks_distance(training_data: Dict[str, pd.DataFrame], params: Dict[str
         x_lt = sm.add_constant(data_continuous, prepend=False)
         y_lt = training_data[s][params["target_column"]]
 
-        logit_results = GLM(y_lt, x_lt, family=families.Binomial(), missing="drop").fit()
+        logit_results = GLM(
+            y_lt, x_lt, family=families.Binomial(), missing="drop"
+        ).fit()
 
         influence = logit_results.get_influence(observed=False)
         summ_df = influence.summary_frame()

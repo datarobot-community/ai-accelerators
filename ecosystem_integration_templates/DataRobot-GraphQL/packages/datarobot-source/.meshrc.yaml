@@ -1,3 +1,4 @@
+---
 sources:
   - name: DataRobot
     handler:
@@ -6,7 +7,6 @@ sources:
         operationHeaders:
           Content-Type: application/json
           Authorization: Bearer <your token goes here>
-
 transforms:
   - rename:
       renames:
