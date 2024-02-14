@@ -16,7 +16,10 @@ parser = argparse.ArgumentParser()
 parser.add_argument("img_path", type=str, help="Absolute path to image files")
 parser.add_argument("data_path", type=str, help="Absolute path to label data")
 parser.add_argument(
-    "--smart_sort", type=bool, default=False, help="Whether or not to sort predictions by certainty"
+    "--smart_sort",
+    type=bool,
+    default=False,
+    help="Whether or not to sort predictions by certainty",
 )
 
 # Parse command-line arguments

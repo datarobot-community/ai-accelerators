@@ -14,7 +14,19 @@ except:
 
 fake = Faker()
 
-datatypes = ["bool", "int", "float", "str", "list", "word", "text", "date", "uuid", "id", "name"]
+datatypes = [
+    "bool",
+    "int",
+    "float",
+    "str",
+    "list",
+    "word",
+    "text",
+    "date",
+    "uuid",
+    "id",
+    "name",
+]
 
 
 def generate_bool(null_probability=None):
