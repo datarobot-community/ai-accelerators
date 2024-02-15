@@ -1,0 +1,21 @@
+---
+title: Predict technical prices based on historical claims data
+file_name: Code first Incurred Claims - Insurance pricing.ipynb
+description: |-
+  This notebook serves as a comprehensive guide to the intricate world of insurance pricing, leveraging historical claims data for modeling and analysis. The primary objective of this notebook is to enable insurance professionals and data scientists to predict insurance pricing accurately and efficiently with DataRobot platform.
+languages:
+  - python
+maintainers:
+  - Paul St-Georges
+  - Olga Shpyrko
+  - Maximilian Hudlberger
+  - Quncai Zou
+maintainers_email:
+  - paul.st-georges@datarobot.com
+  - olga.shpyrko@datarobot.com
+  - maximilian.hudlberger@datarobot.com
+  - quncai.zou@datarobot.com
+smoke_test:
+  run_smoke_test: false
+  user_permissions: []
+tags: []
