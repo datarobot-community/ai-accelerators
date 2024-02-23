@@ -79,7 +79,9 @@ def load_and_process_facilities(reg_dic, params, reg_outline):
         raise Exception(f"Error loading and processing facilities: {e}")
 
 
-def add_raster_data_to_training_data(training_data, raster_names, rasters, reg_path_images):
+def add_raster_data_to_training_data(
+    training_data, raster_names, rasters, reg_path_images
+):
     for j in range(len(raster_names)):
         training_data[raster_names[j]] = ""
         for i, row in training_data.iterrows():
@@ -93,7 +95,9 @@ def add_raster_data_to_training_data(training_data, raster_names, rasters, reg_p
     return training_data
 
 
-def add_raster_data_to_scoring_data(training_data, raster_names, rasters, reg_path_images):
+def add_raster_data_to_scoring_data(
+    training_data, raster_names, rasters, reg_path_images
+):
     for j in range(len(raster_names)):
         training_data[raster_names[j]] = ""
         for i, row in training_data.iterrows():
@@ -235,7 +239,9 @@ def negative_cells(facilities, reg_prop_random, reg, reg_chip, reg_exclusion):
     )
 
     no_facilities_cells = df_rand_points.copy()
-    no_facilities_cells.geometry = no_facilities_cells.buffer(reg_chip * 1000 / 2, cap_style=3)
+    no_facilities_cells.geometry = no_facilities_cells.buffer(
+        reg_chip * 1000 / 2, cap_style=3
+    )
 
     no_facilities_cells["target"] = False
 
@@ -260,7 +266,9 @@ def facilities_gdp_to_cells(facilities_gdp, chip_l, hosp_features):
 
 def facilities_to_gpd(df_hospitals, crs, outline):
     # convert to gdp and ensure they are within the country/region outline
-    df_hospitals_coordinates_xy = df_hospitals["coordinates.coordinates"].apply(lambda x: eval(x))
+    df_hospitals_coordinates_xy = df_hospitals["coordinates.coordinates"].apply(
+        lambda x: eval(x)
+    )
     df_hospitals_coordinates_x = df_hospitals_coordinates_xy.apply(
         lambda x: x[0] if isinstance(x[0], float) else 0
     )
@@ -269,7 +277,9 @@ def facilities_to_gpd(df_hospitals, crs, outline):
     )
     df_hospitals = gpd.GeoDataFrame(
         df_hospitals,
-        geometry=gpd.points_from_xy(x=df_hospitals_coordinates_x, y=df_hospitals_coordinates_y),
+        geometry=gpd.points_from_xy(
+            x=df_hospitals_coordinates_x, y=df_hospitals_coordinates_y
+        ),
         crs="EPSG:4326",
     )
     df_hospitals = df_hospitals.to_crs(crs)
@@ -296,7 +306,9 @@ def rasterise_gpd(gdf, crs, shape, name, path):
     with rio.open(path_string, "w", **meta) as out:
         # Rasterize the input shapefile into the output raster file
         shapes = ((geom, 1) for geom in gdf.geometry)
-        out_arr = rasterize(shapes=shapes, fill=0, out_shape=(512, 512), transform=out.transform)
+        out_arr = rasterize(
+            shapes=shapes, fill=0, out_shape=(512, 512), transform=out.transform
+        )
         out.write(out_arr, indexes=1)
 
     new_raster = rio.open(path_string)
@@ -314,7 +326,9 @@ def reproject_raster(in_path, out_path, crs):
         )
         kwargs = src.meta.copy()
 
-        kwargs.update({"crs": crs, "transform": transform, "width": width, "height": height})
+        kwargs.update(
+            {"crs": crs, "transform": transform, "width": width, "height": height}
+        )
 
         with rio.open(out_path, "w", **kwargs) as dst:
             for i in range(1, src.count + 1):
@@ -347,13 +361,21 @@ def generate_chip(point, raster, fname, cmap="viridis", **kwargs):
     plt.imsave(fname=fname, arr=df_chip, cmap=cmap, **kwargs)
 
 
-def generate_points(num_points, country_name, CHIP_SIDE_LENGTH, df_hospitals, EXCLUSION_ZONE_RATIO):
+def generate_points(
+    num_points, country_name, CHIP_SIDE_LENGTH, df_hospitals, EXCLUSION_ZONE_RATIO
+):
     this_crs = df_hospitals.crs
     bounding_box = get_country_outline(country_name, this_crs).bounds
     # generate random points within country bounding box
-    x_coords = np.random.uniform(low=bounding_box[0], high=bounding_box[2], size=num_points)
-    y_coords = np.random.uniform(low=bounding_box[1], high=bounding_box[3], size=num_points)
-    df_points = gpd.GeoDataFrame(crs=this_crs, geometry=gpd.points_from_xy(x=x_coords, y=y_coords))
+    x_coords = np.random.uniform(
+        low=bounding_box[0], high=bounding_box[2], size=num_points
+    )
+    y_coords = np.random.uniform(
+        low=bounding_box[1], high=bounding_box[3], size=num_points
+    )
+    df_points = gpd.GeoDataFrame(
+        crs=this_crs, geometry=gpd.points_from_xy(x=x_coords, y=y_coords)
+    )
     # remove points outside of country area
     df_points = df_points[
         df_points.within(get_country_outline(country_name, this_crs))
