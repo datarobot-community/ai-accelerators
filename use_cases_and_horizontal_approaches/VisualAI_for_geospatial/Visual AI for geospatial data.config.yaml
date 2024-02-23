@@ -1,0 +1,18 @@
+---
+description: This accelerator shows how you can use Visual AI on geospatial data. Instead of deriving
+  numeric features from the georeferenced data, you look at the geospatial data as images. For example,
+  if you have a map of population distribution, instead of extracting the population that corresponds
+  to each row of the main table you can pass the region of the map that corresponds to that row. This
+  provides more information than a raw count of the population would, as it also encodes the distribution
+  within the region (is it uniform or does it concentrate in some areas? what is the shape?, etc.)
+file_name: Visual AI for geospatial data.ipynb
+languages:
+  - python
+maintainers:
+  - Daniel Straulino
+maintainers_email:
+  - daniel.straulino@datarobot.com
+smoke_test:
+  run_smoke_test: false
+tags: []
+title: Leverage Visual AI for geospatial data
