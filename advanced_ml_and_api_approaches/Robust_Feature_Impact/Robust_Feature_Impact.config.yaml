@@ -1,0 +1,15 @@
+---
+description: This notebook will introduce an approach to select robust features, use multiple seeds for
+  cross validation and add dummy features to compute the median permutation importance, than select the
+  most robust features dummy features.
+file_name: Robust_Feature_Impact.ipynb
+languages:
+  - python
+maintainers:
+  - Senkin Zhan
+maintainers_email:
+  - senkin.zhan@datarobot.com
+smoke_test:
+  run_smoke_test: false
+tags: []
+title: Robust Feature Impact
