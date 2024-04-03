@@ -1,0 +1,15 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.0",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "Mention a user by User Principle Name: "
+    },
+    {
+      "type": "TextBlock",
+      "text": "Mention a user by AAD Object Id: "
+    }
+  ]
+}

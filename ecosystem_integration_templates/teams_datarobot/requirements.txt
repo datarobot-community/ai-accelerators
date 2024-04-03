@@ -1,0 +1,9 @@
+botbuilder-integration-aiohttp>=4.14.0
+datarobotx
+datarobot
+textstat
+tiktoken
+nltk
+py-readability-metrics
+datarobot-mlops
+datarobot-mlops-connected-client
