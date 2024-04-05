@@ -1,0 +1,9 @@
+---
+name: Anthropic runtime parameters
+type: inference
+targetType: textgeneration
+runtimeParameterDefinitions:
+  - fieldName: ANTHROPIC_API_KEY
+    type: credential
+    credentialType: api_token
+    description: Anthropic API key

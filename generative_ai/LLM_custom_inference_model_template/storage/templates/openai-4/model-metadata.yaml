@@ -1,0 +1,9 @@
+---
+name: OpenAI gpt-4
+type: inference
+targetType: textgeneration
+runtimeParameterDefinitions:
+  - fieldName: openai_api_key
+    type: credential
+    credentialType: api_token
+    description: Open API key

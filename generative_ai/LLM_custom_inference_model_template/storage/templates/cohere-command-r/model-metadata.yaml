@@ -1,0 +1,9 @@
+---
+name: "Cohere command-r\truntime parameters"
+type: inference
+targetType: textgeneration
+runtimeParameterDefinitions:
+  - fieldName: cohere_api_key
+    type: credential
+    credentialType: api_token
+    description: Cohere API key

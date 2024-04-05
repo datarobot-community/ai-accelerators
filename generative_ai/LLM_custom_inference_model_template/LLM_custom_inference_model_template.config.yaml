@@ -1,0 +1,15 @@
+---
+title: LLM_custom_inference_model_template
+file_name: example.ipynb
+description: |-
+  LLM custom inference model templates. OpenAI (not Azure), Gemini Pro, Cohere and Claude
+languages:
+  - python
+maintainers:
+  - Ryosuke Hata
+maintainers_email:
+  - ryosuke.hata@datarobot.com
+smoke_test:
+  run_smoke_test: false
+  user_permissions: []
+tags: []

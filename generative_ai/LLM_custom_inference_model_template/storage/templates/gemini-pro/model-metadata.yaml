@@ -1,0 +1,9 @@
+---
+name: Google runtime parameters
+type: inference
+targetType: textgeneration
+runtimeParameterDefinitions:
+  - fieldName: google_api_key
+    type: credential
+    credentialType: api_token
+    description: Google API key
