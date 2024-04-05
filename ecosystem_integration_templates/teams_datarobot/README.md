@@ -1,6 +1,6 @@
 # Use DataRobot generative AI with Microsoft Teams
 
-Microsoft Teams offers workspace chat and video conferencing, file storage, and application integration to organizations. Workspace chat feature aloow you to interact with other users and bots in their day-to-day activities. This feature is useful for deploying Generative AI agents to improve employee productivity. With DataRobot's Generative AI offerings, organizations can deploy chatbots without the need for an additional front-end or consumption layers. 
+Microsoft Teams offers workspace chat and video conferencing, file storage, and application integration to organizations. Workspace chat feature allows you to interact with other users and bots in their day-to-day activities. This feature is useful for deploying Generative AI agents to improve employee productivity. With DataRobot's Generative AI offerings, organizations can deploy chatbots without the need for an additional front-end or consumption layers. 
 
 ## How it works
 
