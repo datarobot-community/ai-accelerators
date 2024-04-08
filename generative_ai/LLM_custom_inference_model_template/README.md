@@ -1,14 +1,14 @@
 # LLM custom inference model template
-There are a wide variety of LLM models, for example, OpenAI (not Azure), Gemini Pro, Cohere and Claude. Managing and monitoring these LLM models are crutial to use them. Data Drift monitoring by DataRobot MLOps enable us to detect the changes the user prompt and its responses and notify us that user might use different as AI builder expected initially. Sidecar models prevent the Jailbreak or replace Personally Identifiable Information or evaluate LLM response by our global model in the model registry or your created models. Data Export functionality reminds us of what the user desired to know at each moment or of nesesarry data you should be included in RAG system. Custom Metrics indicates your own KPI which you can make your decision e.g. token costs, toxicity and  Halcination.
+There are a wide variety of LLM models, for example, OpenAI (not Azure), Gemini Pro, Cohere and Claude. Managing and monitoring these LLM models are crucial to use them. Data Drift monitoring by DataRobot MLOps enable us to detect the changes the user prompt and its responses and notify us that user might use different as AI builder expected initially. Sidecar models prevent the Jailbreak or replace Personally Identifiable Information or evaluate LLM response by our global model in the model registry or your created models. Data Export functionality reminds us of what the user desired to know at each moment or of necessary data you should be included in RAG system. Custom Metrics indicates your own KPI which you can make your decision e.g. token costs, toxicity and Hallucination.
 
 In addition, Playground in DataRobot enables us to compare the RAG system of LLM models you would like to try once you deploy the models into DataRobot MLOps. You can obtain the best LLM model to accelerate your business. The comparison of variety of LLM models is key element to success the RAG system.
 
-Here the DataRobot shows the collection of LLM custom inference model template, which enable you to deploy and accelerate to use your own LLM, along with the battery included LLMs like Azure OpenAI, Google and AWS.
-Currently, the DataRobot have the template for OpenAI (not Azure), Gemini Pro, Cohere and Clude. To use this template following the instruction. 
+Here the DataRobot shows the collection of LLM custom inference model template, which enable you to deploy and accelerate to use your own LLM, along with the battery included LLMs like Azure OpenAI, Google and AWS. 
+Currently, the DataRobot have the template for OpenAI (not Azure), Gemini Pro, Cohere and Claude. To use this template following the instruction. 
 
 # How to use the template
 
-1. Open the Model workshop in DataRobot Registry of NextGen. Push "+ Add Model" buttuon to add the new custom model.
+1. Open the Model workshop in DataRobot Registry of NextGen. Push "+ Add Model" button to add the new custom model.
 
 ![Model workshop + add model](./storage/_images/img1.png "+ add model")
 
@@ -16,7 +16,7 @@ Currently, the DataRobot have the template for OpenAI (not Azure), Gemini Pro, C
 
 ![enter configure](./storage/_images/img2.png "enter configure")
 
-3. Select Base environment (`[DataRobot] Python 3.11 GenAI` is selected to use the template. If you modify the enviroment, you can choose any appropriate enviroment) and then upload the model file from template.
+3. Select Base environment (`[DataRobot] Python 3.11 GenAI` is selected to use the template. If you modify the environment, you can choose any appropriate environment) and then upload the model file from template.
 
 ![upload template](./storage/_images/img3.png "upload template")
 
