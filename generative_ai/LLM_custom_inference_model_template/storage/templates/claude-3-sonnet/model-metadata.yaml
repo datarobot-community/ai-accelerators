@@ -1,0 +1,9 @@
+---
+name: claude-3-sonnet
+type: inference
+targetType: textgeneration
+runtimeParameterDefinitions:
+  - fieldName: ANTHROPIC_API_KEY
+    type: credential
+    credentialType: api_token
+    description: Anthropic API key

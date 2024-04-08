@@ -1,0 +1,9 @@
+---
+name: Together runtime parameters
+type: inference
+targetType: textgeneration
+runtimeParameterDefinitions:
+  - fieldName: togetherai_api_key
+    type: credential
+    credentialType: api_token
+    description: Together.ai API key

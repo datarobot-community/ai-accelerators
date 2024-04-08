@@ -1,0 +1,12 @@
+---
+name: Workers AI runtime parameters
+type: inference
+targetType: textgeneration
+runtimeParameterDefinitions:
+  - fieldName: worker_ai_auth_token
+    type: credential
+    credentialType: api_token
+    description: Workers AI API key
+  - fieldName: worker_ai_account_id
+    type: string
+    description: Account ID of the Workers AI account
