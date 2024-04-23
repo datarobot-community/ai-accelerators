@@ -1,0 +1,16 @@
+---
+description: This AI Accelerator demonstrates how to implement a Streamlit application based on Google
+  Gemini LLM and host it on DataRobot platform. The user of this AI Accelerator is expected to be familiar
+  with the custom model deployment process and custom metrics creation in DataRobot as well as with Google
+  Vertex AI.
+file_name: start-app.sh
+languages:
+  - python
+maintainers:
+  - Pavel Ustinov
+maintainers_email:
+  - pavel.ustinov@datarobot.com
+smoke_test:
+  run_smoke_test: false
+tags: []
+title: Google Gemini with DataRobot
