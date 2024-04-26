@@ -2,7 +2,7 @@
   "name": "mesh-datarobot-source",
   "version": "1.0.0",
   "main": "index.js",
-  "author": "Dennis Whitney,dennis.whitney@datarobot.com>",
+  "author": "Dennis Whitney <dennis.whitney@datarobot.com>",
   "license": "MIT",
   "scripts": {
     "start": "mesh dev",
