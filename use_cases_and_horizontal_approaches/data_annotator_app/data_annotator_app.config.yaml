@@ -5,10 +5,14 @@ description: |-
   This notebook shows how to call a Flask app to easily annotate image data for an ML model.
 languages:
   - python
-maintainers:
+authors:
   - Mel Hanna
-maintainers_email:
+authors_email:
   - melanie.hanna@datarobot.com
+maintainers:
+  - João Gomes
+maintainers_email:
+  - joao@datarobot.com
 smoke_test:
   run_smoke_test: false
   user_permissions: []
