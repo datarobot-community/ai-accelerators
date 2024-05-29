@@ -1,0 +1,18 @@
+---
+description: This accelerator walks through all of the new DataRobot generative AI capabilities and serves
+  as a template for code-first users. It showcases how to create and use playgrounds, connect vector databases
+  and LLMs, and how to query and compare them. It uses the official DataRobot documentation as an example.
+  Furthermore, it combines DataRobot's well-known custom model capablities to allow users to bring their
+  own LLMs and vector databases. It shows how to link, use, and deploy them together with the ones offered
+  by DataRobot.
+file_name: DataRobot GenAI Playground Accelerator.ipynb
+languages:
+  - python
+maintainers:
+  - Gustav von Zitzewitz
+maintainers_email:
+  - gustav.vonzitzewitz@datarobot.com
+smoke_test:
+  run_smoke_test: false
+tags: []
+title: Datarobot Generative AI capabilties Overview
