@@ -7,8 +7,6 @@ languages:
   - python
 authors:
   - Mel Hanna
-authors_email:
-  - melanie.hanna@datarobot.com
 maintainers:
   - João Gomes
 maintainers_email:

@@ -9,10 +9,8 @@ languages:
   - python
 maintainers:
   - Dennis Whitney
-  - Alan Roberts
 maintainers_email:
   - dennis.whitney@datarobot.com
-  - alan.roberts@datarobot.com
 smoke_test:
   run_smoke_test: false
   user_permissions: []
