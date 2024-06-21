@@ -1,6 +1,6 @@
-#Multiple objective optimization streamlit app
+# Multiple objective optimization streamlit app
 
-##Summary
+## Summary
 This accelerator introduces an approach to build a streamlit application using DataRobot deploments for multi-objective optimization.
 
 This notebook outlines how to:
@@ -8,5 +8,5 @@ This notebook outlines how to:
 - Build deployment with best model
 - Build Streamlit application connecting to DataRobot
 
-[Instructions](Multi-objective Optimization Guide.pdf)
-[Notebook](run_multi_objective_optimization.ipynb)
+- [Instructions](Multi-objective Optimization Guide.pdf)
+- [Notebook](run_multi_objective_optimization.ipynb)
