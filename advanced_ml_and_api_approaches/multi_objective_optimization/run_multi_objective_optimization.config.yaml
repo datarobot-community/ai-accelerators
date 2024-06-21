@@ -1,0 +1,14 @@
+---
+description: This accelerator introduces an approach to build a streamlit application using DataRobot
+  deploments for multi-objective optimization.
+file_name: run_multi_objective_optimization.ipynb
+languages:
+  - python
+maintainers:
+  - Senkin Zhan
+maintainers_email:
+  - senkin.zhan@datarobot.com
+smoke_test:
+  run_smoke_test: false
+tags: []
+title: Multi-objective Optimization Streamlit Application
