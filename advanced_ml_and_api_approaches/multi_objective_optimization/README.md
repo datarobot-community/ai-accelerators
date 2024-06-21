@@ -8,5 +8,6 @@ This notebook outlines how to:
 - Build deployment with best model
 - Build Streamlit application connecting to DataRobot
 
-- [Instructions](Multi-objective Optimization Guide.pdf)
+Resources:
+- [Instructions](Multi-objective%20Optimization%20Guide.pdf)
 - [Notebook](run_multi_objective_optimization.ipynb)
