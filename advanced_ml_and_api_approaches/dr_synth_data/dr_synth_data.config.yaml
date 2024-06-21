@@ -7,10 +7,8 @@ languages:
   - python
 maintainers:
   - David Abbott
-  - Alan Roberts
 maintainers_email:
   - david.abbott@datarobot.com
-  - alan.roberts@datarobot.com
 smoke_test:
   run_smoke_test: false
   user_permissions: []
