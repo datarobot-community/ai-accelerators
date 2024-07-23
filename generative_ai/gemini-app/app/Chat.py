@@ -70,7 +70,9 @@ if __name__ == "__main__":
         # Display assistant response in chat message container
         with st.chat_message("assistant", avatar="datarobot_logo_icon.png"):
             message_placeholder = st.empty()
-            toxic_label, toxic_value = ask_guard_model(guard_model_deployment_id, prompt)
+            toxic_label, toxic_value = ask_guard_model(
+                guard_model_deployment_id, prompt
+            )
 
             if toxic_value < 0.5:
                 if (prompt is not None) & (img_file_buffer is not None):
@@ -78,7 +80,9 @@ if __name__ == "__main__":
                         multimodal_model_deployment_id, prompt + "---" + encoded_image
                     )
                 else:
-                    assistant_response = ask_generative_model(text_model_deployment_id, prompt)
+                    assistant_response = ask_generative_model(
+                        text_model_deployment_id, prompt
+                    )
             else:
                 if (prompt is not None) & (img_file_buffer is not None):
                     submit_custom_metrics(multimodal_model_deployment_id)
@@ -95,8 +99,12 @@ if __name__ == "__main__":
                     "data:image/png;base64," + encoded_image,
                 )
             else:
-                write_history(dt.datetime.now(), prompt, assistant_response, toxic_value > 0.5, "")
+                write_history(
+                    dt.datetime.now(), prompt, assistant_response, toxic_value > 0.5, ""
+                )
 
             message_placeholder.markdown(assistant_response)
 
-        st.session_state.messages.append({"role": "assistant", "content": assistant_response})
+        st.session_state.messages.append(
+            {"role": "assistant", "content": assistant_response}
+        )

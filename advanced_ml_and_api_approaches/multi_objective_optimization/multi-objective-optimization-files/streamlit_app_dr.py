@@ -63,7 +63,9 @@ def _raise_dataroboterror_for_status(response):
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
-        err_msg = "{code} Error: {msg}".format(code=response.status_code, msg=response.text)
+        err_msg = "{code} Error: {msg}".format(
+            code=response.status_code, msg=response.text
+        )
         raise DataRobotPredictionError(err_msg)
 
 
@@ -72,11 +74,15 @@ def get_prediction(df, DEPLOYMENT_ID):
     wrapper = io.TextIOWrapper(buffer, encoding="utf-8", write_through=True)
     df.to_csv(wrapper)
 
-    predictions_response = make_datarobot_deployment_predictions(buffer.getvalue(), DEPLOYMENT_ID)
+    predictions_response = make_datarobot_deployment_predictions(
+        buffer.getvalue(), DEPLOYMENT_ID
+    )
 
     if predictions_response.status_code != 200:
         try:
-            message = predictions_response.json().get("message", predictions_response.text)
+            message = predictions_response.json().get(
+                "message", predictions_response.text
+            )
             status_code = predictions_response.status_code
             reason = predictions_response.reason
 
@@ -215,7 +221,19 @@ def run_optimization(
             pred9 = get_prediction(df_target, deploy_ids[8])
             pred10 = get_prediction(df_target, deploy_ids[9])
             pred11 = get_prediction(df_target, deploy_ids[10])
-            return pred1, pred2, pred3, pred4, pred5, pred6, pred7, pred8, pred9, pred10, pred11
+            return (
+                pred1,
+                pred2,
+                pred3,
+                pred4,
+                pred5,
+                pred6,
+                pred7,
+                pred8,
+                pred9,
+                pred10,
+                pred11,
+            )
 
         if len(deploy_ids) == 12:
             pred1 = get_prediction(df_target, deploy_ids[0])
@@ -1097,14 +1115,18 @@ def run_optimization(
     trial_params = []
     for trial in study.get_trials():
         trial_params.append(trial.params)
-        trial_all.append([trial.number, trial.values[0], trial.values[1], trial.values[2]])
+        trial_all.append(
+            [trial.number, trial.values[0], trial.values[1], trial.values[2]]
+        )
     trial_all = pd.DataFrame(trial_all, columns=["Iteration"] + targets)
     trial_params = pd.DataFrame.from_dict(trial_params)
     trial_all = pd.concat([trial_all, trial_params], axis=1)
 
     trial_pareto = []
     for trial in study.best_trials:
-        trial_pareto.append([trial.number, trial.values[0], trial.values[1], trial.values[2]])
+        trial_pareto.append(
+            [trial.number, trial.values[0], trial.values[1], trial.values[2]]
+        )
     trial_pareto = pd.DataFrame(trial_pareto, columns=["Iteration"] + targets)
 
     return trial_all, trial_pareto
@@ -1132,7 +1154,9 @@ with tab1:
         cols = df_feature.columns.to_list()
         feats = [f for f in cols if f not in targets if f not in ids]
 
-        feats_name = st.multiselect("Select features to be simulated", feats, feats, key=1002)
+        feats_name = st.multiselect(
+            "Select features to be simulated", feats, feats, key=1002
+        )
 
         st.markdown(
             "<h1 style='text-align: center; color: grey;'>Simulated Features</h1>",
@@ -1208,7 +1232,9 @@ with tab1:
                 )
                 trial_pareto["best_trial"] = 1
                 trial_all = trial_all.merge(
-                    trial_pareto[["Iteration", "best_trial"]], on=["Iteration"], how="left"
+                    trial_pareto[["Iteration", "best_trial"]],
+                    on=["Iteration"],
+                    how="left",
                 )
                 trial_all = trial_all.fillna(0)
                 trial_all.to_csv("trial_all.csv", index=False)
@@ -1234,7 +1260,9 @@ with tab2:
             st.plotly_chart(fig, use_container_width=True)
 
         # 2d
-        target_name = st.multiselect("Select Two Targets", targets, targets[:2], key=1003)
+        target_name = st.multiselect(
+            "Select Two Targets", targets, targets[:2], key=1003
+        )
         if len(target_name) != 2:
             print("Please select two targets!")
         else:
@@ -1273,9 +1301,9 @@ with tab2:
 
             st.plotly_chart(fig, use_container_width=True)
 
-        trial_all_sort = trial_all.sort_values(["best_trial"], ascending=False).reset_index(
-            drop=True
-        )
+        trial_all_sort = trial_all.sort_values(
+            ["best_trial"], ascending=False
+        ).reset_index(drop=True)
         st.write(trial_all_sort)
         data_as_csv = trial_all_sort.to_csv(index=False).encode("utf-8")
         st.download_button(
