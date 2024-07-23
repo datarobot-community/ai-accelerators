@@ -34,7 +34,11 @@ def score(data, model, **kwargs):
             image_part = Part.from_image(Image.from_bytes(base64.b64decode(spl[1])))
             response = model.generate_content(
                 [image_part, text_part],
-                generation_config={"max_output_tokens": 2048, "temperature": 0, "top_p": 1},
+                generation_config={
+                    "max_output_tokens": 2048,
+                    "temperature": 0,
+                    "top_p": 1,
+                },
                 stream=False,
                 safety_settings=safety_config,
             )
