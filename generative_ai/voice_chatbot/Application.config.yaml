@@ -1,0 +1,13 @@
+---
+description: This AI Accelerator demonstrates how to implement a Streamlit application to interact with a GenAI deployment on DataRobot, and enable the voice input and output. It can support multiple chatbots with the same interface. The user of this AI Accelerator is expected to be familiar with the deployment of LLM's in DataRobot. 
+file_name: voice_chatbot.py
+languages:
+  - python
+maintainers:
+  - Dean Wang
+maintainers_email:
+  - dean.wang@datarobot.com
+smoke_test:
+  run_smoke_test: false
+tags: []
+title: Voice chatbot app with DataRobot
