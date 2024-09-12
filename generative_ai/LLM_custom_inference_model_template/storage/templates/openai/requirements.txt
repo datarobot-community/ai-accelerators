@@ -1,0 +1,2 @@
+openai>=1.44.0
+datarobot-drum>=1.12
