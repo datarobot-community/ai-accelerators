@@ -1,2 +1,0 @@
-openai==1.16.0
-datarobot-drum==1.10.10

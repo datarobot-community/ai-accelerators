@@ -1,0 +1,4 @@
+google-auth
+openai
+requests
+pandas

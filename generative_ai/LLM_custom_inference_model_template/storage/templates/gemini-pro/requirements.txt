@@ -1,3 +1,0 @@
-google-generativeai==0.3.1
-grpcio==1.60.0
-datarobot-drum==1.10.10

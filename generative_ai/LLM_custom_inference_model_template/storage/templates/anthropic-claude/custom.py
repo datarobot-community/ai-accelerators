@@ -54,19 +54,25 @@ def chat(completion_create_params: CompletionCreateParams, model: Anthropic) -> 
         the completion object with generated choices.
     """
     an_message: Message = model.messages.create(**completion_create_params)
+    msg = an_message.content[0]  # TODO: Handle multiple content blocks
+
+    finish_reason = {
+        "end_turn": "stop",
+        "stop_sequence": "stop",
+        "max_tokens": "length",
+        "tool_use": "tool_calls",
+    }[an_message.stop_reason]
+
     return ChatCompletion(
-        **{
-            "id": an_message.id,
-            "choices": [
-                {
-                    "message": {"role": an_message.role, "content": msg.text},
-                    "finish_reason": "stop",
-                    "index": i,
-                }
-                for i, msg in enumerate(an_message.content)
-            ],
-            "model": str(an_message.model),
-            "created": int(time()),
-            "object": "chat.completion",
-        }
+        id=an_message.id,
+        choices=[
+            {
+                "message": {"role": an_message.role, "content": msg.text},
+                "finish_reason": finish_reason,
+                "index": 0,
+            }
+        ],
+        model=str(an_message.model),
+        created=int(time()),
+        object="chat.completion",
     )
