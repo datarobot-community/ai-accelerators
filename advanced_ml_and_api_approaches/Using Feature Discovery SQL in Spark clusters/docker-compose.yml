@@ -1,0 +1,53 @@
+version: "3.3"
+services:
+  spark-master:
+    image: apache-spark:3.2.1
+    container_name: spark-master
+    ports:
+      - "9090:8080"
+      - "7077:7077"
+    volumes:
+      - ./apps:/opt/spark-apps
+      - ./libs:/opt/spark-libs
+      - ./data:/opt/spark/spark-warehouse
+    environment:
+      - SPARK_LOCAL_IP=spark-master
+      - SPARK_WORKLOAD=master
+  spark-worker-a:
+    image: apache-spark:3.2.1
+    ports:
+      - "9091:8080"
+      - "7001:7000"
+    depends_on:
+      - spark-master
+    container_name: spark-worker-a
+    environment:
+      - SPARK_MASTER=spark://spark-master:7077
+      - SPARK_WORKER_CORES=1
+      - SPARK_WORKER_MEMORY=1G
+      - SPARK_EXECUTOR_MEMORY=1G
+      - SPARK_WORKLOAD=worker
+      - SPARK_LOCAL_IP=spark-worker-a
+    volumes:
+      - ./apps:/opt/spark-apps
+      - ./libs:/opt/spark-libs
+      - ./data:/opt/spark/spark-warehouse
+  spark-worker-b:
+    image: apache-spark:3.2.1
+    ports:
+      - "9092:8080"
+      - "7002:7000"
+    depends_on:
+      - spark-master
+    container_name: spark-worker-b
+    environment:
+      - SPARK_MASTER=spark://spark-master:7077
+      - SPARK_WORKER_CORES=1
+      - SPARK_WORKER_MEMORY=1G
+      - SPARK_EXECUTOR_MEMORY=1G
+      - SPARK_WORKLOAD=worker
+      - SPARK_LOCAL_IP=spark-worker-b
+    volumes:
+      - ./apps:/opt/spark-apps
+      - ./libs:/opt/spark-libs
+      - ./data:/opt/spark/spark-warehouse
