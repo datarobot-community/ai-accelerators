@@ -1,6 +1,7 @@
 import os
 import base64
 import json
+from typing import Iterator
 
 from datarobot_drum import RuntimeParameters
 import google.auth
@@ -64,7 +65,7 @@ def load_model(*args, **kwargs):
 
 
 def score(data, model, **kwargs):
-    prompts = data["prompt"].tolist()
+    prompts = data["promptText"].tolist()
     responses = []
     credential, client = model
     if (time() - TOKEN_CREATE_TIME) > 1800:
@@ -91,7 +92,7 @@ def score(data, model, **kwargs):
     return pd.DataFrame({"responseText": responses})
 
 
-def chat(completion_create_params: CompletionCreateParams, model: OpenAI, **kwargs)-> ChatCompletion:
+def chat(completion_create_params: CompletionCreateParams, model: OpenAI, **kwargs)-> ChatCompletion | Iterator[ChatCompletionChunk]:
     """Chat Hook compatibale with ChatCompletion
     OpenAI Specification
 

@@ -7,3 +7,6 @@ runtimeParameterDefinitions:
     type: credential
     credentialType: gcp
     description: Google API key
+  - fieldName: PROMPT_COLUMN_NAME
+    type: string
+    defaultValue: promptText

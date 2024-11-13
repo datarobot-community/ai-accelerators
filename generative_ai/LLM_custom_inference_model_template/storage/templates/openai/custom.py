@@ -45,7 +45,7 @@ def score(data: pd.DataFrame, model, **kwargs):
 
     return pd.DataFrame({"resultText": responses})
 
-def chat(completion_create_params: CompletionCreateParams, model: OpenAI)-> ChatCompletion:
+def chat(completion_create_params: CompletionCreateParams, model: OpenAI)-> ChatCompletion | Iterator[ChatCompletionChunk]:
     """Chat Hook compatibale with ChatCompletion
     OpenAI Specification
 

@@ -7,3 +7,7 @@ runtimeParameterDefinitions:
     type: credential
     credentialType: api_token
     description: Anthropic API key
+  - fieldName: PROMPT_COLUMN_NAME
+    type: string
+    defaultValue: promptText
+
