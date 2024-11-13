@@ -1,5 +1,5 @@
 ---
-name: Claude-3-pro
+name: claude-3-sonnet
 type: inference
 targetType: textgeneration
 runtimeParameterDefinitions:
@@ -7,3 +7,7 @@ runtimeParameterDefinitions:
     type: credential
     credentialType: api_token
     description: Anthropic API key
+  - fieldName: PROMPT_COLUMN_NAME
+    type: string
+    defaultValue: promptText
+
