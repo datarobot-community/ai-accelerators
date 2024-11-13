@@ -1,0 +1,12 @@
+---
+name: XaI Grok Custom Model Template
+type: inference
+targetType: textgeneration
+runtimeParameterDefinitions:
+  - fieldName: xai_grok_api_key
+    type: credential
+    credentialType: api_token
+    description: Grok XaI API key
+  - fieldName: PROMPT_COLUMN_NAME
+    type: string
+    defaultValue: promptText
