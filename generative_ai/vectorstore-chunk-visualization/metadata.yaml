@@ -1,0 +1,9 @@
+name: runtime-params
+
+runtimeParameterDefinitions:
+  - fieldName: OPENAI_API_KEY
+    type: credential
+    description: OPENAI_API_KEY
+  - fieldName: OPENAI_API_BASE
+    type: credential
+    description: OPENAI_API_BASE
