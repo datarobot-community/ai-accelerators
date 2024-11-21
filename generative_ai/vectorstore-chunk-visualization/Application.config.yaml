@@ -1,0 +1,13 @@
+---
+description: This AI Accelerator demonstrates how to implement a Streamlit application to gain insight from vectordatabase of chunks, RAG developer can compare similarity between chunks and remove unnecessary data during RAG development.
+file_name: start-app.sh
+languages:
+  - python
+maintainers:
+  - Senkin Zhan
+maintainers_email:
+  - senkin.zhan@@datarobot.com
+smoke_test:
+  run_smoke_test: false
+tags: []
+title: Vectorstore Chunk Visualization App With DataRobot
