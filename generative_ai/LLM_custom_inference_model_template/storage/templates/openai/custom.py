@@ -1,9 +1,9 @@
+from typing import Iterator
 from datarobot_drum import RuntimeParameters
 from openai import OpenAI
 from openai.types.chat import ChatCompletion, ChatCompletionChunk, CompletionCreateParams
 import pandas as pd
 import os
-
 
 def load_model(*args, **kwargs)-> OpenAI:
     if (env_key := os.getenv("open_api_key")):
@@ -35,7 +35,7 @@ def score(data: pd.DataFrame, model, **kwargs):
 
     for prompt in prompts:
         response = model.chat.completions.create(
-            model="gpt-4",
+            model=RuntimeParameters.get("MODEL"),
             messages=[
                 {"role": "user", "content": f"{prompt}"},
             ],
@@ -61,4 +61,6 @@ def chat(completion_create_params: CompletionCreateParams, model: OpenAI)-> Chat
     ChatCompletion
         the completion object with generated choices. 
     """
+    if completion_create_params['model'] == "datarobot-deployed-llm":
+        completion_create_params['model'] = RuntimeParameters.get("MODEL")
     return model.chat.completions.create(**completion_create_params)
