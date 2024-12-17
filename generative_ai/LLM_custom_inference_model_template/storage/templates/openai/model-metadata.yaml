@@ -10,3 +10,6 @@ runtimeParameterDefinitions:
   - fieldName: PROMPT_COLUMN_NAME
     type: string
     defaultValue: promptText
+  - fieldName: MODEL
+    type: string
+    defaultValue: gpt-4o-mini
