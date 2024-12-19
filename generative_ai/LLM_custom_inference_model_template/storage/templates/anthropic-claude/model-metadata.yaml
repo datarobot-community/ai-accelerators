@@ -10,4 +10,3 @@ runtimeParameterDefinitions:
   - fieldName: PROMPT_COLUMN_NAME
     type: string
     defaultValue: promptText
-

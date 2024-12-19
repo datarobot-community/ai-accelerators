@@ -1,11 +1,12 @@
-version: "3.3"
+---
+version: '3.3'
 services:
   spark-master:
     image: apache-spark:3.2.1
     container_name: spark-master
     ports:
-      - "9090:8080"
-      - "7077:7077"
+      - 9090:8080
+      - 7077:7077
     volumes:
       - ./apps:/opt/spark-apps
       - ./libs:/opt/spark-libs
@@ -16,8 +17,8 @@ services:
   spark-worker-a:
     image: apache-spark:3.2.1
     ports:
-      - "9091:8080"
-      - "7001:7000"
+      - 9091:8080
+      - 7001:7000
     depends_on:
       - spark-master
     container_name: spark-worker-a
@@ -35,8 +36,8 @@ services:
   spark-worker-b:
     image: apache-spark:3.2.1
     ports:
-      - "9092:8080"
-      - "7002:7000"
+      - 9092:8080
+      - 7002:7000
     depends_on:
       - spark-master
     container_name: spark-worker-b
