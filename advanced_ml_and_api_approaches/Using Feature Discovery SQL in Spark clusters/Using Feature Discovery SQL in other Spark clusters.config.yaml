@@ -1,12 +1,16 @@
 ---
-description: This guidebook offers an example of running Feature Discovery SQL in a Docker-based Spark cluster. It walks you through the process of setting up a Spark cluster in Docker, registering custom User Defined Functions (UDFs), and executing complex SQL queries for feature engineering across multiple datasets. The same approach can be applied to other Spark environments, such as GCP Dataproc, Amazon EMR, Cloudera CDP, ... providing flexibility for running Feature Discovery on various Spark platforms.
+description: This guidebook offers an example of running Feature Discovery SQL in a Docker-based Spark
+  cluster. It walks you through the process of setting up a Spark cluster in Docker, registering custom
+  User Defined Functions (UDFs), and executing complex SQL queries for feature engineering across multiple
+  datasets. The same approach can be applied to other Spark environments, such as GCP Dataproc, Amazon
+  EMR, Cloudera CDP, ... providing flexibility for running Feature Discovery on various Spark platforms.
 file_name: Using Feature Discovery SQL in other Spark clusters.ipynb
 languages:
   - python
 maintainers:
   - Harry Dinh
 maintainers_email:
-  - harry.dinh@datarobot.com 
+  - harry.dinh@datarobot.com
 smoke_test:
   run_smoke_test: false
 tags: []
