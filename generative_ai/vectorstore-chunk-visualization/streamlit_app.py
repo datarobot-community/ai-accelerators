@@ -144,7 +144,8 @@ def convert_df(df):
 
 def create_vectordb(file):
     dr.Client(
-        token=os.environ.get("DATAROBOT_API_TOKEN"), endpoint=os.environ.get("DATAROBOT_ENDPOINT")
+        token=os.environ.get("DATAROBOT_API_TOKEN"),
+        endpoint=os.environ.get("DATAROBOT_ENDPOINT"),
     )
     local_file_path = file
     use_case_name = file.split(".")[0]
@@ -221,7 +222,9 @@ with tab1:
 
                 vdb_id, df = create_vectordb(file_name)
                 end_time = time.time()
-                st.write("Cumulative Execution Time: ", end_time - start_time, "seconds")
+                st.write(
+                    "Cumulative Execution Time: ", end_time - start_time, "seconds"
+                )
 
                 st.write("Creating Kmeans Cluster For Chunks...")
                 for cluster_number in range(min_clusters, max_clusters + 1):
@@ -245,7 +248,9 @@ with tab1:
                     df_embedding["tsne0"] = tsne[:, 1]
                     df_embedding["index"] = df_embedding["index"] + 1
                     df_embedding["label"] = df_embedding["label"].astype("category")
-                    df_embedding.to_csv("vdb_chunk_" + str(cluster_number) + ".csv", index=False)
+                    df_embedding.to_csv(
+                        "vdb_chunk_" + str(cluster_number) + ".csv", index=False
+                    )
 
             end_time = time.time()
             st.write("Cumulative Execution Time: ", end_time - start_time, "seconds")
@@ -273,7 +278,9 @@ with tab2:
                 st.write("Start Cluster:", cluster_number)
                 df_cluster = pd.read_csv("vdb_chunk_" + str(cluster_number) + ".csv")
                 cluster = create_cluster_summary(df_cluster, cluster_number)
-                cluster.to_csv("cluster_summary_" + str(cluster_number) + ".csv", index=False)
+                cluster.to_csv(
+                    "cluster_summary_" + str(cluster_number) + ".csv", index=False
+                )
 
             end_time = time.time()
             st.write("Cumulative Execution Time: ", end_time - start_time, "seconds")

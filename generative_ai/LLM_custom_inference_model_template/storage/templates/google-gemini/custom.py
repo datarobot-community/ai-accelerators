@@ -1,25 +1,30 @@
-import os
 import base64
 import json
+import os
+from time import time
 from typing import Iterator
 
 from datarobot_drum import RuntimeParameters
+from datarobot_drum.drum import description
 import google.auth
-import pandas as pd
-import openai
-from openai import OpenAI
-from openai.types.chat import ChatCompletion, ChatCompletionChunk, CompletionCreateParams
 import google.auth.transport.requests
 from google.oauth2 import service_account
+import openai
+from openai import OpenAI
+from openai.types.chat import (
+    ChatCompletion,
+    ChatCompletionChunk,
+    CompletionCreateParams,
+)
+import pandas as pd
 import requests
-from datarobot_drum.drum import description
-from time import time
 
 print(f"The DRUM Version is {description.version}")
 
 
-LOCATION = 'us-central1'
+LOCATION = "us-central1"
 TOKEN_CREATE_TIME = time()
+
 
 def get_google_credential():
     if os.getenv(
@@ -32,7 +37,8 @@ def get_google_credential():
         key = supplied_credential["gcpKey"]
         raw_credential, project = google.auth.load_credentials_from_dict(key)
         credential = raw_credential.with_scopes(
-            ['https://www.googleapis.com/auth/cloud-platform'])
+            ["https://www.googleapis.com/auth/cloud-platform"]
+        )
     else:
         try:
             credential, project = google.auth.default()
@@ -44,6 +50,7 @@ def get_google_credential():
             )
     return credential, project
 
+
 def get_token(credential):
     global TOKEN_CREATE_TIME
     TOKEN_CREATE_TIME = time()
@@ -52,15 +59,15 @@ def get_token(credential):
     return credential.token
 
 
-
 def load_model(*args, **kwargs):
     print(f"The DRUM Version is {description.version}")
     credential, project = get_google_credential()
     print(f"Got the Credential for {project}")
     token = get_token(credential)
     client = openai.OpenAI(
-    base_url = f'https://{LOCATION}-aiplatform.googleapis.com/v1beta1/projects/{project}/locations/{LOCATION}/endpoints/openapi',
-    api_key = token)
+        base_url=f"https://{LOCATION}-aiplatform.googleapis.com/v1beta1/projects/{project}/locations/{LOCATION}/endpoints/openapi",
+        api_key=token,
+    )
     return credential, client
 
 
@@ -73,18 +80,12 @@ def score(data, model, **kwargs):
         client.api_key = token
     for p in prompts:
         completion_create_params = {
-        "model": "google/gemini-1.5-flash-001",
-        "messages": [
-        {
-            "role": "system",
-            "content": "You are a helpful assistant."
-        },
-        {
-            "role": "user",
-            "content": p
+            "model": "google/gemini-1.5-flash-001",
+            "messages": [
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": p},
+            ],
         }
-        ]
-    }
         response = client.chat.completions.create(**completion_create_params)
         response_text = response.choices[0].message.content
         responses.append(response_text)
@@ -92,7 +93,9 @@ def score(data, model, **kwargs):
     return pd.DataFrame({"responseText": responses})
 
 
-def chat(completion_create_params: CompletionCreateParams, model: OpenAI, **kwargs)-> ChatCompletion | Iterator[ChatCompletionChunk]:
+def chat(
+    completion_create_params: CompletionCreateParams, model: OpenAI, **kwargs
+) -> ChatCompletion | Iterator[ChatCompletionChunk]:
     """Chat Hook compatibale with ChatCompletion
     OpenAI Specification
 
@@ -106,13 +109,14 @@ def chat(completion_create_params: CompletionCreateParams, model: OpenAI, **kwar
     Returns
     -------
     ChatCompletion
-        the completion object with generated choices. 
+        the completion object with generated choices.
     """
     credential, client = model
     if (time() - TOKEN_CREATE_TIME) > 1800:
         token = get_token(credential)
         client.api_key = token
     return client.chat.completions.create(**completion_create_params)
+
 
 # m = load_model()
 # chat({

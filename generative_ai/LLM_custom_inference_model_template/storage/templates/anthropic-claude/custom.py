@@ -1,10 +1,11 @@
+import os
+from time import time
+
 from anthropic import Anthropic
 from anthropic.types import CompletionCreateParams, Message
 from datarobot_drum import RuntimeParameters
-import pandas as pd
-import os
 from openai.types.chat import ChatCompletion
-from time import time
+import pandas as pd
 
 
 def load_model(*args, **kwargs):
