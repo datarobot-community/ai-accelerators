@@ -21,7 +21,7 @@ The following steps outline the accelerator workflow. If you experience network 
 ![add_credential](image/add_credential.png) 
 ![runtime_parameters](image/runtime_parameters.png)
 
-3. Upload the document to build a vectorstore with DataRobot or use exsiting vectorstore.
+3. Upload the document to build a vectorstore with DataRobot or use an existing vectorstore.
 
 ![upload_document](image/upload_document.png)
 ![upload_document](image/exsited_vdb.png)
