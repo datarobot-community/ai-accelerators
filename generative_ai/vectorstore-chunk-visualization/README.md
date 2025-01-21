@@ -2,7 +2,7 @@
 
 **Author:** senkin.zhan@datarobot.com
 
-**Demo data:** https://s3.us-east-1.amazonaws.com/datarobot_public_datasets/ai_accelerators/godzillaMinusOne.zip
+**Demo data:** https://s3.us-east-1.amazonaws.com/datarobot_public_datasets/ai_accelerators/DORAEMON.zip
 
 ## Problem framing
 
@@ -21,9 +21,10 @@ The following steps outline the accelerator workflow. If you experience network 
 ![add_credential](image/add_credential.png) 
 ![runtime_parameters](image/runtime_parameters.png)
 
-3. Upload the document to build a vectorstore with DataRobot.
+3. Upload the document to build a vectorstore with DataRobot or use an existing vectorstore.
 
 ![upload_document](image/upload_document.png)
+![upload_document](image/exsited_vdb.png)
 
 4. Build a summary of clusters with Azure OpenAI services.
 ![cluster_summary](image/cluster_summary.png)
