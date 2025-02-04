@@ -1,0 +1,18 @@
+---
+name: runtime-params
+runtimeParameterDefinitions:
+  - fieldName: ENABLE_GENAI
+    type: string
+    description: control setting True/False
+  - fieldName: OPENAI_API_KEY
+    type: credential
+    description: your Azure OpenAI token
+  - fieldName: OPENAI_API_VERSION
+    type: string
+    description: version of Azure OpenAI model, e.g. 2023-05-15
+  - fieldName: AZURE_OPENAI_ENDPOINT
+    type: string
+    description: OPENAI BASE, e.g. https://your_org.openai.azure.com/
+  - fieldName: AZURE_OPENAI_DEPLOYMENT
+    type: string
+    description: deployment name

@@ -1,0 +1,65 @@
+{
+    "Predictive": {
+      "Critical": [
+        { "id": "data_drift", "displayName": "Data Drift" },
+        { "id": "accuracy_monitoring", "displayName": "Accuracy Monitoring" },
+        { "id": "notifications", "displayName": "Notifications" },
+        { "id": "challenger_model", "displayName": "Challenger Model" },
+        { "id": "retraining_policy", "displayName": "Retraining Policy" },
+        { "id": "monitoring_job", "displayName": "Monitoring Job" },
+        { "id": "custom_metric", "displayName": "Custom Metric" },
+        { "id": "segment_analysis", "displayName": "Segment Analysis" },
+        { "id": "humility", "displayName": "Humility" },
+        { "id": "fairness", "displayName": "Fairness" },
+        { "id": "compliance_report", "displayName": "Compliance Report" }
+      ],
+      "High": [
+        { "id": "data_drift", "displayName": "Data Drift" },
+        { "id": "accuracy_monitoring", "displayName": "Accuracy Monitoring" },
+        { "id": "notifications", "displayName": "Notifications" },
+        { "id": "retraining_policy", "displayName": "Retraining Policy" },
+        { "id": "monitoring_job", "displayName": "Monitoring Job" },
+        { "id": "custom_metric", "displayName": "Custom Metric" },
+        { "id": "compliance_report", "displayName": "Compliance Report" }
+      ],
+      "Moderate": [
+        { "id": "data_drift", "displayName": "Data Drift" },
+        { "id": "accuracy_monitoring", "displayName": "Accuracy Monitoring" },
+        { "id": "notifications", "displayName": "Notifications" },
+        { "id": "custom_metric", "displayName": "Custom Metric" }
+      ],
+      "Low": [
+        { "id": "notifications", "displayName": "Notifications" },
+        { "id": "data_drift", "displayName": "Data Drift" }
+      ]
+    },
+  
+    "Generative": {
+      "Critical": [
+        { "id": "accuracy_monitoring", "displayName": "Tracing Table" },
+        { "id": "notifications", "displayName": "Notifications" },
+        { "id": "custom_metric", "displayName": "Custom Metric" },
+        { "id": "compliance_report", "displayName": "Compliance Report" },
+        { "id": "guard_configuration", "displayName": "Guard Configuration" },
+        { "id": "compliance_test", "displayName": "Compliance Test" }
+      ],
+      "High": [
+        { "id": "accuracy_monitoring", "displayName": "Tracing Table" },
+        { "id": "notifications", "displayName": "Notifications" },
+        { "id": "compliance_report", "displayName": "Compliance Report" },
+        { "id": "guard_configuration", "displayName": "Guard Configuration" },
+        { "id": "compliance_test", "displayName": "Compliance Test" }
+      ],
+      "Moderate": [
+        { "id": "accuracy_monitoring", "displayName": "Tracing Table" },
+        { "id": "notifications", "displayName": "Notifications" },
+        { "id": "compliance_report", "displayName": "Compliance Report" },
+        { "id": "compliance_test", "displayName": "Compliance Test" }
+      ],
+      "Low": [
+        { "id": "accuracy_monitoring", "displayName": "Tracing Table" },
+        { "id": "notifications", "displayName": "Notifications" }
+      ]
+    }
+  }
+  

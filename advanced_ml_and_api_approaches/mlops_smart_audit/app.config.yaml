@@ -1,0 +1,17 @@
+---
+description: This accelerator outlines a workflow to create an application that provides an interactive
+  dashboard for analyzing the MLOps configuration across multiple machine learning deployments. The application
+  examines each deployment for enabled capabilities (e.g., data drift detection, accuracy monitoring,
+  notifications, etc.) and produces a summarized, interactive view. This helps MLOps administrators assess
+  deployment quality, identify gaps, prioritize improvements, and check compliance scores.
+file_name: app.py
+languages:
+  - python
+maintainers:
+  - Philippe Lassale
+maintainers_email:
+  - philippe.lassale@datarobot.com
+smoke_test:
+  run_smoke_test: false
+tags: []
+title: MLOps smart audit
