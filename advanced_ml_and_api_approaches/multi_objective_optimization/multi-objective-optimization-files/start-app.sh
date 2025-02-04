@@ -7,5 +7,7 @@
 #  Released under the terms of DataRobot Tool and Utility Agreement.
 #
 echo "Starting App"
+# set OPTUNAHUB_CACHE_HOME to ./.cache
+export OPTUNAHUB_CACHE_HOME=./.cache
 
-streamlit run --server.port 8080 streamlit_app_dr.py
+streamlit run streamlit_app_dr.py --server.port 8080 --browser.gatherUsageStats False
