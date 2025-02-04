@@ -1,0 +1,9 @@
+datarobot
+numexpr
+numpy
+optuna
+optunahub
+pandas
+plotly
+requests
+streamlit

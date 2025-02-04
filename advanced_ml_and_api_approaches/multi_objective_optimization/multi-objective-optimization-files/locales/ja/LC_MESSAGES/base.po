@@ -1,0 +1,90 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Multi Objective Optimization App"
+msgstr "多目的最適化アプリ"
+
+msgid "Select features to be simulated"
+msgstr "シミュレーションする特徴量を選択"
+
+msgid "Simulated Features"
+msgstr "シミュレーション対象の特徴量"
+
+msgid "Please upload config.csv"
+msgstr "事前に`config.csv`をアップロードしてください"
+
+msgid "Dropped Features"
+msgstr "固定する特徴量"
+
+msgid "No features with fixed values."
+msgstr "固定する特徴量はありません。"
+
+msgid "Trials Number"
+msgstr "試行回数"
+
+msgid "Simulation Start!"
+msgstr "シミュレーション開始"
+
+msgid "Simulation Finished!"
+msgstr "シミュレーション完了"
+
+msgid "Please go to the Visualization tab to see the results."
+msgstr "結果タブ（ページの最上部）に移動してください"
+
+msgid "Select Two Targets"
+msgstr "2つの目的変数を選択"
+
+msgid "Please select two targets!"
+msgstr "2つの目的変数を選択してください!"
+
+msgid "Select Three Targets"
+msgstr "3つの目的変数を選択"
+
+msgid "Please select three targets!"
+msgstr "3つの目的変数を選択してください!"
+
+msgid "Download data as CSV"
+msgstr "CSVファイルをダウンロード"
+
+msgid "Simulation"
+msgstr "特徴量設定"
+
+msgid "Visualization"
+msgstr "結果の可視化"
+
+msgid "no_label"
+msgstr "カスタム式"
+
+msgid "Custom Direction Example:"
+msgstr "カスタム表記例："
+
+msgid "for support operators."
+msgstr "からサポートする式を参照"
+
+msgid "The custom expression will be **minized**."
+msgstr "式は**最小化**される"
+
+msgid "**Don't change the variable name `x`.**"
+msgstr "**`x`** は変更しないでください"
+
+msgid "make x close to 10"
+msgstr "xを10に近づける"
+
+msgid "penalize x > 5 and reward smaller x"
+msgstr "xを5以上しないようにする"
+
+msgid "keep x between 5 and 15"
+msgstr "xを5から15の間にする"
+
+msgid "Select X-axis"
+msgstr "X軸を選択"
+
+msgid " Scatter Plot"
+msgstr "プロット"
+
+msgid "Pareto Curve"
+msgstr "パレート図"
+
+msgid "optimization_result"
+msgstr "最適化結果"

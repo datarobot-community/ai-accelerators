@@ -1,0 +1,90 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Multi Objective Optimization App"
+msgstr "Multi Objective Optimization App"
+
+msgid "Select features to be simulated"
+msgstr "Select features to be simulated"
+
+msgid "Simulated Features"
+msgstr "Simulated Features"
+
+msgid "Please upload config.csv"
+msgstr "Please upload config.csv"
+
+msgid "Dropped Features"
+msgstr "Dropped Features"
+
+msgid "No features with fixed values."
+msgstr "No features with fixed values."
+
+msgid "Trials Number"
+msgstr "Trials Number"
+
+msgid "Simulation Start!"
+msgstr "Simulation Start!"
+
+msgid "Simulation Finished!"
+msgstr "Simulation Finished!"
+
+msgid "Please go to the Visualization tab to see the results."
+msgstr "Please go to the Visualization tab to see the results."
+
+msgid "Select Two Targets"
+msgstr "Select Two Targets"
+
+msgid "Please select two targets!"
+msgstr "Please select two targets!"
+
+msgid "Select Three Targets"
+msgstr "Select Three Targets"
+
+msgid "Please select three targets!"
+msgstr "Please select three targets!"
+
+msgid "Download data as CSV"
+msgstr "Download data as CSV"
+
+msgid "Simulation"
+msgstr "Simulation"
+
+msgid "Visualization"
+msgstr "Visualization"
+
+msgid "no_label"
+msgstr "Custom Expression"
+
+msgid "Custom Direction Example:"
+msgstr "Custom Direction Example:"
+
+msgid "for support operators."
+msgstr "for support operators."
+
+msgid "The custom expression will be **minized**."
+msgstr "The custom expression will be **minized**."
+
+msgid "**Don't change the variable name `x`.**"
+msgstr "**Don't change the variable name `x`.**"
+
+msgid "make x close to 10"
+msgstr "make x close to 10"
+
+msgid "penalize x > 5 and reward smaller x"
+msgstr "penalize x > 5 and reward smaller x"
+
+msgid "keep x between 5 and 15"
+msgstr "keep x between 5 and 15"
+
+msgid "Select X-axis"
+msgstr "Select X-axis"
+
+msgid " Scatter Plot"
+msgstr " Scatter Plot"
+
+msgid "Pareto Curve"
+msgstr "Pareto Curve"
+
+msgid "optimization_result"
+msgstr "optimization_result"
