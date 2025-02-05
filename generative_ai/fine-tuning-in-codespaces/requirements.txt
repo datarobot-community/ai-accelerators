@@ -1,0 +1,12 @@
+transformers==4.48.2 
+peft==0.14.0 
+langchain==0.3.17
+langchain-community==0.3.16 
+langchain-core==0.3.33 
+langchain-huggingface==0.1.2
+bitsandbytes==0.45.1 
+accelerate==1.3.0 
+trl==0.14.0
+datasets==3.2.0 
+wandb==0.19.5 
+python-dotenv

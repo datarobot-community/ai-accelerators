@@ -1,0 +1,17 @@
+---
+title: LLM Finetuning in DataRobot Code Spaces
+file_name: Fine-tuning in DataRobot Codespaces.ipynb
+description: |-
+  This is an end to end technical demonstration of fine-tuning an LLM in DataRobot Codespaces
+languages:
+  - python
+maintainers:
+  - Tim Whittaker
+maintainers_email:
+  - timothy.whittaker@datarobot.com
+smoke_test:
+  run_smoke_test: false
+  user_permissions:
+    - ENABLE_CUSTOM_MODEL_GPU_INFERENCE
+    - ENABLE_NOTEBOOKS_GPU
+tags: []
