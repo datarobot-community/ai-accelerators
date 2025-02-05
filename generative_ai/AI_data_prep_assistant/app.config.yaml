@@ -1,0 +1,15 @@
+---
+title: AI data preparation assistant
+file_name: streamlit_app.py
+description: |-
+  The AI data preparation assistant is a powerful tool designed to streamline and automate the data preparation process. It combines automated data quality checks with AI-powered data preparation suggestions to help data scientists and analysts prepare their datasets more efficiently.
+languages:
+  - python
+maintainers:
+  - Brett Olmstead
+maintainers_email:
+  - brett.olmstead@datarobot.com
+smoke_test:
+  run_smoke_test: false
+  user_permissions: []
+tags: []

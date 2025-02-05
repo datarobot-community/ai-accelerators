@@ -1,0 +1,10 @@
+streamlit
+pandas
+numpy
+scikit-learn
+scipy
+statsmodels
+openai 
+datasketch
+datarobot
+python-dotenv
