@@ -1,0 +1,9 @@
+numpy<2.0
+pandas==2.2.3
+networkx==3.4.2
+plotly==6.0.0
+torch==2.6.0
+dgl==1.1.0
+scikit-learn==1.6.1
+datarobot-drum==1.16.2
+datarobot==3.6.0
