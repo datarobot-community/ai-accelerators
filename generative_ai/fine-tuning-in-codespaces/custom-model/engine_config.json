@@ -1,0 +1,5 @@
+{
+  "args": [
+    "--model", "tim-w/llama-3.2-1b-dad-jokes"
+  ]
+}
