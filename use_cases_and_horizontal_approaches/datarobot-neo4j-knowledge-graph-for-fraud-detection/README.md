@@ -2,7 +2,7 @@
 
 <img src="datarobot_kg_neo4j.png"
      alt="Graph Schema Viz"
-     style="float: center; margin-right: 10px;" />
+     style="display: block; margin: 0 auto; width: 900px;" />
 
 This repository demonstrates how to build a **fraud detection pipeline** using:
 - **Neo4j** for storing and querying a knowledge graph of clients, loans, addresses, etc.
