@@ -1,5 +1,9 @@
 # Fraud Detection with Neo4j & DataRobot
 
+<img src="datarobot_kg_neo4j.png"
+     alt="Graph Schema Viz"
+     style="display: block; margin: 0 auto; width: 900px;" />
+
 This repository demonstrates how to build a **fraud detection pipeline** using:
 - **Neo4j** for storing and querying a knowledge graph of clients, loans, addresses, etc.
 - **DataRobot** for building a predictive model using graph-based features.
