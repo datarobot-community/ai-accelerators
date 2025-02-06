@@ -1,0 +1,14 @@
+---
+title: Fraud Detection with Neo4j & DataRobot
+file_name: 01_create_neo4j_db.ipynb
+description: |-
+  This repository demonstrates how to build a fraud detection pipeline using Neo4j and DataRobot.
+languages:
+  - python
+maintainers:
+  - Joel Gongora
+maintainers_email:
+  - joel.gongora@datarobot.com
+smoke_test:
+  run_smoke_test: false
+tags: []
