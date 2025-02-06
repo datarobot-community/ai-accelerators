@@ -1,0 +1,231 @@
+/* General Reset */
+
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    height: 100vh;
+}
+
+.container {
+    display: flex;
+    width: 100%;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #f4f4f4;
+    padding: 20px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    overflow-y: auto;
+    height: 100%;
+}
+
+/* Left Sidebar */
+.left-sidebar {
+    border-right: 1px solid #ccc;
+    height: 100%;
+}
+
+.right-sidebar {
+    border-left: 1px solid #ccc;
+    height: 100%;
+    position: relative;
+    transition: all 0.3s ease;
+    transition: all 0.3s ease;
+}
+.right-sidebar.collapsed {
+    width: 0;
+    padding: 0;
+}
+.sidebar .toggle-btn {
+    position: absolute;
+    top: 20px;
+    right: 100px;
+    /* left: -40px; */
+    font-size: 30px;
+    /* background: #333; */
+    color: white;
+    border: none;
+    cursor: pointer;
+} 
+
+.sidebar h2 {
+    margin-top: 0;
+    font-size: 20px;
+}
+
+.list {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0 0 0;
+}
+
+.list-item {
+    cursor: pointer;
+    padding: 10px;
+    background-color: #e9e9e9;
+    margin-bottom: 5px;
+    border-radius: 4px;
+    user-select: none;
+}
+
+.list-item:hover {
+    background-color: #dcdcdc;
+}
+
+.nested-list {
+    display: none;
+    list-style: none;
+    padding-left: 15px;
+    margin: 0;
+}
+
+.nested-list .list-item {
+    background-color: #f1f1f1;
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.input-group {
+
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.input-group input {
+    width: 30%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    padding: 10px 15px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.dropdown-container {
+    margin-top: 20px;
+}
+
+.dropdown-container label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+
+/* The switch - the box around the slider */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 30px;
+    height: 17px;
+  }
+  
+  /* Hide default HTML checkbox */
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  /* The slider */
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+  
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 11px;
+    width: 11px;
+    left: 4px;
+    bottom: 3px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+  
+  input:checked + .slider {
+    background-color: #2196F3;
+  }
+  
+  input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+  }
+  
+  input:checked + .slider:before {
+    -webkit-transform: translateX(12px);
+    -ms-transform: translateX(12px);
+    transform: translateX(12px);
+  }
+  
+  /* Rounded sliders */
+  .slider.round {
+    border-radius: 34px;
+  }
+  
+  .slider.round:before {
+    border-radius: 50%;
+  }
+
+  .reset-button {
+    position: absolute; /* Position the button relative to the container */
+    bottom: 10px; /* Distance from the bottom edge */
+    left: 10px; /* Distance from the right edge */
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .export-graph-button {
+    position: absolute; /* Position the button relative to the container */
+    bottom: 50px; /* Distance from the bottom edge */
+    left: 10px; /* Distance from the right edge */
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
