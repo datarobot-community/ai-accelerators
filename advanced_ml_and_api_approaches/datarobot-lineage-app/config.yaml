@@ -1,0 +1,16 @@
+---
+title: DataRobot Lineage App
+file_name: README.md
+description: |-
+  This application allows you to view dependency graphs for DataRobot Use Cases.  It is Use case-centric, so all assets for a use case are retrieved, and from there we fill in all asset parents.  
+languages:
+  - javascript
+  - python
+maintainers:
+  - Tim Whittaker
+maintainers_email:
+  - timothy.whittaker
+smoke_test:
+  run_smoke_test: false
+  user_permissions: []
+tags: []

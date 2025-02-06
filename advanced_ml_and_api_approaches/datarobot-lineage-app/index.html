@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataRobot Lineage Viewer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="sidebar left-sidebar">
+        <h2>Artifacts</h2>
+        <ul class="list" id="artifact-list">
+            <!-- <li class="list-item">Datasets
+                <ul class="nested-list">
+                    <li class="list-item" value="Some value">Sub-item 1.1</li>
+                    <li class="list-item" value="Some other Vluae">Sub-item 1.2</li>
+                </ul>
+            </li>
+            <li class="list-item">Projects
+                <ul class="nested-list">
+                    <li class="list-item">Sub-item 2.1</li>
+                    <li class="list-item">Sub-item 2.2</li>
+                </ul>
+            </li> -->
+        </ul>
+    </div>
+    <div class="container">
+        <!-- Left Sidebar -->
+        
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <p>
+                <img src="./datarobot.png" alt="datarobot", width = 25%, height="auto">
+            </p>
+            <button id="configure-api">Configure API</button>
+            <h2 id = "configure-api-title"></h2>
+            <div class="input-group">
+                <label for="api-token" id="api-token-label" style="display: none;">Enter your API Token</label>
+                <input type="password" id="api-token" style="display: none;" placeholder="Your redacted text here">
+            </div>
+            <div class="input-group">
+                <label for="endpoint" id="endpoint-label" style="display: none;">Enter your Endpoint</label>
+                <input type="text" id="endpoint" style="display: none;" value="https://app.datarobot.com/api/v2">
+            </div>
+            <button id="get-use-cases">Get Your Use Cases</button>
+            <div class="dropdown-container">
+                <label for="use-cases">Select Use Case</label>
+                <select id="use-cases">
+                    <option value="">-- Select Use Case --</option>
+                    <option value="use-case-1">Use Case 1</option>
+                    <option value="use-case-2">Use Case 2</option>
+                </select>
+            </div>
+            <p>Hierarchical View</p>
+            <p>
+                <label class="switch">
+                    <input type="checkbox" id = "directed-graph-toggle">
+                    <span class="slider round"></span>
+                </label>
+            </p>
+            <p>
+                <input type="button" id="btn-UD" value="Up-Down" style="display: none;"/>
+                <input type="button" id="btn-DU" value="Down-Up" style="display: none;"/>
+                <input type="button" id="btn-LR" value="Left-Right" style="display: none;"/>
+                <input type="button" id="btn-RL" value="Right-Left" style="display: none;"/>
+                <input type="hidden" id="direction" value="LR" style="display: none;"/>
+              </p>
+              <h2 id="title">Graph of Use Case</h2>
+              <button class="export-graph-button" id="export-graph">Export Graph</button>
+              <button class="reset-button" id="reset-button">Reset Graph</button>
+            <container id="network">
+
+            </container>
+        </div>
+
+        <!-- Right Sidebar -->
+        
+    </div>
+    <div class="sidebar right-sidebar" id="right-sidebar">
+        <!-- <button class="toggle-btn" onclick="toggleSidebar()">☰</button> -->
+        <div id = "sidebar-content" class="sidebar-content">Select a node to view its details!!!</div>
+    </div>
+    <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+
+    <!-- Include your own script with type="module" -->
+    <script type="module" src="script.js"></script>
+
+</body>
+</html>
