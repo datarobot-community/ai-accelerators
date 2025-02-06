@@ -1,0 +1,20 @@
+---
+description: Tabular data is one of the most common ways data is represented in machine learning. However,
+  it is not the only structure that can be used. Many real-world problems involve relationships between
+  entities that can be better captured using graph structures. Graph data represents entities as nodes
+  and relationships as edges, making it a powerful tool for capturing relational dependencies. This accelerator
+  shows how one can enrich the feature space with graph-based embeddings automatically through use of
+  DataRobot’s custom transformer functionality.
+file_name: GDL Featurizer.ipynb
+languages:
+  - python
+maintainers:
+  - Taylor Larkin
+  - Mackenzie McPike
+maintainers_email:
+  - taylor.larkin@datarobot.com
+  - mackenzie.mcpike@datarobot.com
+smoke_test:
+  run_smoke_test: false
+tags: []
+title: Geometric Deep Learning Featurizer for Tabular Data
