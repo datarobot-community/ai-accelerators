@@ -1,0 +1,11 @@
+name: Evaluating_XoT_strategies
+runtime:
+  name: python
+  options:
+    toolchain: pip
+    virtualenv: venv
+description: A minimal Python Pulumi program
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: python

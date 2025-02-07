@@ -1,0 +1,17 @@
+---
+description: This accelerator introduces the implementation and evaluation of XoT (Everything of Thoughts) in DataRobot, which is the latest approach to make generative AI "think like humans." In the world of generative AI, various methods (called thought generation) are being researched to help AI acquire more human-like "thinking patterns." In particular, XoT aims to produce more accurate answers by teaching generative AI the "thinking process."
+file_name: XoT Evaluations_vdb.ipynb
+languages:
+  - python
+maintainers:
+  - Yifu Gu
+  - Greig Bloom
+  - Mitsuo Yamamoto
+maintainers_email:
+  - yifu.gu@datarobot.com, 
+  - greig.bloom@datarobot.com
+  - mitsuo.yamamoto@datarobot.com
+smoke_test:
+  run_smoke_test: false
+tags: []
+title: Everything of Thoughts (XoT) Implementation in DataRobot
