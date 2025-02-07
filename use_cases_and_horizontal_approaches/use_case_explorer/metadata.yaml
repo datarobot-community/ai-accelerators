@@ -1,0 +1,6 @@
+name: runtime-params
+
+runtimeParameterDefinitions:
+  - fieldName: DEFAULT_PROJECT_LENGTH
+    type: string
+    description: Number of days to plot on timeline if target date is undefined
