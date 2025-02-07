@@ -1,0 +1,4 @@
+datarobot>=3.5.2
+streamlit==1.40.2
+bson==0.5.10
+streamlit-timeline==0.0.2
