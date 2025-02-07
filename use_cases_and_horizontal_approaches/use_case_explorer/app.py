@@ -230,7 +230,7 @@ def render_use_case_header(use_case):
 
 # Grab all the use cases and append them to the list of elements to render in the sidebar
 def render_sidebar():
-    st.sidebar.image("logo.svg", use_column_width=True)
+    st.sidebar.image("logo.svg", use_container_width=True)
     st.sidebar.header("Use Cases")
     use_cases = dr.UseCase.list()
     element_list = []
@@ -272,8 +272,8 @@ def render_use_case(use_case_id):
     registered_model_list = ""
     deployed_model_list = ""
     dataset_list = ""
-    registered_models = []
-    deployed_models = []
+    # registered_models = []
+    # deployed_models = []
     starred_models = {}
 
     # grab use case start date and default project length to fill in the timeline in case no target date is defined
@@ -287,13 +287,11 @@ def render_use_case(use_case_id):
     # collect associated assets
     projects = uc.list_projects()
     datasets = uc.list_datasets()
-    registeredModels = client.get(f"useCases/{use_case_id}/registeredModels").json()
-    for m in registeredModels["data"]:
-        for v in m["versions"]:
-            registered_models.append(dr.RegisteredModel.get(m['id']))            
-    deployments = client.get(f"useCases/{use_case_id}/deployments").json()
-    for d in deployments["data"]:
-        deployed_models.append(dr.Deployment.get(d['id']))
+    registered_models = client.get(f"useCases/{use_case_id}/registeredModels").json()["data"]
+    deployed_models = client.get(f"useCases/{use_case_id}/deployments").json()["data"]
+    vector_dbs = client.get(f"useCases/{use_case_id}/vectorDatabases").json()["data"]
+    playgrounds = client.get(f"useCases/{use_case_id}/playgrounds").json()["data"]
+    apps = client.get(f"useCases/{use_case_id}/applications").json()["data"]
 
     # render status variables and description
     target_date = "Undefined ❌"
@@ -398,6 +396,17 @@ def render_use_case(use_case_id):
             },
             "group": 1
         })
+    for v in vector_dbs:
+        node_date = ObjectId(v["id"]).generation_time
+        events['events'].append({
+            "start_date": {
+                "year":node_date.year, "month":node_date.month, "day":node_date.day
+            }, 
+            "text": {
+                "headline":"Vector Database Created", "text":v["id"]
+            },
+            "group": 1
+        })
     for p in projects:
         # grab and save all the starred models in the project. this will also be used when rendering the project list
         starred_models[p.id] = p.get_models(search_params={'is_starred': True},use_new_models_retrieval=True)
@@ -422,27 +431,50 @@ def render_use_case(use_case_id):
                 },
                 "group": 2
             })
-    for m in registered_models:
-        node_date = ObjectId(m.id).generation_time
+    for p in playgrounds:
+        node_date = ObjectId(p["id"]).generation_time
         events['events'].append({
             "start_date": {
                 "year":node_date.year, "month":node_date.month, "day":node_date.day
             }, 
             "text": {
-                "headline":"Model Registered", "text":m.name
+                "headline":"Generative AI Playground Created", "text":p["id"]
+            },
+            "group": 2
+        })
+    for m in registered_models:
+        node_date = ObjectId(m["id"]).generation_time
+        events['events'].append({
+            "start_date": {
+                "year":node_date.year, "month":node_date.month, "day":node_date.day
+            }, 
+            "text": {
+                "headline":"Model Registered", "text":m["name"]
             },
             "group": 3
         })
     for m in deployed_models:
-        node_date = ObjectId(m.id).generation_time
+        node_date = ObjectId(m["id"]).generation_time
         events['events'].append({
             "start_date": {
                 "year":node_date.year, "month":node_date.month, "day":node_date.day
             }, 
             "text": {
-                "headline":"Model Deployed", "text":m.label
+                "headline":"Model Deployed", "text":m["label"]
             },
             "group": 4
+        })
+    for a in apps:
+        print(a)
+        node_date = ObjectId(a["applicationId"]).generation_time
+        events['events'].append({
+            "start_date": {
+                "year":node_date.year, "month":node_date.month, "day":node_date.day
+            }, 
+            "text": {
+                "headline":"Application Registered", "text":a["name"]
+            },
+            "group": 1
         })
     st.title("Project Timeline")
     timeline(events, height=380)
@@ -450,6 +482,8 @@ def render_use_case(use_case_id):
     # render list of datasets
     for d in datasets:
         dataset_list += f"<strong>Dataset: <a href=\"{d.get_uri()}\">{d.name}</a><br><br>"
+    for v in vector_dbs:
+        dataset_list += f"<strong>Vector Database: <a href=\"https://app.datarobot.com/usecases/{uc.id}/vector-databases/{p["id"]}\">{p["id"]}</a><br>"
     styled_text_box(f"<h2>Setup</h2>{dataset_list}")
 
     # render list of projects and any starred models they contain
@@ -459,12 +493,14 @@ def render_use_case(use_case_id):
             project_list += "<strong>Starred Models: </strong>"
             project_list += ", ".join([f"<a href=\"{m.get_uri()}\">{m.model_type}</a>" for m in starred_models[p.id]])
         project_list += "<br><br>"
+    for p in playgrounds:
+        project_list += f"<strong>Playground: <a href=\"https://app.datarobot.com/usecases/{uc.id}/playgrounds/{p["id"]}/info\">{p["id"]}</a><br>"
     styled_text_box(f"<h2>Evaluation</h2>{project_list}")
 
     # render list of registered models
     if len(registered_models)> 0:
         registered_model_list += "<strong>Registered Models: </strong>"
-        registered_model_list += "  \n".join([f"<a href=\"https://app.datarobot.com/registry/registered-models/{rm.id}/\">{rm.name}</a><br>" for rm in registered_models])
+        registered_model_list += "  \n".join([f"<a href=\"https://app.datarobot.com/registry/registered-models/{rm["id"]}/\">{rm["name"]}</a><br>" for rm in registered_models])
     else:
         registered_model_list = "There are no models currently registered from this use case."
     styled_text_box(f"<h2>Approval</h2>{registered_model_list}")
@@ -472,9 +508,11 @@ def render_use_case(use_case_id):
     # render list of deployed models
     if len(deployed_models)> 0:
         deployed_model_list += "<strong>Deployed Models: </strong>"
-        deployed_model_list += "  \n".join([f"<a href=\"{d.get_uri()}\">{d.label}</a>" for d in deployed_models])
+        deployed_model_list += "  \n".join([f"<a href=\"https://app.datarobot.com/console-nextgen/deployments/{d["id"]}/overview\">{d["label"]}</a>" for d in deployed_models])
     else:
         deployed_model_list = "There are no models currently deployed from this use case."
+    for a in apps:
+        deployed_model_list += f"<br><strong>Application: <a href=\"https://app.datarobot.com/registry/applications/{a["source"]}/app-info/{a["applicationId"]}\">{a["name"]}</a><br>"
     styled_text_box(f"<h2>Production</h2>{deployed_model_list}")
 
 
