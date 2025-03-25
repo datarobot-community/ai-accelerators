@@ -1,0 +1,26 @@
+---
+title: Fraud Detection with DataRobot & Neo4j Knowledge Graph
+file_name: 02_fraud_detection_dr_project_and_update_neo4j.ipynb
+description: |-
+  This notebook walks through a full end-to-end pipeline for fraud detection 
+  using a Neo4j knowledge graph and the DataRobot platform. 
+  It includes data extraction from Neo4j, training and scoring models in DataRobot, 
+  retrieving predictions and explanations, and optionally writing results back into Neo4j.
+languages:
+  - python
+authors:
+  - Joel A. Gónogra
+maintainers:
+  - João Gomes
+maintainers_email:
+  - joao@datarobot.com
+smoke_test:
+  run_smoke_test: false
+  user_permissions: []
+tags:
+  - datarobot
+  - neo4j
+  - fraud-detection
+  - ai-accelerator
+  - knowledge-graph
+  - graph-ml
