@@ -33,9 +33,7 @@ class CatBoostClassifier_wrapper:
         return self.model
 
     def predict_proba(self, data: pd.DataFrame):
-        return pd.DataFrame(
-            data=self.model.predict_proba(data), columns=self.model.classes_
-        )
+        return pd.DataFrame(data=self.model.predict_proba(data), columns=self.model.classes_)
 
 
 def catboost_pipeline(X):

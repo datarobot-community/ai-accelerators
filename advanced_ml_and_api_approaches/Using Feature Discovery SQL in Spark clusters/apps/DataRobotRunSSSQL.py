@@ -26,9 +26,7 @@ class CSVInputData:
     def load_csv(self, spark: SparkSession):
         df = spark.read.csv(self.absolute_file_path, header=True, inferSchema=True)
         df.createOrReplaceTempView(self.table_name)
-        print(
-            f"\nLoaded CSV file {self.absolute_file_path} into table {self.table_name}"
-        )
+        print(f"\nLoaded CSV file {self.absolute_file_path} into table {self.table_name}")
 
     def validate_table(self, spark: SparkSession):
         try:
@@ -76,9 +74,7 @@ class OutputData:
         elif output_type == "table":
             self.table_name = name
         else:
-            raise ValueError(
-                "Output type must be either 'csv', 'parquet', 'csvfile' or 'table'"
-            )
+            raise ValueError("Output type must be either 'csv', 'parquet', 'csvfile' or 'table'")
 
     def save_output(self, spark: SparkSession, result: DataFrame):
         print(f"\nResult has {result.count()} records")
@@ -218,18 +214,14 @@ def parse_sql_blocks(file_path: str) -> List[namedtuple]:
     last_block = blocks[-1].strip()
     if last_block:
         # Remove single-line comments
-        last_sql = re.sub(
-            r"/\*\s*-+\s*\*/", "", last_block
-        )  # Remove separator comments
+        last_sql = re.sub(r"/\*\s*-+\s*\*/", "", last_block)  # Remove separator comments
         last_sql = re.sub(r"/\*\s*--.*?\*/", "", last_sql)  # Remove view name comments
 
         # Remove multi-line DESCRIPTION comments
         last_sql = re.sub(r"/\*\s*DESCRIPTION:.*?\*/", "", last_sql, flags=re.DOTALL)
 
         # Remove empty lines and strip whitespace
-        last_sql = "\n".join(
-            line.strip() for line in last_sql.split("\n") if line.strip()
-        )
+        last_sql = "\n".join(line.strip() for line in last_sql.split("\n") if line.strip())
         result.append(SqlBlock("Final Block", last_sql))
 
     return result
@@ -269,9 +261,7 @@ def main():
     spark = ssb.getOrCreate()
 
     # Register and list DataRobot spark functions
-    spark._jvm.com.datarobot.safer.spark.extensions.SAFER(
-        spark._jsparkSession
-    ).registerFunctions()
+    spark._jvm.com.datarobot.safer.spark.extensions.SAFER(spark._jsparkSession).registerFunctions()
     result = spark.sql("SHOW FUNCTIONS LIKE 'dr*'").collect()
     print(f"\nSpark DataRobot SAFER functions:")
     for row in result:

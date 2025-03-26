@@ -72,9 +72,7 @@ class DataRobotKeyValueHelper:
         self._datarobot_token = datarobot_token
         self._entity_id = entity_id
         self._entity_type = entity_type
-        self._api_key = (
-            DataRobotKeyValueHelper.AUTHORIZATION_TOKEN_PREFIX + self._datarobot_token
-        )
+        self._api_key = DataRobotKeyValueHelper.AUTHORIZATION_TOKEN_PREFIX + self._datarobot_token
         self._common_headers = {"Authorization": self._api_key}
         self._verify = verify_ssl
         self._allow_update = allow_update
@@ -119,9 +117,7 @@ class DataRobotKeyValueHelper:
         kv_id = self.get_kv_id(name, category)
         if kv_id is None:
             return None
-        url = (
-            self._datarobot_uri + DataRobotKeyValueHelper.KV_API_ENDPOINT + "/" + kv_id
-        )
+        url = self._datarobot_uri + DataRobotKeyValueHelper.KV_API_ENDPOINT + "/" + kv_id
         response = requests.delete(url, headers=headers, verify=self._verify)
         if not response.ok:
             print(response.text)
@@ -147,9 +143,7 @@ class DataRobotKeyValueHelper:
 
         headers = dict(self._common_headers)
         headers.update({"Content-Type": "application/json"})
-        response = requests.post(
-            url, data=json.dumps(data), headers=headers, verify=self._verify
-        )
+        response = requests.post(url, data=json.dumps(data), headers=headers, verify=self._verify)
         if not response.ok:
             print(response.text)
             return False
@@ -175,9 +169,7 @@ class DataRobotKeyValueHelper:
             name, category=KVCategory.TAG, value=value, value_type=KVValueType.STRING
         )
 
-    def set_artifact(
-        self, name: str, path: str, artifact_type: str, description: str = None
-    ):
+    def set_artifact(self, name: str, path: str, artifact_type: str, description: str = None):
         if not os.path.exists(path):
             raise Exception("Path {} does not exists".format(path))
         if os.path.isdir(path):
@@ -202,8 +194,6 @@ class DataRobotKeyValueHelper:
 
         headers = dict(self._common_headers)
         files = {"file": open(path, "rb")}
-        response = requests.post(
-            url, data=data, files=files, headers=headers, verify=self._verify
-        )
+        response = requests.post(url, data=data, files=files, headers=headers, verify=self._verify)
         if not response.ok:
             print(response.text)

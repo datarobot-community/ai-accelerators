@@ -76,9 +76,7 @@ class ScoringService(object):
 
         # MLOPS: report the number of predictions in the request and the execution time.
         ml_ops = cls.get_mlops()
-        ml_ops.report_deployment_stats(
-            predictions_array.shape[0], execution_time * 1000
-        )
+        ml_ops.report_deployment_stats(predictions_array.shape[0], execution_time * 1000)
 
         # MLOPS: report features, predictions, and class names
         ml_ops.report_predictions_data(
@@ -99,9 +97,7 @@ app = flask.Flask(__name__)
 def ping():
     """Determine if the container is working and healthy. In this sample container, we declare
     it healthy if we can load the model successfully."""
-    health = (
-        ScoringService.get_model() is not None
-    )  # You can insert a health check here
+    health = ScoringService.get_model() is not None  # You can insert a health check here
 
     status = 200 if health else 404
     return flask.Response(response="\n", status=status, mimetype="application/json")

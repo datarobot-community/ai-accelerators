@@ -88,7 +88,5 @@ if __name__ == "__main__":
     model_state_dict = load_model("model_state_dict.htp")
     image = "display_imgs/scratches_261.jpg"
 
-    result = score_unstructured(
-        model=model_state_dict, data=image, query={"ret_mode": "csv"}
-    )
+    result = score_unstructured(model=model_state_dict, data=image, query={"ret_mode": "csv"})
     print(result)

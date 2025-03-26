@@ -34,9 +34,7 @@ def error_retry_decision(x) -> bool:
         if x.status_code == 422:
             if "message" in x.json.keys():
                 if "Unable to add jobs to the queue" in x.json["message"]:
-                    print(
-                        "Unable to add jobs to the queue! Waiting and trying again..."
-                    )
+                    print("Unable to add jobs to the queue! Waiting and trying again...")
                     return True
 
     else:
@@ -109,14 +107,12 @@ def _sort_models(
         metrics = project.get_metrics(feature_name=project.target)
 
     # Capture direction
-    ascending = [
-        x for x in metrics["metric_details"] if x["metric_name"].startswith(metric)
-    ][0]["ascending"]
+    ascending = [x for x in metrics["metric_details"] if x["metric_name"].startswith(metric)][0][
+        "ascending"
+    ]
 
     # Ensuring we only have models where keys have a value
-    models_with_score = [
-        model for model in models if model.metrics[metric][partition] is not None
-    ]
+    models_with_score = [model for model in models if model.metrics[metric][partition] is not None]
 
     # Return sorted models
     return sorted(
@@ -144,21 +140,15 @@ def _model_cleanup(
     """
 
     # Pull updated jobs
-    model_jobs = [
-        dr.models.job.Job.get(project_id=project.id, job_id=x) for x in model_job_ids
-    ]
+    model_jobs = [dr.models.job.Job.get(project_id=project.id, job_id=x) for x in model_job_ids]
 
     # Find the models that were successful
-    model_jobs = [
-        x for x in model_jobs if x.status == dr.enums.ASYNC_PROCESS_STATUS.COMPLETED
-    ]
+    model_jobs = [x for x in model_jobs if x.status == dr.enums.ASYNC_PROCESS_STATUS.COMPLETED]
     models = [x.get_result_when_complete(max_wait=60 * 60 * 24) for x in model_jobs]
     print(f"{len(models)} completed successfully!")
 
     # Sorting models
-    sorted_models = _sort_models(
-        project=project, models=models, partition=partition, metric=metric
-    )
+    sorted_models = _sort_models(project=project, models=models, partition=partition, metric=metric)
 
     # Finding models to delete (if more than <max_n_models_to_keep>)
     n_models = len(sorted_models)
@@ -200,9 +190,7 @@ def tuning_hyperparameters(
     # Create list of every possible combination
     keys, values = zip(*advanced_tuning_grid.items())
     hyperparameter_combos = [dict(zip(keys, v)) for v in itertools.product(*values)]
-    print(
-        f"Number of hyperparameter combinations to evaluate: {len(hyperparameter_combos)}"
-    )
+    print(f"Number of hyperparameter combinations to evaluate: {len(hyperparameter_combos)}")
 
     # Pull tuning parameters to pass to model later
     tuning_parameters = model.get_advanced_tuning_parameters()["tuning_parameters"]
@@ -219,9 +207,7 @@ def tuning_hyperparameters(
                 # Get id from parameter name
                 # This allows you to tune, even when a parameter name is shared
                 param_ids = [
-                    x["parameter_id"]
-                    for x in tuning_parameters
-                    if x["parameter_name"] == key
+                    x["parameter_id"] for x in tuning_parameters if x["parameter_name"] == key
                 ]
 
                 # Cycle through parameter IDs (in case there's multiple for a parameter name
@@ -249,9 +235,7 @@ def tuning_hyperparameters(
                 model_job_ids.append(error.json["previousJob"]["id"])
 
     print(f"Waiting for {len(model_job_ids)} models...")
-    model_jobs = [
-        dr.models.job.Job.get(project_id=project.id, job_id=x) for x in model_job_ids
-    ]
+    model_jobs = [dr.models.job.Job.get(project_id=project.id, job_id=x) for x in model_job_ids]
     [x.wait_for_completion(max_wait=60 * 60 * 24) for x in model_jobs]
 
     # Cleaning things up
@@ -331,21 +315,14 @@ def get_top_of_leaderboard(project, metric="AUC", verbose=True):
                 processes.append(p)
         # Print a leaderboard summary:
         print("Unique blueprints tested: " + str(len(leaderboard_df["bp_id"].unique())))
-        print(
-            "Feature lists tested: " + str(len(leaderboard_df["featurelist"].unique()))
-        )
+        print("Feature lists tested: " + str(len(leaderboard_df["featurelist"].unique())))
         print("Models trained: " + str(len(leaderboard_df)))
-        print(
-            "Blueprints in the project repository: "
-            + str(len(project.get_blueprints()))
-        )
+        print("Blueprints in the project repository: " + str(len(project.get_blueprints())))
         print("Feature engineering and preprocessing steps ran: ", len(processes))
 
         # Print key info for top models, sorted by accuracy on validation data:
         print("\n\nTop models in the leaderboard:")
-        displayhook(
-            leaderboard_top.drop(columns=["bp_id", "featurelist"], inplace=False)
-        )
+        displayhook(leaderboard_top.drop(columns=["bp_id", "featurelist"], inplace=False))
 
         # # Show blueprints of top models:
         # for index, m in leaderboard_top.iterrows():
@@ -383,9 +360,7 @@ def parameters_to_df(params, keep_duplicates=False):
         axis=1,
     )
     dat_param.drop(columns=["constraints"], inplace=True)
-    dat_param["parameter_name_type"] = (
-        dat_param["parameter_name"] + "_" + dat_param["param_type"]
-    )
+    dat_param["parameter_name_type"] = dat_param["parameter_name"] + "_" + dat_param["param_type"]
     res = dat_param[
         [
             "task_name",
@@ -402,9 +377,7 @@ def parameters_to_df(params, keep_duplicates=False):
         ]
     ].sort_values("parameter_name_type")
     if keep_duplicates is not None:
-        res.drop_duplicates(
-            subset="parameter_name_type", keep=keep_duplicates, inplace=True
-        )
+        res.drop_duplicates(subset="parameter_name_type", keep=keep_duplicates, inplace=True)
     return res.reset_index(drop=True).sort_values(by="task_name")
 
 
@@ -519,9 +492,7 @@ def get_tuned_parameters(project, model, validation_type):
 
     param_search.reset_index(inplace=True)
 
-    list_of_target_parameters = param_search[
-        param_search.is_tuned
-    ].parameter_name_type.tolist()
+    list_of_target_parameters = param_search[param_search.is_tuned].parameter_name_type.tolist()
     param = None
     if list_of_target_parameters:
         param_space = all_parameters.loc[

@@ -37,24 +37,22 @@ def alert_slack(context: dict):
         for ti in task_instances
         if ti.state == "failed"
     ]
-    title = f"<@shu.li>\n:red_circle: Dag: *{dag_id}* has failed, with ({len(failed_tis)}) failed tasks"
+    title = (
+        f"<@shu.li>\n:red_circle: Dag: *{dag_id}* has failed, with ({len(failed_tis)}) failed tasks"
+    )
     messages = {
         "Execution date": execution_date,
         "Failed tasks": ", ".join(failed_tis),
         "Error": error_message,
     }
-    message = "\n".join(
-        [title, *[f"*{key}*: {value}" for key, value in messages.items()]]
-    ).strip()
+    message = "\n".join([title, *[f"*{key}*: {value}" for key, value in messages.items()]]).strip()
     SlackWebhookHook(
         webhook_token=SLACK_WEBHOOK,
         message=message,
     ).execute()
 
 
-def create_custom_task(
-    custom_task_name: str, custom_task_folder: str, custom_task_desc: str = ""
-):
+def create_custom_task(custom_task_name: str, custom_task_folder: str, custom_task_desc: str = ""):
     datarobot_conn_id = "datarobot_default"
     DataRobotHook(datarobot_conn_id).run()
     transform = dr.CustomTask.create(
@@ -182,9 +180,7 @@ def generate_docs(template_id: str, model_package_id):
     )
     doc.generate()
     doc.download()
-    print(
-        f"https://staging.datarobot.com/model-registry/model-packages/{model_package_id}"
-    )
+    print(f"https://staging.datarobot.com/model-registry/model-packages/{model_package_id}")
 
 
 with DAG(

@@ -16,9 +16,7 @@ class DefaultConfig:
     APP_PASSWORD = os.environ.get(
         "MicrosoftAppPassword", ""
     )  # Client Secret from Bot Configure page.
-    DATAROBOT_TOKEN = os.environ.get(
-        "apiToken", ""
-    )  # DataRobot API Token for authorization
+    DATAROBOT_TOKEN = os.environ.get("apiToken", "")  # DataRobot API Token for authorization
     DATAROBOT_ENDPOINT = os.environ.get(
         "DATAROBOT_ENDPOINT", "https://app.datarobot.com/api/v2"
     )  # DataRobot Endpoint

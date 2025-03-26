@@ -27,11 +27,7 @@ class Featurizer:
         if array is not None:
             self.S = np.abs(librosa.stft(array, n_fft=self.n_fft))
             self.spec_features.update(
-                {
-                    "spectrogram": generate_base64_image(
-                        create_spectrogram_image(self.S, self.sr)
-                    )
-                }
+                {"spectrogram": generate_base64_image(create_spectrogram_image(self.S, self.sr))}
             )
 
     def _calc_vector_features(self, vec, suffix=None):
@@ -104,25 +100,19 @@ class Featurizer:
         )
         self.features.update(feat_spectral_centroid)
 
-        feat_spectral_bandwidth = feature.spectral_bandwidth(S=self.S, freq=self.freqs)[
-            0
-        ]
+        feat_spectral_bandwidth = feature.spectral_bandwidth(S=self.S, freq=self.freqs)[0]
         feat_spectral_bandwidth = self._calc_vector_features(
             feat_spectral_bandwidth, suffix="spec_bandwidth_"
         )
         self.features.update(feat_spectral_bandwidth)
 
-        feat_spectral_bandwidth_3 = feature.spectral_bandwidth(
-            S=self.S, freq=self.freqs, p=3
-        )[0]
+        feat_spectral_bandwidth_3 = feature.spectral_bandwidth(S=self.S, freq=self.freqs, p=3)[0]
         feat_spectral_bandwidth_3 = self._calc_vector_features(
             feat_spectral_bandwidth_3, suffix="spec_bandwidth_3_"
         )
         self.features.update(feat_spectral_bandwidth_3)
 
-        feat_spectral_bandwidth_4 = feature.spectral_bandwidth(
-            S=self.S, freq=self.freqs, p=4
-        )[0]
+        feat_spectral_bandwidth_4 = feature.spectral_bandwidth(S=self.S, freq=self.freqs, p=4)[0]
         feat_spectral_bandwidth_4 = self._calc_vector_features(
             feat_spectral_bandwidth_4, suffix="spec_bandwidth_4_"
         )
@@ -154,9 +144,7 @@ class Featurizer:
 
     def _create_all_spectrograms(self):
         # now lets get array features
-        array_melspectrogram = feature.melspectrogram(
-            S=self.S, sr=self.sr, n_fft=self.n_fft
-        )
+        array_melspectrogram = feature.melspectrogram(S=self.S, sr=self.sr, n_fft=self.n_fft)
         self.spec_features.update(
             {
                 "spectrogram_mel": generate_base64_image(
@@ -167,18 +155,10 @@ class Featurizer:
 
         h, p = decompose.hpss(S=self.S)
         self.spec_features.update(
-            {
-                "spectrogram_harmonic": generate_base64_image(
-                    create_spectrogram_image(h, self.sr)
-                )
-            }
+            {"spectrogram_harmonic": generate_base64_image(create_spectrogram_image(h, self.sr))}
         )
         self.spec_features.update(
-            {
-                "spectrogram_percussive": generate_base64_image(
-                    create_spectrogram_image(p, self.sr)
-                )
-            }
+            {"spectrogram_percussive": generate_base64_image(create_spectrogram_image(p, self.sr))}
         )
 
         return self.spec_features
@@ -191,24 +171,16 @@ class Featurizer:
 
     def _extract_mfcc_feature_means(self, number_of_mfcc=8):
         mfcc_alt = librosa.feature.mfcc(S=self.S, n_mfcc=number_of_mfcc)
-        feat_1 = {
-            "feat_mfcc_" + str(i): np.mean(mfcc_alt[i]) for i in range(len(mfcc_alt))
-        }
+        feat_1 = {"feat_mfcc_" + str(i): np.mean(mfcc_alt[i]) for i in range(len(mfcc_alt))}
 
         if min(self.S.shape[1], 9) >= 3:
             delta = librosa.feature.delta(mfcc_alt, width=min(self.S.shape[1], 9))
-            feat_2 = {
-                "feat_mfcc_delta_" + str(i): np.mean(delta[i])
-                for i in range(len(delta))
-            }
+            feat_2 = {"feat_mfcc_delta_" + str(i): np.mean(delta[i]) for i in range(len(delta))}
             feat_1.update(feat_2)
 
-            accelerate = librosa.feature.delta(
-                mfcc_alt, order=2, width=min(self.S.shape[1], 9)
-            )
+            accelerate = librosa.feature.delta(mfcc_alt, order=2, width=min(self.S.shape[1], 9))
             feat_3 = {
-                "feat_mfcc_accel_" + str(i): np.mean(accelerate[i])
-                for i in range(len(accelerate))
+                "feat_mfcc_accel_" + str(i): np.mean(accelerate[i]) for i in range(len(accelerate))
             }
             feat_1.update(feat_3)
 

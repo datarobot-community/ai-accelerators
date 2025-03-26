@@ -60,9 +60,7 @@ class MyBot(TeamsActivityHandler):
         time_end = datetime.now()
         link_block = []
         if len(references) > 0:
-            link_block.append(
-                {"type": "TextBlock", "size": "medium", "text": "References:"}
-            )
+            link_block.append({"type": "TextBlock", "size": "medium", "text": "References:"})
             fs = {"type": "FactSet", "facts": []}
             for link in references:
                 # [Adaptive cards!](https://adaptivecards.io)

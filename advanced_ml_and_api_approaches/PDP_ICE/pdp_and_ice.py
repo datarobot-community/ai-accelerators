@@ -16,9 +16,7 @@ API_KEY = ""
 ENDPOINT = "https://app.datarobot.com/api/v2"
 DATAROBOT_KEY = ""
 
-DEFAULT_HOVER_LABEL = dict(
-    bgcolor="white", font_size=16, font_family="Rockwell", namelength=-1
-)
+DEFAULT_HOVER_LABEL = dict(bgcolor="white", font_size=16, font_family="Rockwell", namelength=-1)
 
 
 def get_column_name_mappings(project_id) -> list:
@@ -311,9 +309,7 @@ class PartialDependencePlot:
                 shap_impact = shap_impact_job.get_result_when_complete()
             except:
                 # Retrieve SHAP impact if it already exists
-                shap_impact = dr.ShapImpact.get(
-                    project_id=self.project.id, model_id=self.model.id
-                )
+                shap_impact = dr.ShapImpact.get(project_id=self.project.id, model_id=self.model.id)
             return shap_impact
 
     def create_pdp_plot(
@@ -353,9 +349,7 @@ class PartialDependencePlot:
 
         """
         assert isinstance(max_bins, int), "max_bins must be an integer"
-        assert (
-            1 < max_bins <= 10
-        ), "max_bins must be greater than 1 and less than or equal to 10"
+        assert 1 < max_bins <= 10, "max_bins must be greater than 1 and less than or equal to 10"
         tickformat = ",.0" if self.project.target_type == "Regression" else ",.0%"
         two_way_pdp = pd.DataFrame()
 
@@ -379,9 +373,7 @@ class PartialDependencePlot:
         # Calculate one-way Partial Depedence
         if self.weights:
             w_mean = lambda x: np.average(x, weights=preds.loc[x.index, self.weights])
-            w_std = lambda x: np.sqrt(
-                np.cov(x, aweights=preds.loc[x.index, self.weights])
-            )
+            w_std = lambda x: np.sqrt(np.cov(x, aweights=preds.loc[x.index, self.weights]))
 
             one_way_pdp = (
                 preds.groupby(feature_1)
@@ -422,11 +414,7 @@ class PartialDependencePlot:
             elif feature_2 in self.df.select_dtypes(include=["object"]).columns:
                 unique_values = len(two_way_pdp[feature_2].unique())
                 if unique_values > max_bins:
-                    top_bins = (
-                        two_way_pdp[feature_2]
-                        .value_counts()[0 : max_bins - 1]
-                        .index.values
-                    )
+                    top_bins = two_way_pdp[feature_2].value_counts()[0 : max_bins - 1].index.values
                     other_bin = two_way_pdp.loc[
                         ~two_way_pdp[feature_2].isin(top_bins), feature_2
                     ].unique()
@@ -442,9 +430,7 @@ class PartialDependencePlot:
                 )
 
             if self.weights:
-                w_mean = lambda x: np.average(
-                    x, weights=two_way_pdp.loc[x.index, self.weights]
-                )
+                w_mean = lambda x: np.average(x, weights=two_way_pdp.loc[x.index, self.weights])
                 w_std = lambda x: np.sqrt(
                     np.cov(x, aweights=two_way_pdp.loc[x.index, self.weights])
                 )
@@ -474,9 +460,9 @@ class PartialDependencePlot:
             one_way_pdp["mean"] = one_way_pdp["mean"] - one_way_pdp["mean"][0]
 
             if feature_2:
-                two_way_pdp["mean"] = two_way_pdp["mean"] - two_way_pdp.groupby(
-                    feature_2
-                )["mean"].transform("first")
+                two_way_pdp["mean"] = two_way_pdp["mean"] - two_way_pdp.groupby(feature_2)[
+                    "mean"
+                ].transform("first")
 
         # Create plots
         fig = go.Figure()
@@ -511,9 +497,7 @@ class PartialDependencePlot:
 
                 m = min(n, preds_temp.shape[0])
                 for i in preds_temp["index"].unique()[0:m]:
-                    t = preds_temp.loc[
-                        preds_temp["index"] == i, [feature_1, col]
-                    ].copy()
+                    t = preds_temp.loc[preds_temp["index"] == i, [feature_1, col]].copy()
                     fig.add_trace(
                         go.Scatter(
                             x=t[feature_1],
@@ -595,8 +579,7 @@ class PartialDependencePlot:
                         name="Lower Bound",
                         showlegend=False,
                         x=one_way_pdp[feature_1],
-                        y=one_way_pdp["mean"]
-                        - one_way_pdp["std"] / np.sqrt(one_way_pdp["count"]),
+                        y=one_way_pdp["mean"] - one_way_pdp["std"] / np.sqrt(one_way_pdp["count"]),
                         mode="lines",
                         line=dict(width=0),
                         marker=dict(
@@ -639,8 +622,7 @@ class PartialDependencePlot:
                         name="Upper Bound",
                         showlegend=False,
                         x=one_way_pdp[feature_1],
-                        y=one_way_pdp["mean"]
-                        + one_way_pdp["std"] / np.sqrt(one_way_pdp["count"]),
+                        y=one_way_pdp["mean"] + one_way_pdp["std"] / np.sqrt(one_way_pdp["count"]),
                         mode="lines",
                         marker=dict(color="#444"),
                         line=dict(width=0),

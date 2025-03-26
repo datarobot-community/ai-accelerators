@@ -11,9 +11,7 @@ def get_deployment_info(deployment_id: str, dr_token: str, dr_url: str) -> dict:
     client = dr.Client(token=dr_token, endpoint=dr_url)
     response = client.get("deployments/{}".format(deployment_id))
     if response.status_code != 200:
-        raise ValueError(
-            "Failed to get deployment info for deployment {}".format(deployment_id)
-        )
+        raise ValueError("Failed to get deployment info for deployment {}".format(deployment_id))
     deployment = response.json()
     label = deployment["label"]
     model_info = deployment["model"]
@@ -33,16 +31,12 @@ def get_deployment_info(deployment_id: str, dr_token: str, dr_url: str) -> dict:
     }
 
 
-def get_deployment_infos(
-    deployment_ids: list[str], dr_token: str, dr_url: str
-) -> list[dict]:
+def get_deployment_infos(deployment_ids: list[str], dr_token: str, dr_url: str) -> list[dict]:
     max_workers = max(len(deployment_ids), 10)
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         deployments_info = list(
             executor.map(
-                lambda deployment_id: get_deployment_info(
-                    deployment_id, dr_token, dr_url
-                ),
+                lambda deployment_id: get_deployment_info(deployment_id, dr_token, dr_url),
                 deployment_ids,
             )
         )
@@ -53,9 +47,7 @@ class DataRobotPredictionError(Exception):
     """Raised if there are issues getting predictions from DataRobot"""
 
 
-def make_datarobot_deployment_predictions(
-    data, deployment_id, dr_token, dr_key, pred_url
-):
+def make_datarobot_deployment_predictions(data, deployment_id, dr_token, dr_key, pred_url):
     # Set HTTP headers. The charset should match the contents of the file.
     headers = {
         "Content-Type": "application/json; charset=UTF-8",
@@ -81,9 +73,7 @@ def _raise_dataroboterror_for_status(response):
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
-        err_msg = "{code} Error: {msg}".format(
-            code=response.status_code, msg=response.text
-        )
+        err_msg = "{code} Error: {msg}".format(code=response.status_code, msg=response.text)
         raise DataRobotPredictionError(err_msg)
 
 
@@ -95,9 +85,7 @@ def get_prediction(df, deployment_id, dr_token, dr_key, pred_url):
 
     if predictions_response.status_code != 200:
         try:
-            message = predictions_response.json().get(
-                "message", predictions_response.text
-            )
+            message = predictions_response.json().get("message", predictions_response.text)
             status_code = predictions_response.status_code
             reason = predictions_response.reason
 
