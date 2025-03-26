@@ -64,14 +64,18 @@ def display_data_quality_results(filename: str, df: pd.DataFrame):
             is_first_issue = i == 0
             with st.expander(f"⚠️ {display_name}", expanded=is_first_issue):
                 if "results_df" in result and not result["results_df"].empty:
-                    st.dataframe(result["results_df"], hide_index=True, use_container_width=True)
+                    st.dataframe(
+                        result["results_df"], hide_index=True, use_container_width=True
+                    )
                 else:
                     st.markdown(result["recommendation"])
 
 
 def main():
     st.set_page_config(
-        page_title="AI Data Prep", page_icon="assets/datarobot_favicon.png", layout="wide"
+        page_title="AI Data Prep",
+        page_icon="assets/datarobot_favicon.png",
+        layout="wide",
     )
 
     # Add DataRobot logo
@@ -85,7 +89,9 @@ def main():
 
     # Sidebar: CSV Upload and Clear Data
     st.sidebar.title("Upload CSV Files")
-    uploaded_files = st.sidebar.file_uploader("Choose CSV files", accept_multiple_files=True)
+    uploaded_files = st.sidebar.file_uploader(
+        "Choose CSV files", accept_multiple_files=True
+    )
 
     # Add Clear Data button to sidebar
     if st.sidebar.button("Clear All Data"):
@@ -97,7 +103,9 @@ def main():
             df = pd.read_csv(uploaded_file)
             st.session_state["datasets"][uploaded_file.name] = df
             # Store metadata for each dataset
-            st.session_state["datasets_metadata"][uploaded_file.name] = get_dataset_metadata(df)
+            st.session_state["datasets_metadata"][
+                uploaded_file.name
+            ] = get_dataset_metadata(df)
 
     # Add title
     st.title("AI Data Preparation Assistant")
@@ -145,12 +153,16 @@ def main():
                             selected_issues[filename][check] = result
 
             st.subheader("Additional Data Preparation Steps")
-            user_instructions = st.text_area("Enter additional data preparation instructions")
+            user_instructions = st.text_area(
+                "Enter additional data preparation instructions"
+            )
 
             if st.button("Generate and Execute Data Prep"):
                 with st.spinner("Generating and executing data preparation code..."):
                     result = generate_and_execute_data_prep(
-                        st.session_state["datasets_metadata"], selected_issues, user_instructions
+                        st.session_state["datasets_metadata"],
+                        selected_issues,
+                        user_instructions,
                     )
 
                     if isinstance(result, list):
@@ -164,7 +176,8 @@ def main():
                             st.subheader("Generated Data Preparation Code")
                             if "generated_code" in st.session_state:
                                 st.code(
-                                    st.session_state["generated_code"]["code"], language="python"
+                                    st.session_state["generated_code"]["code"],
+                                    language="python",
                                 )
 
                             # Show success message
@@ -172,8 +185,12 @@ def main():
 
                             # Display processed datasets
                             st.subheader("Processed Datasets")
-                            for i, df in enumerate(st.session_state["processed_dataframes"]):
-                                with st.expander(f"Processed Dataset {i+1}", expanded=True):
+                            for i, df in enumerate(
+                                st.session_state["processed_dataframes"]
+                            ):
+                                with st.expander(
+                                    f"Processed Dataset {i+1}", expanded=True
+                                ):
                                     # Display first 1000 rows
                                     st.dataframe(df.head(1000), height=600)
 

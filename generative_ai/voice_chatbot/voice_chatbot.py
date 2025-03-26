@@ -117,7 +117,9 @@ def _raise_dataroboterror_for_status(response):
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
-        err_msg = "{code} Error: {msg}".format(code=response.status_code, msg=response.text)
+        err_msg = "{code} Error: {msg}".format(
+            code=response.status_code, msg=response.text
+        )
         raise DataRobotPredictionError(err_msg)
 
 
@@ -128,7 +130,9 @@ def make_prediction(prompt) -> dict:
         }
     ]
 
-    response = make_datarobot_deployment_predictions(rag_ep, data, DEPLOYMENT_ID, token, rag_drkey)
+    response = make_datarobot_deployment_predictions(
+        rag_ep, data, DEPLOYMENT_ID, token, rag_drkey
+    )
 
     if (
         (not response)
@@ -137,7 +141,9 @@ def make_prediction(prompt) -> dict:
     ):
         raise RuntimeError(f"Exception in Custom Model! {response}")
     print(response)
-    report.write(f"lantency = {response['data'][0]['extraModelOutput']['datarobot_latency']}")
+    report.write(
+        f"lantency = {response['data'][0]['extraModelOutput']['datarobot_latency']}"
+    )
     report.write(
         f"token count = {response['data'][0]['extraModelOutput']['datarobot_token_count']}"
     )
@@ -156,7 +162,9 @@ def ini_chat():
     if BOT_Selection == "ARTC":
         initial_msg = "Do you want to know more about the event?"
     if BOT_Selection == "DataRobot":
-        initial_msg = "Do you have any question to machine learning and AI with DataRobot?"
+        initial_msg = (
+            "Do you have any question to machine learning and AI with DataRobot?"
+        )
     if BOT_Selection == "Survey":
         initial_msg = make_prediction(
             "Let's start the survey from the beginneing, one question at one time."

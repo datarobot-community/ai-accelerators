@@ -22,8 +22,12 @@ parser.add_argument(
     "--use-case-id",
     help="ID of use case for which you would like a graph",
 )
-parser.add_argument("--node-output-file", help="json output of nodes", default="dr_nodes.json")
-parser.add_argument("--edge-output-file", help="json output of edges", default="dr_edges.json")
+parser.add_argument(
+    "--node-output-file", help="json output of nodes", default="dr_nodes.json"
+)
+parser.add_argument(
+    "--edge-output-file", help="json output of edges", default="dr_edges.json"
+)
 
 client = dr.Client()
 
@@ -41,7 +45,11 @@ def get_datastore_node(datastore_id, use_case_id):
         )
     except Exception as e:
         node = dict(
-            assetId=datastore_id, label="datastore", name="unknown", parents=[], note=str(e)
+            assetId=datastore_id,
+            label="datastore",
+            name="unknown",
+            parents=[],
+            note=str(e),
         )
     return node
 
@@ -50,7 +58,9 @@ def get_datasource_node(datasource_id, datastore_id, use_case_id):
     try:
         resp = client.get(f"externalDataSources/{datasource_id}").json()
         name = resp["canonicalName"]
-        datastore_id = resp["params"]["dataStoreId"] if datastore_id is None else datastore_id
+        datastore_id = (
+            resp["params"]["dataStoreId"] if datastore_id is None else datastore_id
+        )
         node = dict(
             assetId=datasource_id,
             name=name,
@@ -60,7 +70,11 @@ def get_datasource_node(datasource_id, datastore_id, use_case_id):
         )
     except Exception as e:
         node = dict(
-            assetId=datasource_id, name="unknown", label="datasource", parents=[], note=str(e)
+            assetId=datasource_id,
+            name="unknown",
+            label="datasource",
+            parents=[],
+            note=str(e),
         )
     return node
 
@@ -71,12 +85,18 @@ def get_recipe_node(recipe_id, use_case_id):
     parents = []
     for input in inputs:
         if input["inputType"] == "datasource":
-            node = get_datasource_node(input["dataSourceId"], input["dataStoreId"], use_case_id)
+            node = get_datasource_node(
+                input["dataSourceId"], input["dataStoreId"], use_case_id
+            )
         elif input["inputType"] == "dataset":
-            node = get_dataset_node(input["datasetId"], input["datasetVersionId"], use_case_id)
+            node = get_dataset_node(
+                input["datasetId"], input["datasetVersionId"], use_case_id
+            )
         parents.append(node)
     url = os.path.join(URL, "usecases", use_case_id, "wrangler", recipe_id)
-    return dict(assetId=recipe_id, label="recipes", parents=parents, url=url, name=resp["name"])
+    return dict(
+        assetId=recipe_id, label="recipes", parents=parents, url=url, name=resp["name"]
+    )
 
 
 def get_dataset_node(dataset_id, dataset_version_id=None, use_case_id=None):
@@ -88,7 +108,9 @@ def get_dataset_node(dataset_id, dataset_version_id=None, use_case_id=None):
             dataset = dr.Dataset.get(dataset_id)
             dataset_version_id = dataset.version_id
 
-        dataset = client.get(f"datasets/{dataset_id}/versions/{dataset_version_id}").json()
+        dataset = client.get(
+            f"datasets/{dataset_id}/versions/{dataset_version_id}"
+        ).json()
         recipe_id = dataset.get("recipeId")
         datasource_id = dataset.get("dataSourceId")
         data_engine_query_id = dataset.get("dataEngineQueryId")
@@ -98,7 +120,9 @@ def get_dataset_node(dataset_id, dataset_version_id=None, use_case_id=None):
         if datasource_id is not None:
             parents.append(get_datasource_node(datasource_id, None, use_case_id))
         if data_engine_query_id is not None:
-            parents.append(dict(label="dataEngineQueries", assetId=data_engine_query_id))
+            parents.append(
+                dict(label="dataEngineQueries", assetId=data_engine_query_id)
+            )
         dataset_node = dict(
             assetId=dataset.get("datasetId"),
             assetVersionId=dataset.get("versionId"),
@@ -127,7 +151,9 @@ def get_vectordatabase_node(vdb_id, use_case_id):
             dataset_version_id = (
                 dataset.version_id
             )  ## dataset version id is not available from vdb.
-            dataset_node = get_dataset_node(dataset.id, dataset_version_id, use_case_id=use_case_id)
+            dataset_node = get_dataset_node(
+                dataset.id, dataset_version_id, use_case_id=use_case_id
+            )
             url = os.path.join(URL, "usecases", use_case_id, "vector-databases", vdb.id)
             vdb_node = dict(
                 assetId=vdb.id,
@@ -177,7 +203,9 @@ def get_model_node(dr_model, project_node):
         model_node = dict(
             assetId=dr_model.id,
             label="models",
-            url=os.path.join(URL, "projects", dr_model.project_id, "models", dr_model.id),
+            url=os.path.join(
+                URL, "projects", dr_model.project_id, "models", dr_model.id
+            ),
             modelType=dr_model.model_type,
             modelFamily=dr_model.model_family,
             parents=[project_node],
@@ -192,7 +220,9 @@ def get_model_nodes(pid, use_case_id):
     try:
         project = dr.Project.get(pid)
         project_node = get_project_node(pid, use_case_id)
-        model_nodes = [get_model_node(model, project_node) for model in project.get_model_records()]
+        model_nodes = [
+            get_model_node(model, project_node) for model in project.get_model_records()
+        ]
         return model_nodes
     except Exception as e:
         print(e)
@@ -200,11 +230,16 @@ def get_model_nodes(pid, use_case_id):
 
 
 def get_custom_model_version_node(
-    custom_model_id, custom_model_version_id=None, custom_model_version_label=None, use_case_id=None
+    custom_model_id,
+    custom_model_version_id=None,
+    custom_model_version_label=None,
+    use_case_id=None,
 ):
     try:
         if custom_model_version_label:
-            custom_model_versions = client.get(f"customModels/{custom_model_id}/versions").json()
+            custom_model_versions = client.get(
+                f"customModels/{custom_model_id}/versions"
+            ).json()
             custom_model_version = [
                 cm
                 for cm in custom_model_versions["data"]
@@ -214,7 +249,9 @@ def get_custom_model_version_node(
         elif custom_model_version_id:
             pass
         else:
-            raise Exception("need either custom model version id or custommodel version label")
+            raise Exception(
+                "need either custom model version id or custommodel version label"
+            )
         url = os.path.join(
             URL,
             "registry",
@@ -240,15 +277,24 @@ def get_registered_model_node(reg_model_id, reg_model_version_id, use_case_id):
         f"registeredModels/{reg_model_id}/versions/{reg_model_version_id}"
     ).json()
     url = os.path.join(
-        URL, "registry", "registered-models", reg_model_id, "version", reg_model_version_id, "info"
+        URL,
+        "registry",
+        "registered-models",
+        reg_model_id,
+        "version",
+        reg_model_version_id,
+        "info",
     )
     try:
         custom_model_id = reg_model_version["sourceMeta"]["customModelDetails"]["id"]
-        custom_model_versions = client.get(f"customModels/{custom_model_id}/versions").json()
+        custom_model_versions = client.get(
+            f"customModels/{custom_model_id}/versions"
+        ).json()
         custom_model_version = [
             cm
             for cm in custom_model_versions["data"]
-            if cm["label"] == reg_model_version["sourceMeta"]["customModelDetails"]["versionLabel"]
+            if cm["label"]
+            == reg_model_version["sourceMeta"]["customModelDetails"]["versionLabel"]
         ].pop()
         custom_model_node = get_custom_model_version_node(
             custom_model_id, custom_model_version["id"]
@@ -287,10 +333,12 @@ def get_deployment_node(dep_id, use_case_id):
         reg_model_id = mp["registered_model_id"]
         reg_model_name = mp["name"]
         try:
-            reg_model_versions = client.get(f"registeredModels/{reg_model_id}/versions").json()[
-                "data"
-            ]
-            reg_model_version = [v for v in reg_model_versions if v["name"] == reg_model_name].pop()
+            reg_model_versions = client.get(
+                f"registeredModels/{reg_model_id}/versions"
+            ).json()["data"]
+            reg_model_version = [
+                v for v in reg_model_versions if v["name"] == reg_model_name
+            ].pop()
             reg_model_node = get_registered_model_node(
                 reg_model_id, reg_model_version["id"], use_case_id
             )
@@ -323,7 +371,13 @@ def get_llm_blueprint_nodes(playground_id, use_case_id):
     temp = []
     for llm_bp in llm_blueprints:
         url = os.path.join(
-            URL, "usecases", use_case_id, "playgrounds", playground_id, "llmBlueprint", llm_bp["id"]
+            URL,
+            "usecases",
+            use_case_id,
+            "playgrounds",
+            playground_id,
+            "llmBlueprint",
+            llm_bp["id"],
         )
         node = dict(
             assetId=llm_bp["id"],
@@ -337,7 +391,12 @@ def get_llm_blueprint_nodes(playground_id, use_case_id):
                     assetId=playground_id,
                     label="playgrounds",
                     url=os.path.join(
-                        URL, "usecases", use_case_id, "playgrounds", playground_id, "comparison"
+                        URL,
+                        "usecases",
+                        use_case_id,
+                        "playgrounds",
+                        playground_id,
+                        "comparison",
                     ),
                 ),
             ],
@@ -391,23 +450,40 @@ if __name__ == "__main__":
             recipes["data"].append(resp)
 
     dataset_nodes = [
-        get_dataset_node(d["datasetId"], d["versionId"], use_case_id) for d in datasets["data"]
+        get_dataset_node(d["datasetId"], d["versionId"], use_case_id)
+        for d in datasets["data"]
     ]
-    recipe_nodes = [get_recipe_node(r["recipeId"], use_case_id) for r in recipes["data"]]
-    deployment_nodes = [get_deployment_node(d["id"], use_case_id) for d in deployments["data"]]
-    vdb_nodes = [get_vectordatabase_node(d["id"], use_case_id) for d in vector_databases["data"]]
-    project_nodes = [get_project_node(d["projectId"], use_case_id) for d in projects["data"]]
-    model_nodes = [get_model_nodes(d["projectId"], use_case_id) for d in projects["data"]]
+    recipe_nodes = [
+        get_recipe_node(r["recipeId"], use_case_id) for r in recipes["data"]
+    ]
+    deployment_nodes = [
+        get_deployment_node(d["id"], use_case_id) for d in deployments["data"]
+    ]
+    vdb_nodes = [
+        get_vectordatabase_node(d["id"], use_case_id) for d in vector_databases["data"]
+    ]
+    project_nodes = [
+        get_project_node(d["projectId"], use_case_id) for d in projects["data"]
+    ]
+    model_nodes = [
+        get_model_nodes(d["projectId"], use_case_id) for d in projects["data"]
+    ]
     registered_model_nodes = []
     for m in registeredModels["data"]:
         for v in m["versions"]:
-            registered_model_nodes.append(get_registered_model_node(m["id"], v["id"], use_case_id))
-    llm_bp_llm_nodes = [get_llm_blueprint_nodes(d["id"], use_case_id) for d in playgrounds["data"]]
+            registered_model_nodes.append(
+                get_registered_model_node(m["id"], v["id"], use_case_id)
+            )
+    llm_bp_llm_nodes = [
+        get_llm_blueprint_nodes(d["id"], use_case_id) for d in playgrounds["data"]
+    ]
     playground_nodes = [
         dict(
             assetId=p["id"],
             label="playgrounds",
-            url=os.path.join(URL, "usecases", use_case_id, "playgrounds", p["id"], "comparison"),
+            url=os.path.join(
+                URL, "usecases", use_case_id, "playgrounds", p["id"], "comparison"
+            ),
             parents=[],
         )
         for p in playgrounds["data"]

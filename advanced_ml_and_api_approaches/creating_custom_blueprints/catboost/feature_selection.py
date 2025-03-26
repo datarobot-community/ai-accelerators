@@ -27,7 +27,9 @@ def is_text(x: pd.Series):
     """
     if pd.api.types.is_string_dtype(x):
         x_values = x.dropna()
-        pct_rows_with_whitespace = (x_values.str.count(r"\s") > 0).sum() / x_values.shape[0]
+        pct_rows_with_whitespace = (
+            x_values.str.count(r"\s") > 0
+        ).sum() / x_values.shape[0]
         pct_unique = float(x_values.unique().shape[0]) / x_values.shape[0]
         if pct_unique > 0.8:
             return True
@@ -53,13 +55,17 @@ def get_columns_by_type(X: pd.DataFrame):
     """
     data = X.copy()
     dict = {}
-    dict["num"] = data.columns[list(data.apply(is_numeric, result_type="expand"))].tolist()
+    dict["num"] = data.columns[
+        list(data.apply(is_numeric, result_type="expand"))
+    ].tolist()
     data.drop(dict["num"], axis=1, inplace=True)
 
     dict["txt"] = data.columns[list(data.apply(is_text, result_type="expand"))].tolist()
     data.drop(dict["txt"], axis=1, inplace=True)
 
-    dict["dat"] = data.columns[list(data.apply(is_datetime, result_type="expand"))].tolist()
+    dict["dat"] = data.columns[
+        list(data.apply(is_datetime, result_type="expand"))
+    ].tolist()
     data.drop(dict["dat"], axis=1, inplace=True)
 
     dict["cat"] = data.columns.tolist()

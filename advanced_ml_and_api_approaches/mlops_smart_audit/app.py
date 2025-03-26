@@ -35,7 +35,9 @@ client = dr.Client(token=DATAROBOT_API_TOKEN, endpoint=DATAROBOT_ENDPOINT)
 #    )
 
 # App Version
-ENABLE_GENAI = os.environ.get("MLOPS_RUNTIME_PARAM_ENABLE_GENAI", "FALSE").upper() == "TRUE"
+ENABLE_GENAI = (
+    os.environ.get("MLOPS_RUNTIME_PARAM_ENABLE_GENAI", "FALSE").upper() == "TRUE"
+)
 if ENABLE_GENAI:
     import openai
     import tiktoken
@@ -114,11 +116,15 @@ def load_capability_requirements(path="capability_requirements.json"):
 
     # Validate the structure
     if not isinstance(capability_requirements, dict):
-        raise ValueError("capability_requirements.json must be a dictionary at the top level.")
+        raise ValueError(
+            "capability_requirements.json must be a dictionary at the top level."
+        )
 
     for model_type in ["Predictive", "Generative"]:
         if model_type not in capability_requirements:
-            raise KeyError(f"Missing '{model_type}' section in capability_requirements.json.")
+            raise KeyError(
+                f"Missing '{model_type}' section in capability_requirements.json."
+            )
 
         for importance_level in ["Critical", "High", "Moderate", "Low"]:
             if importance_level not in capability_requirements[model_type]:
@@ -166,8 +172,12 @@ def data_drift(deployment_id):
     try:
         deployment = dr.Deployment.get(deployment_id)
         drift_settings = deployment.get_drift_tracking_settings()
-        target_drift_enabled = drift_settings.get("target_drift", {}).get("enabled", False)
-        feature_drift_enabled = drift_settings.get("feature_drift", {}).get("enabled", False)
+        target_drift_enabled = drift_settings.get("target_drift", {}).get(
+            "enabled", False
+        )
+        feature_drift_enabled = drift_settings.get("feature_drift", {}).get(
+            "enabled", False
+        )
         return target_drift_enabled or feature_drift_enabled
     except Exception:
         return False
@@ -182,7 +192,9 @@ def accuracy_monitoring(deployment_id):
         deployment = dr.Deployment.get(deployment_id)
         association_id_settings = deployment.get_association_id_settings()
         columns_set = association_id_settings.get("column_names", [])
-        required_in_requests = association_id_settings.get("required_in_prediction_requests", False)
+        required_in_requests = association_id_settings.get(
+            "required_in_prediction_requests", False
+        )
         return bool(columns_set or required_in_requests)
     except Exception:
         return False
@@ -368,7 +380,9 @@ def guard_configuration(deployment_id):
             return "NA"
 
         # Fetch the registered model version details
-        registered_model_url = f"registeredModels/{reg_model_id}/versions/{model_package_id}/"
+        registered_model_url = (
+            f"registeredModels/{reg_model_id}/versions/{model_package_id}/"
+        )
         registered_model_resp = client.get(registered_model_url)
 
         if registered_model_resp.status_code == 404:
@@ -380,7 +394,9 @@ def guard_configuration(deployment_id):
 
         # Parse the registered model details
         reg_model_data = registered_model_resp.json()
-        custom_model_details = reg_model_data.get("sourceMeta", {}).get("customModelDetails", {})
+        custom_model_details = reg_model_data.get("sourceMeta", {}).get(
+            "customModelDetails", {}
+        )
         custom_model_id = custom_model_details.get("id")
         version_label = custom_model_details.get("versionLabel")
 
@@ -428,7 +444,10 @@ def guard_configuration(deployment_id):
     except dr.errors.APIError as api_err:
         # Handle API-specific errors
         error_message = str(api_err).lower()
-        if "registered model not found" in error_message or "access denied" in error_message:
+        if (
+            "registered model not found" in error_message
+            or "access denied" in error_message
+        ):
             return "NA"
         return False
 
@@ -483,7 +502,9 @@ def compliance_test(deployment_id):
         return False
 
 
-def compute_compliance_score(data, capability_requirements, standard_caps, text_gen_caps):
+def compute_compliance_score(
+    data, capability_requirements, standard_caps, text_gen_caps
+):
     """
     Calculates the compliance score for a deployment.
 
@@ -510,7 +531,9 @@ def compute_compliance_score(data, capability_requirements, standard_caps, text_
     # 2. Retrieve capabilities based on model_type and model_importance
     if model_type not in capability_requirements:
         # Unknown model_type
-        st.warning(f"Unknown model_type '{model_type}'. Skipping compliance calculation.")
+        st.warning(
+            f"Unknown model_type '{model_type}'. Skipping compliance calculation."
+        )
         return 0.0
 
     mandatory_caps = capability_requirements[model_type].get(model_importance, [])
@@ -657,7 +680,9 @@ def check_deployment_status(deployment_id=None):
 
     # -- Run concurrency for standard vs. text-gen separately
     standard_results = run_checks_for_subset(standard_deployments, standard_checks)
-    text_gen_results = run_checks_for_subset(text_gen_deployments, text_generation_checks)
+    text_gen_results = run_checks_for_subset(
+        text_gen_deployments, text_generation_checks
+    )
 
     # 4) Merge the results
     deployment_status = standard_results + text_gen_results
@@ -734,7 +759,9 @@ def generate_llm_summary(df, all_caps):
 
     # Estimate tokens
     encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
-    prompt_without_data = prompt_template.format(deployment_data="", total_deployments=0)
+    prompt_without_data = prompt_template.format(
+        deployment_data="", total_deployments=0
+    )
     prompt_tokens = len(encoding.encode(prompt_without_data))
     data_tokens = len(encoding.encode(deployment_data_csv))
 
@@ -772,7 +799,9 @@ def generate_llm_summary(df, all_caps):
 # --------------------------------------------------
 # LLM Chatbot
 # --------------------------------------------------
-def generate_chatbot_response(user_question, deployment_data_csv, trunc_number_deployments):
+def generate_chatbot_response(
+    user_question, deployment_data_csv, trunc_number_deployments
+):
     prompt = f"""
         The following is a CSV data of deployments:
 
@@ -822,11 +851,15 @@ def render_chatbot(deployment_data_csv, trunc_number_deployments):
 
         if submit_button:
             if user_input:
-                st.session_state.chat_history.append({"role": "user", "content": user_input})
+                st.session_state.chat_history.append(
+                    {"role": "user", "content": user_input}
+                )
                 bot_response = generate_chatbot_response(
                     user_input, deployment_data_csv, trunc_number_deployments
                 )
-                st.session_state.chat_history.append({"role": "assistant", "content": bot_response})
+                st.session_state.chat_history.append(
+                    {"role": "assistant", "content": bot_response}
+                )
 
         chat_history_container = st.container()
         with chat_history_container:
@@ -921,9 +954,11 @@ def load_data():
 
     # For LLM summary
     if ENABLE_GENAI:
-        summary_text, deployment_data_csv, trunc_number_deployments = generate_llm_summary(
-            df, all_possible_caps
-        )
+        (
+            summary_text,
+            deployment_data_csv,
+            trunc_number_deployments,
+        ) = generate_llm_summary(df, all_possible_caps)
     else:
         summary_text, deployment_data_csv, trunc_number_deployments = "", "", 0
 
@@ -1130,7 +1165,9 @@ def get_display_name(model_type):
         for cap in caps:
             cap_id = cap.get("id")
             if cap_id and cap_id not in cap_id_to_display:
-                cap_id_to_display[cap_id] = cap.get("displayName", cap_id.replace("_", " ").title())
+                cap_id_to_display[cap_id] = cap.get(
+                    "displayName", cap_id.replace("_", " ").title()
+                )
     return cap_id_to_display
 
 
@@ -1152,7 +1189,9 @@ def render_header_boxes(df, title_text):
         avg_compliance_score = df["compliance_score"].mean()
 
     # Calculate total or average
-    st.markdown(f"<h4 style='margin-bottom:5px;'>{title_text}</h4>", unsafe_allow_html=True)
+    st.markdown(
+        f"<h4 style='margin-bottom:5px;'>{title_text}</h4>", unsafe_allow_html=True
+    )
     cols = st.columns(3)
     # 1) Number of Deployments
     cols[0].markdown(
@@ -1171,7 +1210,9 @@ def render_header_boxes(df, title_text):
     )
 
 
-def render_model_capability_summary(df, model_type, capabilities, capability_requirements):
+def render_model_capability_summary(
+    df, model_type, capabilities, capability_requirements
+):
     """
     Displays a row of boxes for the given model_type,
     showing the percentage of deployments with each capability enabled.
@@ -1180,7 +1221,9 @@ def render_model_capability_summary(df, model_type, capabilities, capability_req
     cap_id_to_display = get_display_name(model_type)
 
     # Aggregate capability usage
-    capability_usage = {cap: df[cap].sum() if cap in df.columns else 0 for cap in capabilities}
+    capability_usage = {
+        cap: df[cap].sum() if cap in df.columns else 0 for cap in capabilities
+    }
 
     # Create Streamlit columns
     cols = st.columns(len(capabilities))
@@ -1206,7 +1249,9 @@ def render_model_capability_summary(df, model_type, capabilities, capability_req
 # --------------------------------------------------
 def render_llm_summary(summary_text):
     with st.expander("Summary and Recommendations", expanded=False):
-        st.markdown(f"<div class='llm-summary'>{summary_text}</div>", unsafe_allow_html=True)
+        st.markdown(
+            f"<div class='llm-summary'>{summary_text}</div>", unsafe_allow_html=True
+        )
 
 
 # --------------------------------------------------
@@ -1240,7 +1285,9 @@ def render_critical_capabilities(capability_requirements):
                     st.markdown(f"#### {level_name}")
 
                     # Retrieve the list of capability objects
-                    capability_objects = capability_requirements[model_type].get(level_name, [])
+                    capability_objects = capability_requirements[model_type].get(
+                        level_name, []
+                    )
 
                     if not capability_objects:
                         st.write("No capabilities listed.")
@@ -1294,7 +1341,9 @@ def render_table_header():
     )
 
 
-def render_table_row(deployment, capabilities_line1, capabilities_line2, capabilities_line3=""):
+def render_table_row(
+    deployment, capabilities_line1, capabilities_line2, capabilities_line3=""
+):
     """
     Renders a single row for the given deployment.
     capabilities_line1, capabilities_line2, and capabilities_line3
@@ -1302,12 +1351,8 @@ def render_table_row(deployment, capabilities_line1, capabilities_line2, capabil
     """
     owners = "<br>".join(deployment["model_owners"])
     deployment_id = deployment["deployment_id"]
-    deployment_url = (
-        f"https://app.datarobot.com/console-nextgen/deployments/{deployment_id}/overview"
-    )
-    deployment_link = (
-        f"<a href='{deployment_url}' target='_blank' class='deployment-link'>View Deployment</a>"
-    )
+    deployment_url = f"https://app.datarobot.com/console-nextgen/deployments/{deployment_id}/overview"
+    deployment_link = f"<a href='{deployment_url}' target='_blank' class='deployment-link'>View Deployment</a>"
 
     deployment_label_html = f"""
     <div>
@@ -1344,7 +1389,9 @@ def render_table_row(deployment, capabilities_line1, capabilities_line2, capabil
     )
 
 
-def render_deployment_table(df, page_number=1, page_size=10, capability_requirements={}):
+def render_deployment_table(
+    df, page_number=1, page_size=10, capability_requirements={}
+):
     """
     Renders a paginated table of deployments, showing only the relevant capabilities
     for each model type (Predictive vs. Generative), using 'displayName' from JSON.
@@ -1439,9 +1486,15 @@ def render_filters(df):
     )
 
     # Owners
-    all_owners = sorted(set(owner for owners_list in df["model_owners"] for owner in owners_list))
-    selected_owners = st.sidebar.multiselect("Select Owners", options=all_owners, default=[])
-    excluded_owners = st.sidebar.multiselect("Exclude Owners", options=all_owners, default=[])
+    all_owners = sorted(
+        set(owner for owners_list in df["model_owners"] for owner in owners_list)
+    )
+    selected_owners = st.sidebar.multiselect(
+        "Select Owners", options=all_owners, default=[]
+    )
+    excluded_owners = st.sidebar.multiselect(
+        "Exclude Owners", options=all_owners, default=[]
+    )
 
     # Quality score range
     min_quality, max_quality = 0, 100
@@ -1488,9 +1541,13 @@ def render_filters(df):
         filtered_df = filtered_df[~filtered_df["model_type"].isin(excluded_types)]
 
     if selected_importances:
-        filtered_df = filtered_df[filtered_df["model_importance"].isin(selected_importances)]
+        filtered_df = filtered_df[
+            filtered_df["model_importance"].isin(selected_importances)
+        ]
     if excluded_importances:
-        filtered_df = filtered_df[~filtered_df["model_importance"].isin(excluded_importances)]
+        filtered_df = filtered_df[
+            ~filtered_df["model_importance"].isin(excluded_importances)
+        ]
 
     if selected_owners:
         filtered_df = filtered_df[
@@ -1536,7 +1593,9 @@ def render_filters(df):
 # --------------------------------------------------
 def render_page_selector(df, page_size_default=10):
     total_records = len(df)
-    total_pages = math.ceil(total_records / page_size_default) if total_records > 0 else 1
+    total_pages = (
+        math.ceil(total_records / page_size_default) if total_records > 0 else 1
+    )
 
     st.markdown("<h2>Deployments</h2>", unsafe_allow_html=True)
     content_col, spacer_col_right = st.columns([0.3, 0.7])
@@ -1545,7 +1604,11 @@ def render_page_selector(df, page_size_default=10):
         col_page, col_page_size = st.columns([1, 1])
         with col_page:
             page_number = st.number_input(
-                f"Page (1 - {total_pages})", min_value=1, max_value=total_pages, value=1, step=1
+                f"Page (1 - {total_pages})",
+                min_value=1,
+                max_value=total_pages,
+                value=1,
+                step=1,
             )
             st.write(f"Page {page_number} of {total_pages}")
 
@@ -1610,7 +1673,9 @@ def main():
 
     # Render the paginated deployment table
     page_number, page_size = render_page_selector(filtered_df, page_size_default=10)
-    render_deployment_table(filtered_df, page_number, page_size, capability_requirements)
+    render_deployment_table(
+        filtered_df, page_number, page_size, capability_requirements
+    )
 
 
 if __name__ == "__main__":

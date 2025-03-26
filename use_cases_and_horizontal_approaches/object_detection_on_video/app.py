@@ -57,7 +57,9 @@ def parse_arguments():
     parser = argparse.ArgumentParser(
         description="This is a DataRobot Glasses Detection Application"
     )
-    parser.add_argument("--deployment_id", action="store", default=[], help="Add the deployment ID")
+    parser.add_argument(
+        "--deployment_id", action="store", default=[], help="Add the deployment ID"
+    )
     args = parser.parse_args()
 
     return {

@@ -78,7 +78,9 @@ def generate_data_prep_code(
         logger.info(f"Shape: {metadata['shape']}")
         logger.info("Columns:")
         for col, col_info in metadata["columns"].items():
-            logger.info(f"  {col}: {col_info['dtype']} ({col_info['unique_count']} unique values)")
+            logger.info(
+                f"  {col}: {col_info['dtype']} ({col_info['unique_count']} unique values)"
+            )
 
     logger.info("\nSelected Issues:")
     logger.info(f"{selected_issues}")
@@ -95,7 +97,9 @@ def generate_data_prep_code(
         token=os.getenv("DATAROBOT_API_TOKEN"), endpoint=os.getenv("DATAROBOT_ENDPOINT")
     )
     chat_agent_deployment_id = os.getenv("CHAT_AGENT_DEPLOYMENT_ID")
-    deployment_chat_base_url = dr_client.endpoint + f"/deployments/{chat_agent_deployment_id}/"
+    deployment_chat_base_url = (
+        dr_client.endpoint + f"/deployments/{chat_agent_deployment_id}/"
+    )
     client = OpenAI(
         api_key=dr_client.token,
         base_url=deployment_chat_base_url,

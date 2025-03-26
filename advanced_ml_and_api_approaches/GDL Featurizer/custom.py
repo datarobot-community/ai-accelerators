@@ -41,7 +41,9 @@ def build_knn_graph(X_data, n_neighbors):
     [1] https://scikit-learn.org/stable/auto_examples/preprocessing/plot_scaling_importance.html#sphx-glr-auto-examples-preprocessing-plot-scaling-importance-py
     """
     # Compute the k-nearest neighbor connectivity matrix (binary adjacency)
-    A = kneighbors_graph(X_data, n_neighbors=n_neighbors, mode="connectivity", include_self=False)
+    A = kneighbors_graph(
+        X_data, n_neighbors=n_neighbors, mode="connectivity", include_self=False
+    )
 
     # Convert the sparse matrix to COO format for easy extraction of indices
     A_coo = sp.coo_matrix(A)
@@ -223,9 +225,15 @@ class CustomTask(TransformerInterface):
             )
 
         # Define hyperparameters
-        self.hidden_channels = parameters["hidden_channels"]  # Number of hidden units in GraphSAGE
-        self.out_channels = parameters["out_channels"]  # Dimension of the learned embedding
-        self.k_neighbors = parameters["k_neighbors"]  # Number of neighbors for kneighbors_graph
+        self.hidden_channels = parameters[
+            "hidden_channels"
+        ]  # Number of hidden units in GraphSAGE
+        self.out_channels = parameters[
+            "out_channels"
+        ]  # Dimension of the learned embedding
+        self.k_neighbors = parameters[
+            "k_neighbors"
+        ]  # Number of neighbors for kneighbors_graph
         self.learning_rate = parameters["learning_rate"]  # Learning rate for optimizer
         self.epochs = parameters["epochs"]  # Number of training epochs to run
         self.num_neg_samples = parameters[
@@ -263,7 +271,10 @@ class CustomTask(TransformerInterface):
 
         # Save embedding on the training data for later use
         self.train_embeddings = (
-            self.model(self.train_data.x, self.train_data.edge_index).cpu().detach().numpy()
+            self.model(self.train_data.x, self.train_data.edge_index)
+            .cpu()
+            .detach()
+            .numpy()
         )
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
@@ -310,7 +321,10 @@ class CustomTask(TransformerInterface):
             self.model.eval()
             with torch.no_grad():
                 combined_embeddings = (
-                    self.model(combined_data.x, combined_data.edge_index).cpu().detach().numpy()
+                    self.model(combined_data.x, combined_data.edge_index)
+                    .cpu()
+                    .detach()
+                    .numpy()
                 )
 
             # Extract embeddings corresponding to the new data only
@@ -357,5 +371,7 @@ class CustomTask(TransformerInterface):
         """
         # Load task and model
         custom_task = cls.load_task(artifact_directory)
-        custom_task.model = torch.load(Path(artifact_directory) / "model.pth", weights_only=False)
+        custom_task.model = torch.load(
+            Path(artifact_directory) / "model.pth", weights_only=False
+        )
         return custom_task

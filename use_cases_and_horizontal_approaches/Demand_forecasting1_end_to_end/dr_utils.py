@@ -61,13 +61,21 @@ def prepare_demo_tables_in_db(
                 display(df.head())
                 print("info for ", value["table_name"])
                 print(df.info())
-                print("writing", value["table_name"], "to snowflake from: ", value["url"])
-                write_pandas(con, df, value["table_name"], auto_create_table=True, overwrite=True)
+                print(
+                    "writing", value["table_name"], "to snowflake from: ", value["url"]
+                )
+                write_pandas(
+                    con, df, value["table_name"], auto_create_table=True, overwrite=True
+                )
                 con.commit()
 
 
-def create_dataset_from_data_source(data_source_name, query, data_store_id, credential_id):
-    data_sources = [ds for ds in dr.DataSource.list() if ds.canonical_name == data_source_name]
+def create_dataset_from_data_source(
+    data_source_name, query, data_store_id, credential_id
+):
+    data_sources = [
+        ds for ds in dr.DataSource.list() if ds.canonical_name == data_source_name
+    ]
     if len(data_sources) > 0:
         data_source = data_sources[0]
         print("existing data source:", data_source)
@@ -99,7 +107,9 @@ def make_series_stats(data, date_col, series_id, target, freq=1):
     data_tmp.sort_values([series_id, date_col], inplace=True)
     data_tmp["gap"] = data_tmp.groupby(series_id)[date_col].diff()
     data_mode = (
-        data_tmp.groupby(series_id)[["gap"]].agg(gap_mode=("gap", pd.Series.mode)).reset_index()
+        data_tmp.groupby(series_id)[["gap"]]
+        .agg(gap_mode=("gap", pd.Series.mode))
+        .reset_index()
     )
     data_tmp = data_tmp.merge(data_mode, how="left", on=series_id)
     data_tmp["gap_uncommon"] = (
@@ -140,10 +150,14 @@ def identify_spikes(data, date_col, series_id, target, span=5, threshold=4):
     tmp.reset_index(drop=True, inplace=True)
 
     tmp["EWA"] = (
-        tmp.groupby(series_id)[target].transform(lambda x: x.ewm(span=span).mean()).fillna(value=1)
+        tmp.groupby(series_id)[target]
+        .transform(lambda x: x.ewm(span=span).mean())
+        .fillna(value=1)
     )
     tmp["SD"] = (
-        tmp.groupby(series_id)[target].transform(lambda x: x.ewm(span=span).std()).fillna(value=1)
+        tmp.groupby(series_id)[target]
+        .transform(lambda x: x.ewm(span=span).std())
+        .fillna(value=1)
     )
     tmp["Threshold"] = threshold * tmp["SD"]
     tmp["Spike"] = np.where(tmp[target] >= tmp["Threshold"], 1, 0)
@@ -196,7 +210,9 @@ def run_projects(data, params, description=None, file_to_save=None):
                 "description": description,
             }
         }
-    elif params.get("cluster_id") is not None and params.get("segmented_project", False):
+    elif params.get("cluster_id") is not None and params.get(
+        "segmented_project", False
+    ):
         proj = run_project(data, params)
         results = {
             proj.id: {
@@ -261,9 +277,7 @@ def run_project(data, params, notes=""):
         fdwe = np.abs(proj_params["feature_derivation_window_end"])
         fws = proj_params["forecast_window_start"]
         fwe = proj_params["forecast_window_end"]
-        project_name = (
-            f'{target}{notes}_fdw_{fdws}_{fdwe}_fw_{fws}_{fwe}_{dt.now().strftime("%Y%m%d_%H%M")}'
-        )
+        project_name = f'{target}{notes}_fdw_{fdws}_{fdwe}_fw_{fws}_{fwe}_{dt.now().strftime("%Y%m%d_%H%M")}'
     except Exception as e:
         print("DataRobot will define FDW and FD automatically.")
         project_name = f'{target}{notes}_{dt.now().strftime("%Y%m%d_%H%M")}'
@@ -280,7 +294,9 @@ def run_project(data, params, notes=""):
 
     print(str(dt.now()), "start:", project_name)
     if isinstance(data, dr.Dataset):
-        project = dr.Project.create_from_dataset(project_name=project_name, dataset_id=data.id)
+        project = dr.Project.create_from_dataset(
+            project_name=project_name, dataset_id=data.id
+        )
     else:
         project = dr.Project.create(project_name=project_name, sourcedata=data)
 
@@ -453,7 +469,9 @@ def make_deployment(project, name=None, model_id=None, feature_drift_enabled=Fal
 
     if feature_drift_enabled:
         try:
-            deployment.update_drift_tracking_settings(feature_drift_enabled=True, max_wait=3600)
+            deployment.update_drift_tracking_settings(
+                feature_drift_enabled=True, max_wait=3600
+            )
         except Exception as e:
             print(str(e))
 
@@ -619,11 +637,17 @@ def get_series_accuracy(project, model, compute_all_series=False):
         if model_sa.shape[0] == model_sa["backtestingScore"].isna().sum():
             _ = model.compute_series_accuracy(compute_all_series=compute_all_series)
 
-            num_jobs = len([j for j in project.get_all_jobs() if j.job_type == "series_accuracy"])
+            num_jobs = len(
+                [j for j in project.get_all_jobs() if j.job_type == "series_accuracy"]
+            )
             while num_jobs > 0:
                 time.sleep(5 + (num_jobs // 20) * 15)
                 num_jobs = len(
-                    [j for j in project.get_all_jobs() if j.job_type == "series_accuracy"]
+                    [
+                        j
+                        for j in project.get_all_jobs()
+                        if j.job_type == "series_accuracy"
+                    ]
                 )
 
             model_sa = model.get_series_accuracy_as_dataframe()
@@ -633,16 +657,22 @@ def get_series_accuracy(project, model, compute_all_series=False):
     except:
         _ = model.compute_series_accuracy(compute_all_series=compute_all_series)
 
-        num_jobs = len([j for j in project.get_all_jobs() if j.job_type == "series_accuracy"])
+        num_jobs = len(
+            [j for j in project.get_all_jobs() if j.job_type == "series_accuracy"]
+        )
         while num_jobs > 0:
             time.sleep(5 + (num_jobs // 20) * 15)
-            num_jobs = len([j for j in project.get_all_jobs() if j.job_type == "series_accuracy"])
+            num_jobs = len(
+                [j for j in project.get_all_jobs() if j.job_type == "series_accuracy"]
+            )
 
         model_sa = model.get_series_accuracy_as_dataframe()
         return model_sa
 
 
-def make_train_preds_from_model(project, model, data_subsets=["allBacktests", "holdout"]):
+def make_train_preds_from_model(
+    project, model, data_subsets=["allBacktests", "holdout"]
+):
     pred_jobs = []
     preds_lst = []
 
@@ -657,7 +687,10 @@ def make_train_preds_from_model(project, model, data_subsets=["allBacktests", "h
             # retrieve training predictions if they were already requested
             train_preds = dr.TrainingPredictions.list(project.id)
             for train_pred in train_preds:
-                if train_pred.model_id == model.id and train_pred.data_subset == data_subset:
+                if (
+                    train_pred.model_id == model.id
+                    and train_pred.data_subset == data_subset
+                ):
                     preds_tmp = dr.TrainingPredictions.get(
                         project.id, train_pred.prediction_id
                     ).get_all_as_dataframe()
@@ -673,7 +706,9 @@ def make_train_preds_from_model(project, model, data_subsets=["allBacktests", "h
     return df_preds
 
 
-def make_train_preds_from_projects(projects_dct, data_train, date_col, series_id, target):
+def make_train_preds_from_projects(
+    projects_dct, data_train, date_col, series_id, target
+):
     """requests training predictions from the specified projects and
        combines with corresponding training data
 
@@ -766,7 +801,9 @@ def make_train_preds_from_projects(projects_dct, data_train, date_col, series_id
     return pd.concat(preds, ignore_index=True, sort=False)
 
 
-def get_target_and_feature_drift(deployment, start_time=None, end_time=None, metric=None):
+def get_target_and_feature_drift(
+    deployment, start_time=None, end_time=None, metric=None
+):
     """
     deployment : dr.Deployment
     start_time : datetime
@@ -778,7 +815,9 @@ def get_target_and_feature_drift(deployment, start_time=None, end_time=None, met
         values include `psi`, `kl_divergence`, `dissimilarity`, `hellinger`, and
         `js_divergence`.
     """
-    td = deployment.get_target_drift(start_time=start_time, end_time=end_time, metric=metric)
+    td = deployment.get_target_drift(
+        start_time=start_time, end_time=end_time, metric=metric
+    )
     depl_drifts = [
         {
             "feature": td.target_name,
@@ -790,7 +829,9 @@ def get_target_and_feature_drift(deployment, start_time=None, end_time=None, met
             "is_target": 1,
         }
     ]
-    for dd in deployment.get_feature_drift(start_time=start_time, end_time=end_time, metric=metric):
+    for dd in deployment.get_feature_drift(
+        start_time=start_time, end_time=end_time, metric=metric
+    ):
         dd_vals = {
             "feature": dd.name,
             "feature_impact": dd.feature_impact,
@@ -838,7 +879,11 @@ def get_metrics(data, target, pred_cols):
 # plotting
 #################################################################
 def plot_series_count_over_time(data, date_col, series_id):
-    ax = data.groupby(date_col)[series_id].nunique().plot(figsize=(15, 7), color=[dr_orange])
+    ax = (
+        data.groupby(date_col)[series_id]
+        .nunique()
+        .plot(figsize=(15, 7), color=[dr_orange])
+    )
     ax.set_facecolor(dr_dark_blue)
     ax.xaxis.grid(True, alpha=0.2)
     ax.yaxis.grid(False)
@@ -880,7 +925,9 @@ def plot_num_col_over_time(data, date_col, num_col, func="sum", freq=None):
 def plot_series_over_time(data, date_col, series_id, series_name, num_cols):
     data_tmp = data[data[series_id] == series_name].copy()
 
-    ax = data_tmp.plot(x=date_col, y=num_cols, figsize=(15, 7), color=[dr_orange, dr_blue])
+    ax = data_tmp.plot(
+        x=date_col, y=num_cols, figsize=(15, 7), color=[dr_orange, dr_blue]
+    )
     ax.set_facecolor(dr_dark_blue)
     ax.xaxis.grid(False)
     ax.yaxis.grid(False)
@@ -933,7 +980,9 @@ def plot_stability_scores(project, model, metric=None):
     ind = [f"Backtest{i+1}" for i in range(0, len(scores))]
     scores = pd.Series(scores, index=ind).sort_index(ascending=False)
 
-    ax = scores.plot(figsize=(15, 7), ylim=0, color=[dr_orange], marker="o", markersize=10)
+    ax = scores.plot(
+        figsize=(15, 7), ylim=0, color=[dr_orange], marker="o", markersize=10
+    )
     ax.set_facecolor(dr_dark_blue)
     ax.xaxis.grid(True, alpha=0.2)
     ax.yaxis.grid(False)
@@ -951,7 +1000,9 @@ def plot_feature_impacts(model, top_n=100):
     impact_df.sort_values(by="impactNormalized", ascending=True, inplace=True)
 
     # Positive values are blue, negative are red
-    bar_colors = impact_df.impactNormalized.apply(lambda x: dr_red if x < 0 else dr_blue)
+    bar_colors = impact_df.impactNormalized.apply(
+        lambda x: dr_red if x < 0 else dr_blue
+    )
 
     ax = impact_df.plot.barh(
         x="featureName",
@@ -975,7 +1026,11 @@ def plot_feature_impacts(model, top_n=100):
 def plot_predictions(data, test_start_date, date_col, target, freq):
     data_tmp = data[data[date_col] >= test_start_date].copy()
     grouper = pd.Grouper(freq=freq, key=date_col, closed="left", label="left")
-    data_agg = data_tmp.groupby(grouper)[[target, f"{target}_prediction"]].sum().replace(0, np.NaN)
+    data_agg = (
+        data_tmp.groupby(grouper)[[target, f"{target}_prediction"]]
+        .sum()
+        .replace(0, np.NaN)
+    )
 
     ax = data_agg.plot(
         figsize=(15, 7),
@@ -999,7 +1054,9 @@ def plot_drift_data(data, drift_score_threshold=0.2, feature_impact_threshold=0.
     data_tmp = data.copy()
     data_tmp["color"] = np.where(
         data_tmp["drift_score"] >= drift_score_threshold,
-        np.where(data_tmp["feature_impact"] >= feature_impact_threshold, dr_red, dr_orange),
+        np.where(
+            data_tmp["feature_impact"] >= feature_impact_threshold, dr_red, dr_orange
+        ),
         dr_green,
     )
     data_tmp["drift_score_rank"] = data_tmp["drift_score"].rank(ascending=False) / 100
