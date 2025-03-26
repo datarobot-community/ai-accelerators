@@ -105,9 +105,7 @@ def prepare_data(data, modelling_choice, aggregation_dictionary=None):
         )
         fwd = pd.concat([aggregate[["Symbol_", "date_time_"]], fwd], axis=1)
         fwd_cols = [col for col in fwd.columns if "fwd" in col]
-        fwd.loc[
-            (fwd.date_time_ > end - (n + 1) * timedelta(minutes=slice_size)), fwd_cols
-        ] = None
+        fwd.loc[(fwd.date_time_ > end - (n + 1) * timedelta(minutes=slice_size)), fwd_cols] = None
         neighbours.append(fwd.drop(columns=["Symbol_", "date_time_"]))
 
         # n slices bwd
@@ -120,9 +118,7 @@ def prepare_data(data, modelling_choice, aggregation_dictionary=None):
         )
         bwd = pd.concat([aggregate[["Symbol_", "date_time_"]], bwd], axis=1)
         bwd_cols = [col for col in bwd.columns if "bwd" in col]
-        bwd.loc[
-            (bwd.date_time_ < start + (n + 1) * timedelta(minutes=slice_size)), bwd_cols
-        ] = None
+        bwd.loc[(bwd.date_time_ < start + (n + 1) * timedelta(minutes=slice_size)), bwd_cols] = None
         neighbours.append(bwd.drop(columns=["Symbol_", "date_time_"]))
 
     appendage = pd.concat(neighbours, axis=1)
@@ -180,11 +176,7 @@ def run_ts_project(source_data, project_name, target, calendar, kia_columns):
         worker_count=number_of_workers,
         max_wait=6000,
     )
-    print(
-        "Project creation finished. Elapsed time: {}".format(
-            time.time() - data_upload_start
-        )
-    )
+    print("Project creation finished. Elapsed time: {}".format(time.time() - data_upload_start))
     url = "https://app.datarobot.com/projects/" + project.id + "/eda"
     print(url)
 
@@ -244,11 +236,7 @@ def run_ts_project_with_dictionary(source_data, project_name, datetime_dict):
         worker_count=number_of_workers,
         max_wait=6000,
     )
-    print(
-        "Project creation finished. Elapsed time: {}".format(
-            time.time() - data_upload_start
-        )
-    )
+    print("Project creation finished. Elapsed time: {}".format(time.time() - data_upload_start))
     url = "https://app.datarobot.com/projects/" + project.id + "/eda"
     print(url)
 
@@ -287,18 +275,14 @@ def run_all_projects(prepared_data, slices, modelling_choice, datetime_dict):
 
         print(project_name)
 
-        project, url = run_ts_project_with_dictionary(
-            df_filtered, project_name, datetime_dict
-        )
+        project, url = run_ts_project_with_dictionary(df_filtered, project_name, datetime_dict)
 
         project_time_window_starts.append(str(s["hours"]) + ":" + str(s["minutes"]))
         project_ids.append(project.id)
         projects.append(project)
         urls.append(url)
 
-    projects_df = pd.DataFrame(
-        list(zip(project_ids, project_time_window_starts, urls, projects))
-    )
+    projects_df = pd.DataFrame(list(zip(project_ids, project_time_window_starts, urls, projects)))
     projects_df.columns = ["project_id", "slice", "url", "project"]
 
     return projects_df
@@ -316,20 +300,14 @@ def prepare_data_for_predictions(data, modelling_choice, aggregation_dictionary=
     # We identify the numeric columns, which won't be know at prediction time
 
     numeric_cols = list(
-        prepared_data.select_dtypes(include="number")
-        .drop(columns=["minute_min"])
-        .columns
+        prepared_data.select_dtypes(include="number").drop(columns=["minute_min"]).columns
     )
     start = datetime.datetime.fromisoformat(start)
     end = datetime.datetime.fromisoformat(end)
 
     # We make sure that the rows which we want to predict have blanks on the numeric data
 
-    recent_data = prepared_data[
-        prepared_data.date_time_ > (end - (16) * timedelta(days=1))
-    ].copy()
-    recent_data.loc[
-        (recent_data.date_first > end - timedelta(days=1)), numeric_cols
-    ] = ""
+    recent_data = prepared_data[prepared_data.date_time_ > (end - (16) * timedelta(days=1))].copy()
+    recent_data.loc[(recent_data.date_first > end - timedelta(days=1)), numeric_cols] = ""
 
     return recent_data

@@ -42,9 +42,7 @@ def _raise_dataroboterror_for_status(response):
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
-        err_msg = "{code} Error: {msg}".format(
-            code=response.status_code, msg=response.text
-        )
+        err_msg = "{code} Error: {msg}".format(code=response.status_code, msg=response.text)
         raise DataRobotPredictionError(err_msg)
 
 
@@ -139,9 +137,7 @@ def submit_metric(deployment_id, timestamp, cm_id) -> None:
     }
 
     response = requests.post(
-        url=route_custom_metrics.format(
-            st.secrets["DR_ENDPOINT"], deployment_id, cm_id
-        ),
+        url=route_custom_metrics.format(st.secrets["DR_ENDPOINT"], deployment_id, cm_id),
         json=json,
         headers=headers,
     )

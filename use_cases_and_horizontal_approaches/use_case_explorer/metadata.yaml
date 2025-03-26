@@ -1,5 +1,5 @@
+---
 name: runtime-params
-
 runtimeParameterDefinitions:
   - fieldName: DEFAULT_PROJECT_LENGTH
     type: string

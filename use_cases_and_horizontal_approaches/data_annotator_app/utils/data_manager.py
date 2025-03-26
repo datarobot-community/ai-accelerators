@@ -21,13 +21,9 @@ class DataManager:
             # create blank df for adding labels
             files = os.listdir(self.images_base_path)
             files = [
-                file
-                for file in files
-                if os.path.isfile(os.path.join(self.images_base_path, file))
+                file for file in files if os.path.isfile(os.path.join(self.images_base_path, file))
             ]
-            self.df = pd.DataFrame(
-                columns=["label", "image_path"], index=range(len(files))
-            )
+            self.df = pd.DataFrame(columns=["label", "image_path"], index=range(len(files)))
             self.df["image_path"] = files
         else:
             if smart_sort:
@@ -36,9 +32,7 @@ class DataManager:
     def _sort_by_certainty(self):
         pred_cols = [x for x in self.df.columns if x.startswith("class")]
         self.df["certainty"] = self.df[pred_cols].var(axis="columns")
-        return self.df.sort_values(by="certainty", ascending=True).reset_index(
-            drop=True
-        )
+        return self.df.sort_values(by="certainty", ascending=True).reset_index(drop=True)
 
     def current_data(self):
         data = self.df.iloc[self.current_index].copy()
@@ -52,9 +46,7 @@ class DataManager:
         self.df.loc[self.current_index, "label"] = new_label
 
     def use_predicted_label(self):
-        self.df.loc[self.current_index, "label"] = self.df.loc[
-            self.current_index, "prediction"
-        ]
+        self.df.loc[self.current_index, "label"] = self.df.loc[self.current_index, "prediction"]
 
     def next_image(self):
         self.current_index = min(self.current_index + 1, len(self.df) - 1)

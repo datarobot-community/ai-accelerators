@@ -37,15 +37,11 @@ with st.expander("The deployment overview", expanded=False):
     st.write(f'Target: {deployment.model["target_name"]}')
     st.write(f'Type: {deployment.model["target_type"]}')
     st.write(f"Features:")
-    df_feats = pd.DataFrame(deployment.get_features()).drop(
-        columns=["importance"], errors="ignore"
-    )
+    df_feats = pd.DataFrame(deployment.get_features()).drop(columns=["importance"], errors="ignore")
     st.write(df_feats)
     # st.write("---")
 
-uploaded_file = st.sidebar.file_uploader(
-    "file_uploader", type="csv", label_visibility="hidden"
-)
+uploaded_file = st.sidebar.file_uploader("file_uploader", type="csv", label_visibility="hidden")
 
 if uploaded_file is not None:
     st.sidebar.write("---")
@@ -130,9 +126,7 @@ if uploaded_file is not None:
 
                     if "all" in dates_sel:
                         dates_sel = ["all"]
-                    df_to_preds = au.modify_ka_values(
-                        df, date_col, target, ka_cols_dct, dates_sel
-                    )
+                    df_to_preds = au.modify_ka_values(df, date_col, target, ka_cols_dct, dates_sel)
 
                     with st.expander("The updated data overview", expanded=False):
                         # st.header('The updated data')
@@ -145,9 +139,7 @@ if uploaded_file is not None:
                             run_params.append(ka_col + ":" + ka_col_val)
                         run_params.append("dates" + ":" + ",".join(sorted(dates_sel)))
                         run_params = sorted(run_params)
-                        run_id = hashlib.sha256(
-                            ";".join(run_params).encode()
-                        ).hexdigest()
+                        run_id = hashlib.sha256(";".join(run_params).encode()).hexdigest()
                         if "params_hist" not in st.session_state:
                             st.session_state.params_hist = {}
                         if st.session_state.params_hist.get(run_id) is None:
@@ -256,9 +248,7 @@ if uploaded_file is not None:
 
             if param_name not in ("<select>", "All predictions"):
                 pred_int_cols = [
-                    c
-                    for c in preds.columns
-                    if c.startswith("prediction_") and "_percentile_" in c
+                    c for c in preds.columns if c.startswith("prediction_") and "_percentile_" in c
                 ]
                 if len(pred_int_cols) == 2:
                     pred_int = st.checkbox("Show prediction intervals")
@@ -342,8 +332,6 @@ if uploaded_file is not None:
                 )
                 if sid != "<select>":
                     with col2:
-                        au.plot_predictions_series(
-                            preds, date_col, series_id, sid, cols_to_plot
-                        )
+                        au.plot_predictions_series(preds, date_col, series_id, sid, cols_to_plot)
 
         st.write("---")

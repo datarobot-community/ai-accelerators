@@ -40,9 +40,7 @@ def uploaded_data_section(uploaded_file):
         periods = uploaded_df[config["DATE_COL"]].unique()
         st.write(f"The dataset contains:")
         st.write(f"- {sids} series;")
-        st.write(
-            f"- {len(periods)} periods between {periods.min()} and {periods.max()}."
-        )
+        st.write(f"- {len(periods)} periods between {periods.min()} and {periods.max()}.")
         st.write(uploaded_df.head())
         st.write(uploaded_df.tail())
         return uploaded_df
@@ -57,9 +55,7 @@ def clear_cache(vals):
             del st.session_state[val]
 
 
-def modify_ka_values(
-    df: pd.DataFrame, date_col: str, target: str, ka_updates: dict, dates: list
-):
+def modify_ka_values(df: pd.DataFrame, date_col: str, target: str, ka_updates: dict, dates: list):
     df_tmp = df.copy()
 
     if "all" in dates:
@@ -98,9 +94,7 @@ def add_make_predictions_button(
             return preds
         else:
             try:
-                preds = make_predictions(
-                    deployment, uploaded_df, date_col, series_id, target
-                )
+                preds = make_predictions(deployment, uploaded_df, date_col, series_id, target)
                 preds["run_id"] = run_id
                 preds["params"] = ";".join(params)
                 st.session_state.preds_hist[run_id] = preds.copy()
@@ -115,23 +109,17 @@ def add_predictions_stats(data, date_col, series_id, preds_cols=None):
     data_tmp = data[data["is_pred_period"] == 1].copy()
     periods = data_tmp[date_col].unique()
     if preds_cols is not None:
-        st.sidebar.write(
-            f"The file contains predictions based on {len(preds_cols)} datasets:"
-        )
+        st.sidebar.write(f"The file contains predictions based on {len(preds_cols)} datasets:")
         for p in preds_cols:
             st.sidebar.write(f"- {p}")
 
     st.sidebar.write(f"Predictions were made for:")
     st.sidebar.write(f"- {data_tmp[series_id].nunique()} series;")
-    st.sidebar.write(
-        f"- {len(periods)} periods between {periods.min()} and {periods.max()}."
-    )
+    st.sidebar.write(f"- {len(periods)} periods between {periods.min()} and {periods.max()}.")
 
 
 @st.cache_data
-def make_predictions(
-    _deployment, data, date_col, series_id, target, forecast_point=None
-):
+def make_predictions(_deployment, data, date_col, series_id, target, forecast_point=None):
     """Makes predictions based on the deployment and the provided data
 
     Args:
@@ -153,22 +141,16 @@ def make_predictions(
 
     cols_to_drop = [c for c in data_preds.columns if c.endswith("_y")]
     data_preds.drop(columns=cols_to_drop, inplace=True)
-    cols_to_rename = {
-        c: c.replace("_x", "") for c in data_preds.columns if c.endswith("_x")
-    }
+    cols_to_rename = {c: c.replace("_x", "") for c in data_preds.columns if c.endswith("_x")}
     data_preds.rename(columns=cols_to_rename, inplace=True)
     data_preds["is_pred_period"] = 1
 
-    pred_col = [
-        c for c in data_preds.columns if target in c and c.endswith("_PREDICTION")
-    ]
+    pred_col = [c for c in data_preds.columns if target in c and c.endswith("_PREDICTION")]
     if len(pred_col) == 1:
         data_preds.rename(columns={pred_col[0]: f"{target}_prediction"}, inplace=True)
 
     perc_cols = [
-        c
-        for c in data_preds.columns
-        if c.startswith("PREDICTION_") and "_PERCENTILE_" in c
+        c for c in data_preds.columns if c.startswith("PREDICTION_") and "_PERCENTILE_" in c
     ]
     if len(perc_cols) == 2:
         perc_cols = {c: c.lower() for c in perc_cols}

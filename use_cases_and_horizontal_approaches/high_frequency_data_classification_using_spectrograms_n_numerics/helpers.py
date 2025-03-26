@@ -68,9 +68,7 @@ def plot_feature_impacts(model, top_n=100):
     impact_df.sort_values(by="impactNormalized", ascending=True, inplace=True)
 
     # Positive values are blue, negative are red
-    bar_colors = impact_df.impactNormalized.apply(
-        lambda x: dr_red if x < 0 else dr_blue
-    )
+    bar_colors = impact_df.impactNormalized.apply(lambda x: dr_red if x < 0 else dr_blue)
 
     ax = impact_df.plot.barh(
         x="featureName",
@@ -149,14 +147,9 @@ def get_top_of_leaderboard(project, metric="LogLoss", verbose=True):
     if verbose == True:
         # Print a Leaderboard summary:
         print("Unique blueprints tested: " + str(len(leaderboard_df["bp_id"].unique())))
-        print(
-            "Feature lists tested: " + str(len(leaderboard_df["featurelist"].unique()))
-        )
+        print("Feature lists tested: " + str(len(leaderboard_df["featurelist"].unique())))
         print("Models trained: " + str(len(leaderboard_df)))
-        print(
-            "Blueprints in the project repository: "
-            + str(len(project.get_blueprints()))
-        )
+        print("Blueprints in the project repository: " + str(len(project.get_blueprints())))
 
         # Print the essential information for top models, sorted by accuracy from validation data:
         print("\n\nTop models in the leaderboard:")
