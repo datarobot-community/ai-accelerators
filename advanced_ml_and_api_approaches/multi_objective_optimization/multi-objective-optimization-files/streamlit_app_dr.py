@@ -1,8 +1,10 @@
 import gettext
 import os
-import warnings
 from textwrap import dedent
+import warnings
 
+from PIL import Image
+from drops import get_deployment_infos, get_prediction
 import numexpr
 import optuna
 import optunahub
@@ -10,8 +12,6 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
-from drops import get_deployment_infos, get_prediction
-from PIL import Image
 
 if not os.getenv("SCRIPT_NAME"):
     from dotenv import load_dotenv
@@ -52,7 +52,9 @@ language = sidebar.radio(
 )
 
 # Load translations
-translator = gettext.translation("base", localedir="locales", languages=[st.session_state.language])
+translator = gettext.translation(
+    "base", localedir="locales", languages=[st.session_state.language]
+)
 translator.install()
 
 # Alias for translations
@@ -79,7 +81,9 @@ st.session_state.trials_num = sidebar.number_input(
 
 # put directions into deployment_infos as initial value
 for idx, deploy_info in enumerate(st.session_state.deployment_infos):
-    deploy_info["direction"] = st.session_state.config["Optimization Direction"].iloc[idx]
+    deploy_info["direction"] = st.session_state.config["Optimization Direction"].iloc[
+        idx
+    ]
 
 # Display radio buttons for each deployment info in sidebar
 for idx, deploy_info in enumerate(st.session_state.deployment_infos):
@@ -111,7 +115,10 @@ for idx, deploy_info in enumerate(st.session_state.deployment_infos):
 
 sidebar.markdown("---")
 # Show numpy expression example if any direction is custom
-if any(deploy_info["direction"] == "custom" for deploy_info in st.session_state.deployment_infos):
+if any(
+    deploy_info["direction"] == "custom"
+    for deploy_info in st.session_state.deployment_infos
+):
     sidebar.markdown(f"### {_('Custom Direction Example:')}")
     sidebar.write(
         dedent(
@@ -162,7 +169,9 @@ def run_optimization(
 
         predictions = []
         for n, (deploy_id, custom_exp) in enumerate(zip(deploy_ids, custom_exprs)):
-            pred = get_prediction(df_target, deploy_id, DATAROBOT_API_TOKEN, DATAROBOT_KEY, API_URL)
+            pred = get_prediction(
+                df_target, deploy_id, DATAROBOT_API_TOKEN, DATAROBOT_KEY, API_URL
+            )
             trial.set_user_attr(targets[n], pred)
             if custom_exp:
                 # since the variable in the expression is x, we need to assign the value to x
@@ -197,7 +206,9 @@ def run_optimization(
         trial_params.append(trial.params)
         trail_pred.append([v[0] for v in trial.user_attrs.values()])
         trial_all.append([trial.number] + [v for v in trial.values])
-    trial_all = pd.DataFrame(trial_all, columns=["Iteration"] + [f"{t}_opt" for t in targets])
+    trial_all = pd.DataFrame(
+        trial_all, columns=["Iteration"] + [f"{t}_opt" for t in targets]
+    )
     trail_pred = pd.DataFrame(trail_pred, columns=targets)
     trial_params = pd.DataFrame.from_dict(trial_params)
     trial_all = pd.concat([trial_all, trail_pred, trial_params], axis=1)
@@ -226,19 +237,29 @@ with tab1:
         st.warning(_("Please upload config.csv"))
         st.stop()
     df_feature = st.session_state.df_feature.copy()
-    targets = [deploy_info["label"] for deploy_info in st.session_state.deployment_infos]
-    deploy_ids = [deploy_info["deployment_id"] for deploy_info in st.session_state.deployment_infos]
+    targets = [
+        deploy_info["label"] for deploy_info in st.session_state.deployment_infos
+    ]
+    deploy_ids = [
+        deploy_info["deployment_id"]
+        for deploy_info in st.session_state.deployment_infos
+    ]
     ids = ["ID"]
-    directions = [deploy_info["direction"] for deploy_info in st.session_state.deployment_infos]
+    directions = [
+        deploy_info["direction"] for deploy_info in st.session_state.deployment_infos
+    ]
     # replace custom with minimize
     directions = ["minimize" if d == "custom" else d for d in directions]
     custom_exprs = [
-        deploy_info.get("custom_exp", "") for deploy_info in st.session_state.deployment_infos
+        deploy_info.get("custom_exp", "")
+        for deploy_info in st.session_state.deployment_infos
     ]
     cols = df_feature.columns.to_list()
     feats = [f for f in cols if f not in targets if f not in ids]
 
-    feats_name = st.multiselect(_("Select features to be simulated"), feats, feats, key=1002)
+    feats_name = st.multiselect(
+        _("Select features to be simulated"), feats, feats, key=1002
+    )
 
     st.markdown(
         f"<h1 style='text-align: center; color: grey;'>{_('Simulated Features')}</h1>",
@@ -317,7 +338,9 @@ with tab1:
             sidebar.write(_("Simulation Finished!"))
             sidebar.info(_("Please go to the Visualization tab to see the results."))
         reference_point = trial_all.loc[0, targets].values
-        fig = optuna.visualization.plot_hypervolume_history(study, reference_point=reference_point)
+        fig = optuna.visualization.plot_hypervolume_history(
+            study, reference_point=reference_point
+        )
         st.plotly_chart(fig, use_container_width=True)
 
 with tab2:
@@ -356,7 +379,9 @@ with tab2:
             st.plotly_chart(fig, use_container_width=True)
 
         # 2d
-        target_name = st.multiselect(_("Select Two Targets"), targets, targets[:2], key=1003)
+        target_name = st.multiselect(
+            _("Select Two Targets"), targets, targets[:2], key=1003
+        )
         if len(target_name) != 2:
             st.error(_("Please select two targets!"))
         else:
@@ -387,13 +412,17 @@ with tab2:
             st.plotly_chart(fig, use_container_width=True)
 
         # 3d
-        target_name = st.multiselect(_("Select Three Targets"), targets, targets, key=1004)
+        target_name = st.multiselect(
+            _("Select Three Targets"), targets, targets, key=1004
+        )
         if len(target_name) != 3:
             st.error(_("Please select three targets!"))
         else:
             target_disp = [f"{t}_opt" for t in target_name]
 
-            fig1 = px.line_3d(trial_pareto, x=target_name[0], y=target_name[1], z=target_name[2])
+            fig1 = px.line_3d(
+                trial_pareto, x=target_name[0], y=target_name[1], z=target_name[2]
+            )
             fig1.update_traces(line=dict(color="red"))
             fig2 = px.scatter_3d(
                 trial_all,
@@ -416,9 +445,9 @@ with tab2:
 
             st.plotly_chart(fig, use_container_width=True)
 
-        trial_all_sort = trial_all.sort_values(["best_trial"], ascending=False).reset_index(
-            drop=True
-        )
+        trial_all_sort = trial_all.sort_values(
+            ["best_trial"], ascending=False
+        ).reset_index(drop=True)
         trial_all_sort.drop(columns=["color", "size"], inplace=True)
         st.dataframe(trial_all_sort)
         data_as_csv = trial_all_sort.to_csv(index=False).encode("utf-8")

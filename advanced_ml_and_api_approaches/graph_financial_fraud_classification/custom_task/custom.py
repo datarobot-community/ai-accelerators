@@ -64,7 +64,9 @@ def graph_2_dgl(df: pd.DataFrame, graph_col: str) -> pd.DataFrame:
             graph_dict = json.loads(row)  # Ensure valid JSON
             edges = graph_dict.get("edges", [])
             if not isinstance(edges, list):
-                raise ValueError("Invalid edges format. Expected a list of (u, v) tuples.")
+                raise ValueError(
+                    "Invalid edges format. Expected a list of (u, v) tuples."
+                )
 
             num_nodes = max(max(u, v) for u, v in edges) + 1 if edges else 0
             src, dst = zip(*edges) if edges else ([], [])
@@ -119,7 +121,10 @@ def graph_column_selector(dataframe: pd.DataFrame, graph_column_type: Any) -> st
                 continue
     elif graph_column_type == dgl.DGLGraph:
         for column in dataframe.columns:
-            if dataframe[column].apply(lambda x: isinstance(x, dgl.DGLGraph)).mean() >= 0.8:
+            if (
+                dataframe[column].apply(lambda x: isinstance(x, dgl.DGLGraph)).mean()
+                >= 0.8
+            ):
                 return column
     else:
         raise ValueError("Invalid graph_column_type provided.")
@@ -202,11 +207,15 @@ def transform(data: pd.DataFrame, model: Any) -> pd.DataFrame:
     pd.DataFrame
         Transformed DataFrame with a serialized DGL graph column.
     """
-    graph_column = graph_column_selector(data, "str")  # The expected column containing graph data
+    graph_column = graph_column_selector(
+        data, "str"
+    )  # The expected column containing graph data
     return graph_2_dgl(data, graph_column)
 
 
-def fit(X: pd.DataFrame, y: pd.Series, output_dir: str, **kwargs: Dict[str, Any]) -> None:
+def fit(
+    X: pd.DataFrame, y: pd.Series, output_dir: str, **kwargs: Dict[str, Any]
+) -> None:
     """
     Trains the GIN model using the provided data and saves the trained model to the specified output directory.
 
@@ -228,9 +237,12 @@ def fit(X: pd.DataFrame, y: pd.Series, output_dir: str, **kwargs: Dict[str, Any]
     """
     # Create datasets and dataloaders
     train_dataset = [
-        (pickle.loads(graph_pickle), label) for graph_pickle, label in zip(X[DGL_COLUMN_NAME], y)
+        (pickle.loads(graph_pickle), label)
+        for graph_pickle, label in zip(X[DGL_COLUMN_NAME], y)
     ]
-    train_loader = DataLoader(train_dataset, batch_size=8, shuffle=True, collate_fn=collate)
+    train_loader = DataLoader(
+        train_dataset, batch_size=8, shuffle=True, collate_fn=collate
+    )
 
     # Initialize the GIN model
     model = GIN(
@@ -255,7 +267,9 @@ def fit(X: pd.DataFrame, y: pd.Series, output_dir: str, **kwargs: Dict[str, Any]
     if output_dir_path.exists() and output_dir_path.is_dir():
         model.save_model(f"{output_dir}/gin_model")
     else:
-        raise ValueError(f"Output directory '{output_dir}' does not exist or is not a directory.")
+        raise ValueError(
+            f"Output directory '{output_dir}' does not exist or is not a directory."
+        )
 
 
 def score(data: pd.DataFrame, model: Any, **kwargs: Dict[str, Any]) -> pd.DataFrame:
@@ -281,7 +295,8 @@ def score(data: pd.DataFrame, model: Any, **kwargs: Dict[str, Any]) -> pd.DataFr
 
     # Create dataset for prediction (no labels)
     prediction_dataset = [
-        pickle.loads(graph_pickle) for graph_pickle in data[dgl_column]  # Deserialize each graph
+        pickle.loads(graph_pickle)
+        for graph_pickle in data[dgl_column]  # Deserialize each graph
     ]
     prediction_loader = DataLoader(
         prediction_dataset, batch_size=8, shuffle=False, collate_fn=collate

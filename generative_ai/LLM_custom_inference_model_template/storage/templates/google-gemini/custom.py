@@ -27,19 +27,27 @@ TOKEN_CREATE_TIME = time()
 
 
 def get_google_credential():
-    if os.getenv("DRUM_JAVA_SHARED_JARS"):  # You are running in a custom model environment
+    if os.getenv(
+        "DRUM_JAVA_SHARED_JARS"
+    ):  # You are running in a custom model environment
         print("Using Custom Model Runtime")
-        supplied_credential = RuntimeParameters.get("GOOGLE_APPLICATION_RUNTIME_CREDENTIAL")
+        supplied_credential = RuntimeParameters.get(
+            "GOOGLE_APPLICATION_RUNTIME_CREDENTIAL"
+        )
         key = supplied_credential["gcpKey"]
         raw_credential, project = google.auth.load_credentials_from_dict(key)
-        credential = raw_credential.with_scopes(["https://www.googleapis.com/auth/cloud-platform"])
+        credential = raw_credential.with_scopes(
+            ["https://www.googleapis.com/auth/cloud-platform"]
+        )
     else:
         try:
             credential, project = google.auth.default()
             print(f"Using Default Credentials for project {project}")
         except:
             print("last try just look for credential file in directory")
-            credential, project = google.auth.load_credentials_from_file("account_key.json")
+            credential, project = google.auth.load_credentials_from_file(
+                "account_key.json"
+            )
     return credential, project
 
 

@@ -1,45 +1,48 @@
-import streamlit as st
-import numpy as np
-import pandas as pd
+import datetime
 import json
-from PIL import Image
 import os
 import time
-import datetime
+import warnings
+
+from PIL import Image
 import datarobot as dr
-from datarobot.models.genai.vector_database import VectorDatabase
-from datarobot.models.genai.vector_database import ChunkingParameters
-from datarobot.enums import PromptType
-from datarobot.enums import VectorDatabaseEmbeddingModel
-from datarobot.enums import VectorDatabaseChunkingMethod
-from datarobot.models.genai.playground import Playground
-from datarobot.models.genai.llm import LLMDefinition
-from datarobot.models.genai.llm_blueprint import LLMBlueprint
-from datarobot.models.genai.llm_blueprint import VectorDatabaseSettings
+from datarobot.enums import (
+    PromptType,
+    VectorDatabaseChunkingMethod,
+    VectorDatabaseEmbeddingModel,
+)
 from datarobot.models.genai.chat import Chat
 from datarobot.models.genai.chat_prompt import ChatPrompt
-from datarobot.models.genai.vector_database import CustomModelVectorDatabaseValidation
 from datarobot.models.genai.comparison_chat import ComparisonChat
 from datarobot.models.genai.comparison_prompt import ComparisonPrompt
 from datarobot.models.genai.custom_model_llm_validation import CustomModelLLMValidation
-import plotly.express as px
-import plotly.graph_objects as go
-import plotly
-from sklearn.manifold import TSNE
-from sklearn.cluster import KMeans
-from sklearn.decomposition import PCA
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_openai import ChatOpenAI
-from langchain.embeddings.openai import OpenAIEmbeddings
-from langchain.chat_models import AzureChatOpenAI
-from langchain_core.messages import HumanMessage
-from langchain_text_splitters import CharacterTextSplitter
+from datarobot.models.genai.llm import LLMDefinition
+from datarobot.models.genai.llm_blueprint import LLMBlueprint, VectorDatabaseSettings
+from datarobot.models.genai.playground import Playground
+from datarobot.models.genai.vector_database import (
+    ChunkingParameters,
+    CustomModelVectorDatabaseValidation,
+    VectorDatabase,
+)
 from langchain.chains.combine_documents.stuff import StuffDocumentsChain
 from langchain.chains.llm import LLMChain
-from langchain_core.prompts import PromptTemplate
+from langchain.chat_models import AzureChatOpenAI
+from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain_core.messages import HumanMessage
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import ChatPromptTemplate, PromptTemplate
+from langchain_openai import ChatOpenAI
+from langchain_text_splitters import CharacterTextSplitter
+import numpy as np
+import pandas as pd
+import plotly
+import plotly.express as px
+import plotly.graph_objects as go
+from sklearn.cluster import KMeans
+from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
+import streamlit as st
 import tiktoken
-import warnings
 
 warnings.filterwarnings("ignore")
 
@@ -141,7 +144,8 @@ def convert_df(df):
 
 def create_vectordb(file):
     dr.Client(
-        token=os.environ.get("DATAROBOT_API_TOKEN"), endpoint=os.environ.get("DATAROBOT_ENDPOINT")
+        token=os.environ.get("DATAROBOT_API_TOKEN"),
+        endpoint=os.environ.get("DATAROBOT_ENDPOINT"),
     )
     local_file_path = file
     use_case_name = file.split(".")[0]
@@ -216,14 +220,16 @@ with tab1:
                         continue
                     vdb_id, df = download_vectordb_embeddings(vid)
                     end_time = time.time()
-                    st.write("Cumulative Execution Time: ", end_time - start_time, "seconds")
+                    st.write(
+                        "Cumulative Execution Time: ", end_time - start_time, "seconds"
+                    )
 
                     st.write("Creating Kmeans Cluster For Chunks...")
                     for cluster_number in range(min_clusters, max_clusters + 1):
                         df_embedding = df.copy()
-                        kmeans = KMeans(n_clusters=cluster_number, random_state=seed).fit(
-                            list(df_embedding["embeddings"])
-                        )
+                        kmeans = KMeans(
+                            n_clusters=cluster_number, random_state=seed
+                        ).fit(list(df_embedding["embeddings"]))
                         df_embedding["label"] = kmeans.labels_
                         df_embedding = df_embedding.reset_index()
                         pca = PCA(n_components=pca_components)
@@ -245,7 +251,9 @@ with tab1:
                         )
 
                 end_time = time.time()
-                st.write("Cumulative Execution Time: ", end_time - start_time, "seconds")
+                st.write(
+                    "Cumulative Execution Time: ", end_time - start_time, "seconds"
+                )
 
                 status.update(label="Complete!", state="complete", expanded=False)
 
@@ -278,14 +286,16 @@ with tab1:
 
                     vdb_id, df = create_vectordb(file_name)
                     end_time = time.time()
-                    st.write("Cumulative Execution Time: ", end_time - start_time, "seconds")
+                    st.write(
+                        "Cumulative Execution Time: ", end_time - start_time, "seconds"
+                    )
 
                     st.write("Creating Kmeans Cluster For Chunks...")
                     for cluster_number in range(min_clusters, max_clusters + 1):
                         df_embedding = df.copy()
-                        kmeans = KMeans(n_clusters=cluster_number, random_state=seed).fit(
-                            list(df_embedding["embeddings"])
-                        )
+                        kmeans = KMeans(
+                            n_clusters=cluster_number, random_state=seed
+                        ).fit(list(df_embedding["embeddings"]))
                         df_embedding["label"] = kmeans.labels_
                         df_embedding = df_embedding.reset_index()
                         pca = PCA(n_components=pca_components)
@@ -307,7 +317,9 @@ with tab1:
                         )
 
                 end_time = time.time()
-                st.write("Cumulative Execution Time: ", end_time - start_time, "seconds")
+                st.write(
+                    "Cumulative Execution Time: ", end_time - start_time, "seconds"
+                )
 
                 status.update(label="Complete!", state="complete", expanded=False)
 
@@ -332,7 +344,9 @@ with tab2:
                 st.write("Start Cluster:", cluster_number)
                 df_cluster = pd.read_csv("vdb_chunk_" + str(cluster_number) + ".csv")
                 cluster = create_cluster_summary(df_cluster, cluster_number)
-                cluster.to_csv("cluster_summary_" + str(cluster_number) + ".csv", index=False)
+                cluster.to_csv(
+                    "cluster_summary_" + str(cluster_number) + ".csv", index=False
+                )
 
             end_time = time.time()
             st.write("Cumulative Execution Time: ", end_time - start_time, "seconds")

@@ -92,7 +92,9 @@ def build_generators(df):
     for g in df.to_dict(orient="records"):
         # c3.json(g)
         generators.append(
-            Generator(name=g["name"], datatype=g["datatype"], **json.loads(g["options"]))
+            Generator(
+                name=g["name"], datatype=g["datatype"], **json.loads(g["options"])
+            )
         )
     return generators
 
@@ -171,7 +173,9 @@ with st.expander("Configuration", expanded=True):
         key="RowsRequired",
         min_value=100,
         max_value=1000000,
-        value=st.session_state["RowsRequired"] if "RowsRequired" in st.session_state else 1000,
+        value=st.session_state["RowsRequired"]
+        if "RowsRequired" in st.session_state
+        else 1000,
         step=100,
         disabled=True if "Result" in st.session_state else False,
     )
@@ -195,7 +199,9 @@ if "Result" in st.session_state:
         st.json(generators_df.to_dict(orient="records"), expanded=False)
         #
         st.write("Dataset")
-        st.dataframe(st.session_state["Result"], hide_index=True, use_container_width=True)
+        st.dataframe(
+            st.session_state["Result"], hide_index=True, use_container_width=True
+        )
         #
         summary_df = (
             st.session_state["Result"]
@@ -216,7 +222,9 @@ if st.session_state.SendToDataRobot == True:
         st.text_input(
             "DataRobot API Endpoint",
             key="DataRobotAPIEndpoint",
-            value=os.environ.get("DATAROBOT_ENDPOINT", "https://app.datarobot.com/api/v2"),
+            value=os.environ.get(
+                "DATAROBOT_ENDPOINT", "https://app.datarobot.com/api/v2"
+            ),
         )
         st.text_input("DataRobot API Token", key="DataRobotAPIToken")
         st.button(
@@ -228,7 +236,8 @@ if st.session_state.SendToDataRobot == True:
         if "DataRobotClient" in st.session_state and st.session_state.DataRobotClient:
             if "DataRobotDatasetName" not in st.session_state:
                 st.session_state.DataRobotDatasetName = (
-                    "DataSynth - " + datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+                    "DataSynth - "
+                    + datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
                 )
             st.text_input("DataRobot Dataset Name", key="DataRobotDatasetName")
             st.button(
@@ -236,7 +245,10 @@ if st.session_state.SendToDataRobot == True:
                 key="UploadToDataRobot",
                 use_container_width=True,
             )
-        if "UploadToDataRobot" in st.session_state and st.session_state.UploadToDataRobot == True:
+        if (
+            "UploadToDataRobot" in st.session_state
+            and st.session_state.UploadToDataRobot == True
+        ):
             upload_to_datarobot()
 
 if "DataRobotDataset" in st.session_state:

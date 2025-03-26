@@ -170,7 +170,9 @@ class GIN(nn.Module):
             else:
                 mlp = MLP(num_mlp_layers, hidden_dim, hidden_dim, hidden_dim)
 
-            self.ginlayers.append(GINConv(ApplyNodeFunc(mlp), neighbor_pooling_type, 0, learn_eps))
+            self.ginlayers.append(
+                GINConv(ApplyNodeFunc(mlp), neighbor_pooling_type, 0, learn_eps)
+            )
             self.batch_norms.append(nn.BatchNorm1d(hidden_dim))
 
         # Prediction heads for each layer

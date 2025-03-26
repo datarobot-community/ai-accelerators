@@ -116,7 +116,9 @@ with st.container():
         predictions_subset["EXPLANATION_1_FEATURE_NAME"]
         .value_counts()
         .reset_index()
-        .rename(columns={"index": "Feature_name", "EXPLANATION_1_FEATURE_NAME": "customers"})
+        .rename(
+            columns={"index": "Feature_name", "EXPLANATION_1_FEATURE_NAME": "customers"}
+        )
         .sort_values(by="customers")
     )
     fig = px.bar(
@@ -168,7 +170,9 @@ with st.container():
         list(pd.unique(predictions_subset["EXPLANATION_1_FEATURE_NAME"])),
     )
     display_df = (
-        predictions_subset[predictions_subset["EXPLANATION_1_FEATURE_NAME"] == reason_select]
+        predictions_subset[
+            predictions_subset["EXPLANATION_1_FEATURE_NAME"] == reason_select
+        ]
         .reset_index()
         .sort_values(by="Churn_Value_1_PREDICTION", ascending=False)
         .drop(

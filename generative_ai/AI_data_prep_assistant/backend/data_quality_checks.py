@@ -52,7 +52,9 @@ def check_missing_values(df: pd.DataFrame) -> Dict:
         results_df = results_df.sort_values(
             by=["Severity", "Missing Count"],
             ascending=[False, False],
-            key=lambda x: pd.Categorical(x, categories=["High", "Moderate", "Low"], ordered=True)
+            key=lambda x: pd.Categorical(
+                x, categories=["High", "Moderate", "Low"], ordered=True
+            )
             if x.name == "Severity"
             else x,
         )
@@ -108,7 +110,9 @@ def check_duplicates(df: pd.DataFrame) -> Dict:
 
         # Check for potential subset duplicates (rows that are duplicates when considering only a subset of columns)
         subset_duplicates = []
-        for subset_size in range(2, min(5, len(df.columns))):  # Check subsets of 2-4 columns
+        for subset_size in range(
+            2, min(5, len(df.columns))
+        ):  # Check subsets of 2-4 columns
             for cols in itertools.combinations(df.columns, subset_size):
                 subset_dups = df.duplicated(subset=list(cols), keep="first")
                 subset_count = subset_dups.sum()
@@ -136,7 +140,9 @@ def check_duplicates(df: pd.DataFrame) -> Dict:
         return {
             "issue_detected": True,
             "results_df": results_df,
-            "duplicate_rows": duplicates[duplicates].index.tolist(),  # Keep for compatibility
+            "duplicate_rows": duplicates[
+                duplicates
+            ].index.tolist(),  # Keep for compatibility
             "recommendation": "Duplicate rows detected. Review the table above for details.",
         }
 
@@ -226,7 +232,9 @@ def check_date_consistency(df: pd.DataFrame) -> Dict:
             sample_values = df[col].dropna().head(10).tolist()
 
             # Check if values look like dates
-            date_like_values = [str(v) for v in sample_values if is_potential_date(str(v))]
+            date_like_values = [
+                str(v) for v in sample_values if is_potential_date(str(v))
+            ]
 
             if date_like_values and len(date_like_values) / len(sample_values) > 0.5:
                 detected_format = detect_date_format(date_like_values)
@@ -236,7 +244,9 @@ def check_date_consistency(df: pd.DataFrame) -> Dict:
                             "Column": col,
                             "Current Type": "object",
                             "Issue": f"String values in {detected_format} format",
-                            "Sample Values": ", ".join(str(x) for x in date_like_values[:3]),
+                            "Sample Values": ", ".join(
+                                str(x) for x in date_like_values[:3]
+                            ),
                             "Action Required": "Convert to datetime",
                         }
                     )
@@ -350,7 +360,9 @@ def check_string_values(df: pd.DataFrame) -> Dict:
         trailing_spaces = string_values.str.endswith(" ").sum()
         consecutive_spaces = string_values.str.contains("  ").sum()
 
-        if any(count > 0 for count in [leading_spaces, trailing_spaces, consecutive_spaces]):
+        if any(
+            count > 0 for count in [leading_spaces, trailing_spaces, consecutive_spaces]
+        ):
             # Get sample values for each issue
             samples = {
                 "leading": ", ".join(
@@ -401,7 +413,9 @@ def check_string_values(df: pd.DataFrame) -> Dict:
     if string_data:
         # Create DataFrame
         results_df = pd.DataFrame(string_data)
-        results_df = results_df.sort_values(["Column", "Affected Rows"], ascending=[True, False])
+        results_df = results_df.sort_values(
+            ["Column", "Affected Rows"], ascending=[True, False]
+        )
 
         return {
             "issue_detected": True,
@@ -430,7 +444,9 @@ def check_string_values(df: pd.DataFrame) -> Dict:
                         if row["Issue Type"] == "Consecutive spaces"
                         else [],
                     },
-                    "total_rows": len(df),  # Use actual DataFrame length instead of calculating
+                    "total_rows": len(
+                        df
+                    ),  # Use actual DataFrame length instead of calculating
                 }
                 for _, row in results_df.iterrows()
             },
@@ -527,8 +543,12 @@ def check_for_special_characters(df: pd.DataFrame) -> Dict:
             "results_df": results_df,
             # Keep compatibility with old format
             "column_issues": {
-                row["Column"]: {"special_chars": [(row["Character"], row["Description"])]}
-                for _, row in results_df[results_df["Location"] == "Column Name"].iterrows()
+                row["Column"]: {
+                    "special_chars": [(row["Character"], row["Description"])]
+                }
+                for _, row in results_df[
+                    results_df["Location"] == "Column Name"
+                ].iterrows()
             },
             "value_issues": {
                 row["Column"]: {
@@ -541,10 +561,16 @@ def check_for_special_characters(df: pd.DataFrame) -> Dict:
                             else 0,
                         }
                     },
-                    "sample_values": {row["Character"]: row["Sample Values"].split(", ")},
-                    "total_rows": len(df),  # Use actual DataFrame length instead of calculating
+                    "sample_values": {
+                        row["Character"]: row["Sample Values"].split(", ")
+                    },
+                    "total_rows": len(
+                        df
+                    ),  # Use actual DataFrame length instead of calculating
                 }
-                for _, row in results_df[results_df["Location"] == "Column Values"].iterrows()
+                for _, row in results_df[
+                    results_df["Location"] == "Column Values"
+                ].iterrows()
             },
             "recommendation": "Special character issues detected. Review the table above for details.",
         }
@@ -617,7 +643,9 @@ def check_data_types(df: pd.DataFrame, summary_stats: Optional[Dict] = None) -> 
                                 "Column": col,
                                 "Current Type": str(current_type),
                                 "Suggested Type": "int64",
-                                "Sample Values": ", ".join(repr(x) for x in sample_values[:3]),
+                                "Sample Values": ", ".join(
+                                    repr(x) for x in sample_values[:3]
+                                ),
                                 "Reason": "Contains only integer values",
                             }
                         )
@@ -627,7 +655,9 @@ def check_data_types(df: pd.DataFrame, summary_stats: Optional[Dict] = None) -> 
                                 "Column": col,
                                 "Current Type": str(current_type),
                                 "Suggested Type": "float64",
-                                "Sample Values": ", ".join(repr(x) for x in sample_values[:3]),
+                                "Sample Values": ", ".join(
+                                    repr(x) for x in sample_values[:3]
+                                ),
                                 "Reason": "Contains numeric values",
                             }
                         )
@@ -842,13 +872,19 @@ def check_statistical_quality(df: pd.DataFrame) -> Dict:
                             "Column 1": numeric_cols[i],
                             "Column 2": numeric_cols[j],
                             "Correlation": f"{correlation:.2f}",
-                            "Strength": "Very Strong" if abs(correlation) > 0.9 else "Strong",
+                            "Strength": "Very Strong"
+                            if abs(correlation) > 0.9
+                            else "Strong",
                         }
                     )
 
     # Create DataFrames
-    results_df = pd.DataFrame(distribution_data) if distribution_data else pd.DataFrame()
-    correlation_df = pd.DataFrame(correlation_data) if correlation_data else pd.DataFrame()
+    results_df = (
+        pd.DataFrame(distribution_data) if distribution_data else pd.DataFrame()
+    )
+    correlation_df = (
+        pd.DataFrame(correlation_data) if correlation_data else pd.DataFrame()
+    )
 
     if not results_df.empty or not correlation_df.empty:
         return {
@@ -995,7 +1031,8 @@ def check_format_consistency(df: pd.DataFrame) -> Dict:
                         "Count": case_counts[pattern],
                         "Percentage": f"{(case_counts[pattern] / total_values) * 100:.1f}%",
                         "Sample Values": ", ".join(
-                            repr(x) for x in string_values[case_patterns[pattern]].head(3)
+                            repr(x)
+                            for x in string_values[case_patterns[pattern]].head(3)
                         ),
                     }
                 )
@@ -1081,7 +1118,9 @@ def check_text_variations(df: pd.DataFrame) -> Dict:
 
         # Get value counts and filter out rare values
         value_counts = df[col].value_counts()
-        min_occurrences = max(2, len(df) * 0.001)  # At least 2 occurrences or 0.1% of data
+        min_occurrences = max(
+            2, len(df) * 0.001
+        )  # At least 2 occurrences or 0.1% of data
         frequent_values = value_counts[value_counts >= min_occurrences]
 
         if len(frequent_values) < 2:
@@ -1154,7 +1193,9 @@ def normalize_text(text: str) -> str:
         return str(text)
     text = text.lower()
     text = re.sub(r"\s+", " ", text)
-    text = re.sub(r"(?<!\w)[-.,](?!\w)|(?<=\w)[-.,](?!\w)|(?<=\w)[-.,](?!\w)", " ", text)
+    text = re.sub(
+        r"(?<!\w)[-.,](?!\w)|(?<=\w)[-.,](?!\w)|(?<=\w)[-.,](?!\w)", " ", text
+    )
     return text.strip()
 
 
@@ -1210,7 +1251,9 @@ def find_similar_groups(frequent_values, value_counts):
     return similar_groups
 
 
-def run_data_quality_checks(df: pd.DataFrame, summary_stats: Optional[Dict] = None) -> Dict:
+def run_data_quality_checks(
+    df: pd.DataFrame, summary_stats: Optional[Dict] = None
+) -> Dict:
     """Run all data quality checks on the DataFrame."""
     logger.info("Starting data quality checks...")
     results = {}

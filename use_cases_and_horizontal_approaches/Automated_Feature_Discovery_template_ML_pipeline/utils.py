@@ -43,6 +43,10 @@ def prepare_demo_tables_in_db(
                 display(df.head())
                 print("info for ", value["table_name"])
                 print(df.info())
-                print("writing", value["table_name"], "to snowflake from: ", value["url"])
-                write_pandas(con, df, value["table_name"], auto_create_table=True, overwrite=True)
+                print(
+                    "writing", value["table_name"], "to snowflake from: ", value["url"]
+                )
+                write_pandas(
+                    con, df, value["table_name"], auto_create_table=True, overwrite=True
+                )
                 con.commit()

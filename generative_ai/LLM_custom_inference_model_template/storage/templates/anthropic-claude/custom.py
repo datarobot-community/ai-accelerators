@@ -14,14 +14,15 @@
 
 import os
 from typing import Any, Iterator, Union
+
 from datarobot_drum import RuntimeParameters
-import pandas as pd
 from litellm import completion
 from openai.types.chat import (
     ChatCompletion,
     ChatCompletionChunk,
     CompletionCreateParams,
 )
+import pandas as pd
 
 
 def load_model(*args, **kwargs):

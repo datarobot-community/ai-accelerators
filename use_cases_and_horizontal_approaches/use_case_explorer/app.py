@@ -6,18 +6,19 @@
 #  Released under the terms of DataRobot Tool and Utility Agreement.
 #
 
-import datarobot as dr
 import datetime
 import json
 import os
+import re
+
+from bson import ObjectId
+import datarobot as dr
+from datarobot.models.model_registry import RegisteredModelListFilters
+import requests
 import streamlit as st
 import streamlit.components.v1 as components
-import re
-import requests
-import yaml
-from bson import ObjectId
-from datarobot.models.model_registry import RegisteredModelListFilters
 from streamlit_timeline import timeline
+import yaml
 
 # Grab the DataRobot client that has already been built for us
 client = dr.Client()
@@ -25,9 +26,11 @@ client = dr.Client()
 # Set page layout
 st.set_page_config(layout="wide")
 
+
 # Render styles to the page
 def render_css():
-    st.markdown(f"""
+    st.markdown(
+        f"""
         <style>
             header {{visibility: hidden;}}
             footer {{visibility: hidden;}}
@@ -37,11 +40,11 @@ def render_css():
                 -moz-appearance: none; /* Firefox fix */
             }}
             .uc_block {{
-                background-color: #333; 
-                border-radius: 10px; 
-                padding: 15px; 
-                font-size: 14px; 
-                font-family: 'Arial', sans-serif; 
+                background-color: #333;
+                border-radius: 10px;
+                padding: 15px;
+                font-size: 14px;
+                font-family: 'Arial', sans-serif;
                 color: #eee;
                 box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
                 overflow: auto;
@@ -164,7 +167,7 @@ def render_css():
             }}
         </style>
         """,
-        unsafe_allow_html=True
+        unsafe_allow_html=True,
     )
 
 
@@ -188,7 +191,7 @@ def extract_yaml_lines(text: str):
     yaml_lines = []
     plain_lines = []
     y_out = {}
-    
+
     # Regular expression for YAML-style key-value pairs
     yaml_pattern = re.compile(r"^\s*([a-zA-Z0-9_-]+)\s*:\s*(.+)$")
     if text:
@@ -202,7 +205,7 @@ def extract_yaml_lines(text: str):
     if yaml_lines:
         # Join extracted lines and parse as YAML
         y_out = yaml.safe_load("\n".join(yaml_lines))
-    
+
     return "\n".join(plain_lines), y_out
 
 
@@ -225,7 +228,7 @@ def render_use_case_header(use_case):
         description = "Project status is undefined"
     # link to drill into the use case
     uc_url = f"?use_case_id={use_case.id}"
-    return f"<a href=\"{uc_url}\" target=\"_self\">{use_case.name}</a><br>{description}"
+    return f'<a href="{uc_url}" target="_self">{use_case.name}</a><br>{description}'
 
 
 # Grab all the use cases and append them to the list of elements to render in the sidebar
@@ -235,7 +238,7 @@ def render_sidebar():
     use_cases = dr.UseCase.list()
     element_list = []
     for use_case in use_cases:
-         styled_text_box(render_use_case_header(use_case=use_case), True)
+        styled_text_box(render_use_case_header(use_case=use_case), True)
 
 
 # Update the use case description with new YAML values if status has been modified
@@ -252,13 +255,13 @@ def update_use_case_description(use_case_id, new_status=None, new_target=None):
             metadata["status"] = new_status
         if new_target:
             metadata["target_date"] = new_target
-        for k,v in metadata.items():
+        for k, v in metadata.items():
             meta_out += f"{k}: {v}\n"
         uc.update(description=f"{description}\n{meta_out}")
 
 
 # Load use case details when a user drills in
-def render_use_case(use_case_id):    
+def render_use_case(use_case_id):
     try:
         uc = dr.UseCase.get(use_case_id)
         st.header(uc.name)
@@ -277,7 +280,7 @@ def render_use_case(use_case_id):
     starred_models = {}
 
     # grab use case start date and default project length to fill in the timeline in case no target date is defined
-    uc_created_date = datetime.datetime.strptime(uc.created_at, '%Y-%m-%d %H:%M:%S.%f')
+    uc_created_date = datetime.datetime.strptime(uc.created_at, "%Y-%m-%d %H:%M:%S.%f")
     default_project_length = os.environ.get("DEFAULT_PROJECT_LENGTH", 90)
 
     # grab all members of the use case
@@ -287,7 +290,9 @@ def render_use_case(use_case_id):
     # collect associated assets
     projects = uc.list_projects()
     datasets = uc.list_datasets()
-    registered_models = client.get(f"useCases/{use_case_id}/registeredModels").json()["data"]
+    registered_models = client.get(f"useCases/{use_case_id}/registeredModels").json()[
+        "data"
+    ]
     deployed_models = client.get(f"useCases/{use_case_id}/deployments").json()["data"]
     vector_dbs = client.get(f"useCases/{use_case_id}/vectorDatabases").json()["data"]
     playgrounds = client.get(f"useCases/{use_case_id}/playgrounds").json()["data"]
@@ -329,190 +334,240 @@ def render_use_case(use_case_id):
             <input type="submit" value="Submit Update" class="submit-button">
         </form>
     """
-    st.markdown(f"<div class=\"container\"><div class=\"uc_block\">{description}</div><div class=\"uc_block\">{update_html}</div></div><br>", unsafe_allow_html=True)
+    st.markdown(
+        f'<div class="container"><div class="uc_block">{description}</div><div class="uc_block">{update_html}</div></div><br>',
+        unsafe_allow_html=True,
+    )
 
     # render list of use case members
     styled_text_box(f"<h2>Members</h2>{members}")
 
     # build and render the timeline
     if target_date == "Undefined ❌":
-        target_date = uc_created_date + datetime.timedelta(days = default_project_length)
-    events = { 
+        target_date = uc_created_date + datetime.timedelta(days=default_project_length)
+    events = {
         "eras": [
             {
                 "start_date": {
-                    "year":uc_created_date.year, "month":uc_created_date.month, "day":uc_created_date.day
-                }, 
+                    "year": uc_created_date.year,
+                    "month": uc_created_date.month,
+                    "day": uc_created_date.day,
+                },
                 "end_date": {
-                    "year":target_date.year, "month":target_date.month, "day":target_date.day
+                    "year": target_date.year,
+                    "month": target_date.month,
+                    "day": target_date.day,
                 },
                 "text": {
-                    "headline":"Project Timeline", "text":"Gathering project assets and approvals."
-                }
+                    "headline": "Project Timeline",
+                    "text": "Gathering project assets and approvals.",
+                },
             }
         ],
         "groups": [
             {
-                "id": 1, 
+                "id": 1,
                 "content": "Project Setup",
-                "style": "color: red; background-color: pink;"
+                "style": "color: red; background-color: pink;",
             },
             {
-                "id": 2, 
+                "id": 2,
                 "content": "Model Training and Evaluation",
-                "style": "color: yellow; background-color: blue;"
+                "style": "color: yellow; background-color: blue;",
             },
             {
-                "id": 3, 
+                "id": 3,
                 "content": "Model Registration and Approval",
-                "style": "color: red; background-color: green;"
+                "style": "color: red; background-color: green;",
             },
             {
-                "id": 4, 
+                "id": 4,
                 "content": "Production Deployment and Maintenance",
-                "style": "color: white; background-color: black;"
+                "style": "color: white; background-color: black;",
             },
         ],
         "events": [
             {
                 "start_date": {
-                    "year":uc_created_date.year, "month":uc_created_date.month, "day":uc_created_date.day
-                }, 
-                "text": {
-                    "headline":"Use Case Start", "text":"Use case created"
+                    "year": uc_created_date.year,
+                    "month": uc_created_date.month,
+                    "day": uc_created_date.day,
                 },
-                "group": 1
+                "text": {"headline": "Use Case Start", "text": "Use case created"},
+                "group": 1,
             }
-            ]
+        ],
     }
     for d in datasets:
         node_date = ObjectId(d.id).generation_time
-        events['events'].append({
-            "start_date": {
-                "year":node_date.year, "month":node_date.month, "day":node_date.day
-            }, 
-            "text": {
-                "headline":"Dataset Registered", "text":d.name
-            },
-            "group": 1
-        })
+        events["events"].append(
+            {
+                "start_date": {
+                    "year": node_date.year,
+                    "month": node_date.month,
+                    "day": node_date.day,
+                },
+                "text": {"headline": "Dataset Registered", "text": d.name},
+                "group": 1,
+            }
+        )
     for v in vector_dbs:
         node_date = ObjectId(v["id"]).generation_time
-        events['events'].append({
-            "start_date": {
-                "year":node_date.year, "month":node_date.month, "day":node_date.day
-            }, 
-            "text": {
-                "headline":"Vector Database Created", "text":v["id"]
-            },
-            "group": 1
-        })
+        events["events"].append(
+            {
+                "start_date": {
+                    "year": node_date.year,
+                    "month": node_date.month,
+                    "day": node_date.day,
+                },
+                "text": {"headline": "Vector Database Created", "text": v["id"]},
+                "group": 1,
+            }
+        )
     for p in projects:
         # grab and save all the starred models in the project. this will also be used when rendering the project list
-        starred_models[p.id] = p.get_models(search_params={'is_starred': True},use_new_models_retrieval=True)
+        starred_models[p.id] = p.get_models(
+            search_params={"is_starred": True}, use_new_models_retrieval=True
+        )
         node_date = p.created
-        events['events'].append({
-            "start_date": {
-                "year":node_date.year, "month":node_date.month, "day":node_date.day
-            }, 
-            "text": {
-                "headline":"Experiment Started", "text":p.project_name
-            },
-            "group": 2
-        })
+        events["events"].append(
+            {
+                "start_date": {
+                    "year": node_date.year,
+                    "month": node_date.month,
+                    "day": node_date.day,
+                },
+                "text": {"headline": "Experiment Started", "text": p.project_name},
+                "group": 2,
+            }
+        )
         for m in starred_models[p.id]:
             node_date = ObjectId(m.id).generation_time
-            events['events'].append({
-                "start_date": {
-                    "year":node_date.year, "month":node_date.month, "day":node_date.day
-                }, 
-                "text": {
-                    "headline":"Key Model Trained", "text":m.model_type
-                },
-                "group": 2
-            })
+            events["events"].append(
+                {
+                    "start_date": {
+                        "year": node_date.year,
+                        "month": node_date.month,
+                        "day": node_date.day,
+                    },
+                    "text": {"headline": "Key Model Trained", "text": m.model_type},
+                    "group": 2,
+                }
+            )
     for p in playgrounds:
         node_date = ObjectId(p["id"]).generation_time
-        events['events'].append({
-            "start_date": {
-                "year":node_date.year, "month":node_date.month, "day":node_date.day
-            }, 
-            "text": {
-                "headline":"Generative AI Playground Created", "text":p["id"]
-            },
-            "group": 2
-        })
+        events["events"].append(
+            {
+                "start_date": {
+                    "year": node_date.year,
+                    "month": node_date.month,
+                    "day": node_date.day,
+                },
+                "text": {
+                    "headline": "Generative AI Playground Created",
+                    "text": p["id"],
+                },
+                "group": 2,
+            }
+        )
     for m in registered_models:
         node_date = ObjectId(m["id"]).generation_time
-        events['events'].append({
-            "start_date": {
-                "year":node_date.year, "month":node_date.month, "day":node_date.day
-            }, 
-            "text": {
-                "headline":"Model Registered", "text":m["name"]
-            },
-            "group": 3
-        })
+        events["events"].append(
+            {
+                "start_date": {
+                    "year": node_date.year,
+                    "month": node_date.month,
+                    "day": node_date.day,
+                },
+                "text": {"headline": "Model Registered", "text": m["name"]},
+                "group": 3,
+            }
+        )
     for m in deployed_models:
         node_date = ObjectId(m["id"]).generation_time
-        events['events'].append({
-            "start_date": {
-                "year":node_date.year, "month":node_date.month, "day":node_date.day
-            }, 
-            "text": {
-                "headline":"Model Deployed", "text":m["label"]
-            },
-            "group": 4
-        })
+        events["events"].append(
+            {
+                "start_date": {
+                    "year": node_date.year,
+                    "month": node_date.month,
+                    "day": node_date.day,
+                },
+                "text": {"headline": "Model Deployed", "text": m["label"]},
+                "group": 4,
+            }
+        )
     for a in apps:
         print(a)
         node_date = ObjectId(a["applicationId"]).generation_time
-        events['events'].append({
-            "start_date": {
-                "year":node_date.year, "month":node_date.month, "day":node_date.day
-            }, 
-            "text": {
-                "headline":"Application Registered", "text":a["name"]
-            },
-            "group": 1
-        })
+        events["events"].append(
+            {
+                "start_date": {
+                    "year": node_date.year,
+                    "month": node_date.month,
+                    "day": node_date.day,
+                },
+                "text": {"headline": "Application Registered", "text": a["name"]},
+                "group": 1,
+            }
+        )
     st.title("Project Timeline")
     timeline(events, height=380)
 
     # render list of datasets
     for d in datasets:
-        dataset_list += f"<strong>Dataset: <a href=\"{d.get_uri()}\">{d.name}</a><br><br>"
+        dataset_list += f'<strong>Dataset: <a href="{d.get_uri()}">{d.name}</a><br><br>'
     for v in vector_dbs:
-        dataset_list += f"<strong>Vector Database: <a href=\"https://app.datarobot.com/usecases/{uc.id}/vector-databases/{p["id"]}\">{p["id"]}</a><br>"
+        dataset_list += f"<strong>Vector Database: <a href=\"https://app.datarobot.com/usecases/{uc.id}/vector-databases/{p['id']}\">{p['id']}</a><br>"
     styled_text_box(f"<h2>Setup</h2>{dataset_list}")
 
     # render list of projects and any starred models they contain
     for p in projects:
-        project_list += f"<strong>Experiment: <a href=\"{p.get_uri()}\">{p.project_name}</a><br>"
+        project_list += (
+            f'<strong>Experiment: <a href="{p.get_uri()}">{p.project_name}</a><br>'
+        )
         if len(starred_models[p.id]) > 0:
             project_list += "<strong>Starred Models: </strong>"
-            project_list += ", ".join([f"<a href=\"{m.get_uri()}\">{m.model_type}</a>" for m in starred_models[p.id]])
+            project_list += ", ".join(
+                [
+                    f'<a href="{m.get_uri()}">{m.model_type}</a>'
+                    for m in starred_models[p.id]
+                ]
+            )
         project_list += "<br><br>"
     for p in playgrounds:
-        project_list += f"<strong>Playground: <a href=\"https://app.datarobot.com/usecases/{uc.id}/playgrounds/{p["id"]}/info\">{p["id"]}</a><br>"
+        project_list += f"<strong>Playground: <a href=\"https://app.datarobot.com/usecases/{uc.id}/playgrounds/{p['id']}/info\">{p['id']}</a><br>"
     styled_text_box(f"<h2>Evaluation</h2>{project_list}")
 
     # render list of registered models
-    if len(registered_models)> 0:
+    if len(registered_models) > 0:
         registered_model_list += "<strong>Registered Models: </strong>"
-        registered_model_list += "  \n".join([f"<a href=\"https://app.datarobot.com/registry/registered-models/{rm["id"]}/\">{rm["name"]}</a><br>" for rm in registered_models])
+        registered_model_list += "  \n".join(
+            [
+                f"<a href=\"https://app.datarobot.com/registry/registered-models/{rm['id']}/\">{rm['name']}</a><br>"
+                for rm in registered_models
+            ]
+        )
     else:
-        registered_model_list = "There are no models currently registered from this use case."
+        registered_model_list = (
+            "There are no models currently registered from this use case."
+        )
     styled_text_box(f"<h2>Approval</h2>{registered_model_list}")
 
     # render list of deployed models
-    if len(deployed_models)> 0:
+    if len(deployed_models) > 0:
         deployed_model_list += "<strong>Deployed Models: </strong>"
-        deployed_model_list += "  \n".join([f"<a href=\"https://app.datarobot.com/console-nextgen/deployments/{d["id"]}/overview\">{d["label"]}</a>" for d in deployed_models])
+        deployed_model_list += "  \n".join(
+            [
+                f"<a href=\"https://app.datarobot.com/console-nextgen/deployments/{d['id']}/overview\">{d['label']}</a>"
+                for d in deployed_models
+            ]
+        )
     else:
-        deployed_model_list = "There are no models currently deployed from this use case."
+        deployed_model_list = (
+            "There are no models currently deployed from this use case."
+        )
     for a in apps:
-        deployed_model_list += f"<br><strong>Application: <a href=\"https://app.datarobot.com/registry/applications/{a["source"]}/app-info/{a["applicationId"]}\">{a["name"]}</a><br>"
+        deployed_model_list += f"<br><strong>Application: <a href=\"https://app.datarobot.com/registry/applications/{a['source']}/app-info/{a['applicationId']}\">{a['name']}</a><br>"
     styled_text_box(f"<h2>Production</h2>{deployed_model_list}")
 
 
@@ -522,7 +577,7 @@ if __name__ == "__main__":
     new_status = st.query_params.get("new_status", None)
     new_target = st.query_params.get("new_target", None)
     update_use_case_description(use_case_id, new_status, new_target)
-    
+
     # clear query parameters to prevent bookmarking a URL with update parameters defined
     st.query_params.clear()
 
@@ -535,5 +590,9 @@ if __name__ == "__main__":
         render_use_case(use_case_id)
     else:
         st.title("DataRobot Use Case Explorer")
-        st.markdown("Browse your use cases and review project status. Make a selection from the menu to continue.")
-        styled_text_box("Target date and status can be set via this app, or by adding the appropriate YAML keys to your use case description, ex:<br><br>target_date: 2025-05-23<br>status: green")
+        st.markdown(
+            "Browse your use cases and review project status. Make a selection from the menu to continue."
+        )
+        styled_text_box(
+            "Target date and status can be set via this app, or by adding the appropriate YAML keys to your use case description, ex:<br><br>target_date: 2025-05-23<br>status: green"
+        )

@@ -103,7 +103,8 @@ class ClientLoanFeatureExtractor:
         # 3) fraud neighbors
         df_fraud_nbr = pd.DataFrame(self._compute_fraud_neighbors())
         df_fraud_nbr.rename(
-            columns={"fraud_neighbor_count": "client_fraud_neighbor_count"}, inplace=True
+            columns={"fraud_neighbor_count": "client_fraud_neighbor_count"},
+            inplace=True,
         )
         base_df = base_df.merge(df_fraud_nbr, on="client_id", how="left")
 
@@ -203,7 +204,9 @@ class ClientLoanFeatureExtractor:
         with self._get_session() as session:
             for rec in session.run(cypher):
                 cid = rec["client_id"] or str(rec["internalNeo4jId"])
-                out.append({"client_id": cid, "fraud_neighbor_count": rec["fraudNeighbors"]})
+                out.append(
+                    {"client_id": cid, "fraud_neighbor_count": rec["fraudNeighbors"]}
+                )
         return out
 
     def _compute_fraud_loaner_links(self):
@@ -228,7 +231,9 @@ class ClientLoanFeatureExtractor:
         with self._get_session() as session:
             for rec in session.run(cypher):
                 cid = rec["client_id"] or str(rec["internalNeo4jId"])
-                out.append({"client_id": cid, "fraud_loaner_count": rec["fraudLoanerLinks"]})
+                out.append(
+                    {"client_id": cid, "fraud_loaner_count": rec["fraudLoanerLinks"]}
+                )
         return out
 
     def _compute_rejected_loans(self):
@@ -250,7 +255,9 @@ class ClientLoanFeatureExtractor:
         with self._get_session() as session:
             for rec in session.run(cypher):
                 cid = rec["client_id"] or str(rec["internalNeo4jId"])
-                out.append({"client_id": cid, "rejected_loan_count": rec["rejectedCount"]})
+                out.append(
+                    {"client_id": cid, "rejected_loan_count": rec["rejectedCount"]}
+                )
         return out
 
     # ----------------------------------------------------------------

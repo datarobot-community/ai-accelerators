@@ -74,18 +74,24 @@ class Fire:
             feature_impact["rank"] = feature_impact.index.values
 
             # Add to our master list of all models' feature ranks
-            self.all_impact = pd.concat([self.all_impact, feature_impact], ignore_index=True)
+            self.all_impact = pd.concat(
+                [self.all_impact, feature_impact], ignore_index=True
+            )
 
         # We need to get a threshold number of features to select based on cumulative sum of impact
         all_impact_agg = (
-            self.all_impact.groupby("featureName")[["impactNormalized", "impactUnnormalized"]]
+            self.all_impact.groupby("featureName")[
+                ["impactNormalized", "impactUnnormalized"]
+            ]
             .sum()
             .sort_values("impactUnnormalized", ascending=False)
             .reset_index()
         )
 
         # calculate cumulative feature impact and take first features that possess <ratio> of total impact
-        all_impact_agg["impactCumulative"] = all_impact_agg["impactUnnormalized"].cumsum()
+        all_impact_agg["impactCumulative"] = all_impact_agg[
+            "impactUnnormalized"
+        ].cumsum()
         total_impact = all_impact_agg["impactCumulative"].max() * ratio
         tmp_fl = list(
             set(
@@ -250,7 +256,10 @@ class Fire:
                 (
                     (models_df.category == "model")
                     & (models_df.is_frozen == False)
-                    & (models_df.featurelist_name.str.contains("DR Reduced Features M") == False)
+                    & (
+                        models_df.featurelist_name.str.contains("DR Reduced Features M")
+                        == False
+                    )
                 ),
                 "model",
             ]
@@ -337,7 +346,9 @@ class Fire:
             except dr.errors.ClientError as e:
                 # decay the ratio
                 ratio *= ratio
-                print(e, f"\nWill try again with a ratio decay ...  New ratio={ratio:.3f}")
+                print(
+                    e, f"\nWill try again with a ratio decay ...  New ratio={ratio:.3f}"
+                )
                 continue
 
             ##############################

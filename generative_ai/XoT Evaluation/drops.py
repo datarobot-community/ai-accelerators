@@ -9,7 +9,9 @@ logger = logging.getLogger(__name__)
 
 
 def get_prompt_count(playground_id: str, headers: Dict[str, str], endpoint: str) -> int:
-    url = f"{endpoint}/genai/playgrounds/{playground_id}/trace/?limit=1&sortBy=timestamp"
+    url = (
+        f"{endpoint}/genai/playgrounds/{playground_id}/trace/?limit=1&sortBy=timestamp"
+    )
 
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
@@ -35,7 +37,9 @@ def flatten_json(data: Dict[str, Any], prefix: str = "") -> Dict[str, Any]:
     return flattened
 
 
-def get_trace_data(playground_id: str, headers: Dict[str, str], endpoint: str) -> pd.DataFrame:
+def get_trace_data(
+    playground_id: str, headers: Dict[str, str], endpoint: str
+) -> pd.DataFrame:
     def _fetch_page(url: str) -> tuple[list, str]:
         response = requests.get(url, headers=headers)
         if response.status_code != 200:
@@ -45,7 +49,9 @@ def get_trace_data(playground_id: str, headers: Dict[str, str], endpoint: str) -
         return json_data.get("data", []), json_data.get("next")
 
     all_data = []
-    url = f"{endpoint}/genai/playgrounds/{playground_id}/trace/?limit=50&sortBy=timestamp"
+    url = (
+        f"{endpoint}/genai/playgrounds/{playground_id}/trace/?limit=50&sortBy=timestamp"
+    )
 
     # Fetch all pages recursively
     while url:

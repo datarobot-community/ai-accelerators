@@ -6,7 +6,9 @@ def get_documents(source_file, destination_folder):
     # filter data
     df_tweets = pd.read_csv(source_file)
     org = "AskSeagate"
-    tweets = df_tweets[(df_tweets.text.str.find(org) != -1) | (df_tweets.author_id == org)]
+    tweets = df_tweets[
+        (df_tweets.text.str.find(org) != -1) | (df_tweets.author_id == org)
+    ]
     # create conversation threads
     df = tweets[~tweets["in_response_to_tweet_id"].isna()][
         ["tweet_id", "in_response_to_tweet_id"]
