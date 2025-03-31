@@ -1,0 +1,15 @@
+---
+title: Create a LLM Multimodal PDF RAG on DataRobot
+file_name: LLM Multimodal PDF RAG.ipynb
+description: |-
+  Open-source PDF OCR tools often make mistakes, so you can use an LLM instead. This AI accelerator introduces an approach to use an LLM as an OCR tool to extract all the text, table, and graph data from PDF. Then you will build a RAG and a Playround chat on DataRobot.
+languages:
+  - python
+maintainers:
+  - Senkin Zhan
+maintainers_email:
+  - senkin.zhan@datarobot.com@datarobot.com
+smoke_test:
+  run_smoke_test: false
+  user_permissions: []
+tags: []
