@@ -1,3 +1,3 @@
 # Create article summaries from RSS feeds
 
-This AI accelerator is no longer usable, as Google Bison has been retired.
+This accelerator has been removed because the LLM it is based on, Google Bison, has been retired.
