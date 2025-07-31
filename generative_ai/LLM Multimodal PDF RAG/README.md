@@ -25,6 +25,7 @@ The following steps outline the accelerator workflow.
 | anthropic            |claude-3-7-sonnet-20250219|
 | openai               | gpt-4o                   |
 | azure                | gpt-4o                   |   
+| llm_gateway          | gpt-4o                   |   
 
 ![markdown](image/markdown.png)
 
