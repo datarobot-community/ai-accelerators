@@ -1,0 +1,14 @@
+---
+title: Modeling marketing attribution
+file_name: marketing_attribution_w_datarobot.ipynb
+description: |-
+  Marketing attribution can be defined as the process of assigning credit to certain marketing activities (e.g., spending) as they contribute towards a desired goal (e.g., increases in revenue). Understanding how much these marketing activities contribute enables stakeholders to make better budget allocation decisions. However, in today’s world, marketing teams have many avenues to spend their marketing dollars, and it can be a daunting task to figure out which avenues are playing the largest role towards optimizing the key performance indicator (KPI) of interest. Model-based approaches can help sift through all this information in a rigorous and efficient way, leading to faster decision-making.
+languages:
+  - python
+maintainers:
+  - Taylor Larkin
+maintainers_email:
+  - taylor.larkin@datarobot.com
+smoke_test:
+  run_smoke_test: false
+tags: []
