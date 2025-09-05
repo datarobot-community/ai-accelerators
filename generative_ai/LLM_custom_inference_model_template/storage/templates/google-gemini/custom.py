@@ -28,7 +28,7 @@ TOKEN_CREATE_TIME = time()
 
 def get_google_credential():
     if os.getenv(
-        "DRUM_JAVA_SHARED_JARS"
+        "CUSTOM_MODEL_SERVICE_HOST"
     ):  # You are running in a custom model environment
         print("Using Custom Model Runtime")
         supplied_credential = RuntimeParameters.get(
