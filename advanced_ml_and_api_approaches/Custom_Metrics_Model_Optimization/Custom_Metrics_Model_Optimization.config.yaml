@@ -1,0 +1,16 @@
+---
+description: This notebook demonstrates how to improve DataRobot models using custom loss functions and
+  advanced hyperparameter tuning.
+file_name: Custom_Metrics_Model_Optimization.ipynb
+languages:
+  - python
+maintainers:
+  - Zeeshan Arif
+  - Oleksandr Ruppelt
+maintainers_email:
+  - md.zeeshan.arif@datarobot.com
+  - oleksandr.ruppelt@datarobot.com
+smoke_test:
+  run_smoke_test: false
+tags: []
+title: Optimize custom model metrics with hyperparameter tuning
