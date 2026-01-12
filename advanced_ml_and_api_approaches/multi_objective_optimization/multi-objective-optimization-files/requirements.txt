@@ -1,9 +1,11 @@
 datarobot
 numexpr
 numpy
-optuna
+optuna==4.1.0
 optunahub
 pandas
 plotly
+python-dotenv
 requests
+scipy
 streamlit

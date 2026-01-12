@@ -79,6 +79,63 @@ st.session_state.trials_num = sidebar.number_input(
     _("Trials Number"), step=10, format="%d", value=100, key=10002
 )
 
+# Sampler selection
+SAMPLER_OPTIONS = {
+    "NSGAII + TPE Warmup": {
+        "description_en": "NSGA-II with TPE warmup for efficient initial exploration",
+        "description_ja": "TPEウォームアップによる効率的な初期探索 + NSGA-II",
+        "type": "optunahub",
+        "package": "samplers/nsgaii_with_tpe_warmup",
+    },
+    "NSGA-II": {
+        "description_en": "Standard NSGA-II genetic algorithm for multi-objective optimization",
+        "description_ja": "標準的なNSGA-II遺伝的アルゴリズム",
+        "type": "builtin",
+        "class": "NSGAIISampler",
+    },
+    "NSGA-III": {
+        "description_en": "NSGA-III for many-objective optimization (3+ objectives)",
+        "description_ja": "多数目的最適化向けNSGA-III（3目的以上に推奨）",
+        "type": "builtin",
+        "class": "NSGAIIISampler",
+    },
+    "TPE": {
+        "description_en": "Tree-structured Parzen Estimator (Bayesian optimization)",
+        "description_ja": "TPE（ベイズ最適化ベース）",
+        "type": "builtin",
+        "class": "TPESampler",
+    },
+    "Random": {
+        "description_en": "Random sampling (baseline)",
+        "description_ja": "ランダムサンプリング（ベースライン）",
+        "type": "builtin",
+        "class": "RandomSampler",
+    },
+    "QMC": {
+        "description_en": "Quasi-Monte Carlo for better space coverage",
+        "description_ja": "準モンテカルロ法（探索空間の効率的カバー）",
+        "type": "builtin",
+        "class": "QMCSampler",
+    },
+}
+
+sampler_names = list(SAMPLER_OPTIONS.keys())
+if "sampler_name" not in st.session_state:
+    st.session_state.sampler_name = sampler_names[0]
+
+selected_sampler = sidebar.selectbox(
+    _("Optimization Algorithm"),
+    sampler_names,
+    index=sampler_names.index(st.session_state.sampler_name),
+    key="sampler_select",
+)
+st.session_state.sampler_name = selected_sampler
+
+# Show sampler description
+sampler_info = SAMPLER_OPTIONS[selected_sampler]
+desc_key = "description_ja" if st.session_state.language == "ja" else "description_en"
+sidebar.caption(f"ℹ️ {sampler_info[desc_key]}")
+
 # put directions into deployment_infos as initial value
 for idx, deploy_info in enumerate(st.session_state.deployment_infos):
     deploy_info["direction"] = st.session_state.config["Optimization Direction"].iloc[
@@ -111,6 +168,15 @@ for idx, deploy_info in enumerate(st.session_state.deployment_infos):
             st.sidebar.warning(f"Invalid expression: {str(e)}")
             st.session_state.deployment_infos[idx]["custom_exp"] = ""
 
+    # Weight input for each objective (no min/max restriction)
+    weight = sidebar.number_input(
+        _("Weight"),
+        value=1.0,
+        step=0.1,
+        format="%.2f",
+        key=f"weight_{idx}",
+    )
+    st.session_state.deployment_infos[idx]["weight"] = weight
     st.session_state.deployment_infos[idx]["direction"] = direction
 
 sidebar.markdown("---")
@@ -147,15 +213,42 @@ where((x >= 5) & (x <= 15), 0, where(x < 5, 5 - x, x - 15))
 simulate = sidebar.button(_("Simulation Start!"), key="simulate_start")
 
 
+def get_sampler(sampler_name: str):
+    """Create and return the selected sampler instance."""
+    sampler_config = SAMPLER_OPTIONS[sampler_name]
+
+    if sampler_config["type"] == "optunahub":
+        package_name = sampler_config["package"]
+        return optunahub.load_module(package=package_name).NSGAIIWithTPEWarmupSampler()
+    else:
+        # Built-in Optuna samplers
+        sampler_class = sampler_config["class"]
+        if sampler_class == "NSGAIISampler":
+            return optuna.samplers.NSGAIISampler()
+        elif sampler_class == "NSGAIIISampler":
+            return optuna.samplers.NSGAIIISampler()
+        elif sampler_class == "TPESampler":
+            return optuna.samplers.TPESampler()
+        elif sampler_class == "RandomSampler":
+            return optuna.samplers.RandomSampler()
+        elif sampler_class == "QMCSampler":
+            return optuna.samplers.QMCSampler()
+        else:
+            raise ValueError(f"Unknown sampler: {sampler_class}")
+
+
 def run_optimization(
     trials_num,
     targets,
     deploy_ids,
     directions,
     custom_exprs,
+    weights,
     feats_name,
     feats_value_min,
     feats_value_max,
+    sampler_name,
+    simulated_feats,
 ):
     def objective(trial):
         df_target = pd.DataFrame(index=[0], columns=feats_name)
@@ -168,7 +261,9 @@ def run_optimization(
             raise ValueError("Number of deployment IDs must be between 2 and 30")
 
         predictions = []
-        for n, (deploy_id, custom_exp) in enumerate(zip(deploy_ids, custom_exprs)):
+        for n, (deploy_id, custom_exp, weight) in enumerate(
+            zip(deploy_ids, custom_exprs, weights)
+        ):
             pred = get_prediction(
                 df_target, deploy_id, DATAROBOT_API_TOKEN, DATAROBOT_KEY, API_URL
             )
@@ -177,12 +272,13 @@ def run_optimization(
                 # since the variable in the expression is x, we need to assign the value to x
                 expr = custom_exp.replace("x", "pred")
                 pred = numexpr.evaluate(expr)
-            predictions.append(pred)
+            # Apply weight to the prediction for optimization
+            weighted_pred = pred * weight
+            predictions.append(weighted_pred)
 
         return tuple(predictions)
 
-    package_name = "samplers/nsgaii_with_tpe_warmup"
-    sampler = optunahub.load_module(package=package_name).NSGAIIWithTPEWarmupSampler()
+    sampler = get_sampler(sampler_name)
 
     study = optuna.create_study(
         sampler=sampler,
@@ -196,15 +292,18 @@ def run_optimization(
         n_trials=trials_num,
         timeout=300,
         gc_after_trial=True,
-        n_jobs=10,
+        n_jobs=3,  # Reduced from 10 to avoid API rate limiting
     )
 
     trial_all = []
     trail_pred = []
     trial_params = []
     for trial in study.get_trials():
+        # Skip failed trials (where values is None)
+        if trial.values is None:
+            continue
         trial_params.append(trial.params)
-        trail_pred.append([v[0] for v in trial.user_attrs.values()])
+        trail_pred.append([v for v in trial.user_attrs.values()])
         trial_all.append([trial.number] + [v for v in trial.values])
     trial_all = pd.DataFrame(
         trial_all, columns=["Iteration"] + [f"{t}_opt" for t in targets]
@@ -214,11 +313,111 @@ def run_optimization(
     trial_all = pd.concat([trial_all, trail_pred, trial_params], axis=1)
 
     trial_pareto = []
+    pareto_params = []
     for trial in study.best_trials:
         trial_pareto.append([trial.number] + [v for v in trial.values])
+        pareto_params.append(trial.params)
     trial_pareto = pd.DataFrame(trial_pareto, columns=["Iteration"] + targets)
+    pareto_params_df = pd.DataFrame.from_dict(pareto_params)
 
-    return trial_all, trial_pareto, study
+    # Calculate reliability statistics for Pareto optimal solutions
+    # Only include simulated features (exclude fixed/dropped features)
+    param_cols = [col for col in simulated_feats if col in pareto_params_df.columns]
+    reliability_stats = calculate_reliability_stats(pareto_params_df, param_cols)
+
+    return trial_all, trial_pareto, study, reliability_stats
+
+
+def calculate_reliability_stats(pareto_params_df: pd.DataFrame, param_cols: list) -> pd.DataFrame:
+    """
+    Calculate reliability statistics for Pareto optimal parameters.
+
+    Returns DataFrame with:
+    - Mean: Average value across Pareto solutions
+    - Std: Standard deviation
+    - CV: Coefficient of Variation (Std/Mean) - lower is more reliable
+    - CI_lower: 95% confidence interval lower bound
+    - CI_upper: 95% confidence interval upper bound
+    - Range: Max - Min value
+    - Stability_Score: 1 - normalized CV (0-1, higher is more stable)
+    """
+    import numpy as np
+    from scipy import stats as scipy_stats
+
+    if len(pareto_params_df) < 2:
+        # Not enough data for statistics
+        stats_data = []
+        for col in param_cols:
+            if col in pareto_params_df.columns:
+                val = pareto_params_df[col].iloc[0] if len(pareto_params_df) > 0 else np.nan
+                stats_data.append({
+                    "Parameter": col,
+                    "Mean": val,
+                    "Std": 0.0,
+                    "CV": 0.0,
+                    "CI_lower": val,
+                    "CI_upper": val,
+                    "Min": val,
+                    "Max": val,
+                    "Range": 0.0,
+                    "Stability_Score": 1.0,
+                })
+        return pd.DataFrame(stats_data)
+
+    stats_data = []
+    cv_values = []
+
+    for col in param_cols:
+        if col not in pareto_params_df.columns:
+            continue
+
+        values = pareto_params_df[col].dropna()
+        if len(values) == 0:
+            continue
+
+        mean_val = values.mean()
+        std_val = values.std()
+        min_val = values.min()
+        max_val = values.max()
+        range_val = max_val - min_val
+
+        # Coefficient of Variation (handle zero mean)
+        cv = std_val / abs(mean_val) if mean_val != 0 else 0.0
+        cv_values.append(cv)
+
+        # 95% Confidence Interval
+        n = len(values)
+        if n > 1:
+            se = std_val / np.sqrt(n)
+            t_val = scipy_stats.t.ppf(0.975, n - 1)
+            ci_lower = mean_val - t_val * se
+            ci_upper = mean_val + t_val * se
+        else:
+            ci_lower = ci_upper = mean_val
+
+        stats_data.append({
+            "Parameter": col,
+            "Mean": mean_val,
+            "Std": std_val,
+            "CV": cv,
+            "CI_lower": ci_lower,
+            "CI_upper": ci_upper,
+            "Min": min_val,
+            "Max": max_val,
+            "Range": range_val,
+            "Stability_Score": 0.0,  # Will be calculated after
+        })
+
+    # Calculate Stability Score (normalized CV, inverted so higher = more stable)
+    if cv_values and max(cv_values) > 0:
+        max_cv = max(cv_values)
+        for stat in stats_data:
+            stat["Stability_Score"] = round(1.0 - (stat["CV"] / max_cv), 4)
+    else:
+        for stat in stats_data:
+            stat["Stability_Score"] = 1.0
+
+    return pd.DataFrame(stats_data)
 
 
 # ======================================== Start Streamlit ========================================#
@@ -252,6 +451,10 @@ with tab1:
     directions = ["minimize" if d == "custom" else d for d in directions]
     custom_exprs = [
         deploy_info.get("custom_exp", "")
+        for deploy_info in st.session_state.deployment_infos
+    ]
+    weights = [
+        deploy_info.get("weight", 1.0)
         for deploy_info in st.session_state.deployment_infos
     ]
     cols = df_feature.columns.to_list()
@@ -314,15 +517,18 @@ with tab1:
             feats_value_mean.append(feat_value_mean)
     if simulate:
         with col2:
-            trial_all, trial_pareto, study = run_optimization(
+            trial_all, trial_pareto, study, reliability_stats = run_optimization(
                 st.session_state.trials_num,
                 targets,
                 deploy_ids,
                 directions,
                 custom_exprs,
+                weights,
                 feats_name + feats_dropped,
                 feats_value_min + feats_value_mean,
                 feats_value_max + feats_value_mean,
+                st.session_state.sampler_name,
+                feats_name,  # Only simulated features for reliability stats
             )
             trial_pareto["best_trial"] = 1
             trial_all = trial_all.merge(
@@ -333,11 +539,12 @@ with tab1:
             trial_all = trial_all.fillna(0)
             trial_all.to_csv("trial_all.csv", index=False)
             trial_pareto.to_csv("trial_pareto.csv", index=False)
+            reliability_stats.to_csv("reliability_stats.csv", index=False)
 
             # display the message
             sidebar.write(_("Simulation Finished!"))
             sidebar.info(_("Please go to the Visualization tab to see the results."))
-        reference_point = trial_all.loc[0, targets].values
+        reference_point = trial_all[targets].iloc[0].values
         fig = optuna.visualization.plot_hypervolume_history(
             study, reference_point=reference_point
         )
@@ -458,3 +665,55 @@ with tab2:
             "text/csv",
             key="download-tools-csv",
         )
+
+        # Display reliability statistics
+        if os.path.isfile("reliability_stats.csv"):
+            st.markdown("---")
+            st.markdown(f"### {_('Parameter Reliability Statistics')}")
+            st.caption(_("Shows how consistently each parameter appears in Pareto optimal solutions"))
+
+            reliability_stats = pd.read_csv("reliability_stats.csv")
+
+            # Display statistics table
+            st.dataframe(
+                reliability_stats.style.format({
+                    "Mean": "{:.4f}",
+                    "Std": "{:.4f}",
+                    "CV": "{:.4f}",
+                    "CI_lower": "{:.4f}",
+                    "CI_upper": "{:.4f}",
+                    "Min": "{:.4f}",
+                    "Max": "{:.4f}",
+                    "Range": "{:.4f}",
+                    "Stability_Score": "{:.4f}",
+                }),
+                use_container_width=True,
+            )
+
+            # Stability Score bar chart
+            if len(reliability_stats) > 0:
+                fig_stability = px.bar(
+                    reliability_stats,
+                    x="Parameter",
+                    y="Stability_Score",
+                    title=_("Parameter Stability Score (higher = more consistent)"),
+                    color="Stability_Score",
+                    color_continuous_scale="RdYlGn",
+                    range_color=[0, 1],
+                )
+                fig_stability.update_layout(
+                    xaxis_title=_("Parameter"),
+                    yaxis_title=_("Stability Score"),
+                    yaxis_range=[0, 1.1],
+                )
+                st.plotly_chart(fig_stability, use_container_width=True)
+
+            # Download button for reliability stats
+            reliability_csv = reliability_stats.to_csv(index=False).encode("utf-8")
+            st.download_button(
+                _("Download Reliability Statistics as CSV"),
+                reliability_csv,
+                "reliability_stats.csv",
+                "text/csv",
+                key="download-reliability-csv",
+            )

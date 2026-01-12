@@ -87,30 +87,52 @@ def _raise_dataroboterror_for_status(response):
         raise DataRobotPredictionError(err_msg)
 
 
-def get_prediction(df, deployment_id, dr_token, dr_key, pred_url):
+def get_prediction(df, deployment_id, dr_token, dr_key, pred_url, max_retries=3):
     records = json.loads(df.to_json(orient="records"))
-    predictions_response = make_datarobot_deployment_predictions(
-        records, deployment_id, dr_token, dr_key, pred_url
-    )
 
-    if predictions_response.status_code != 200:
+    for attempt in range(max_retries):
         try:
-            message = predictions_response.json().get(
-                "message", predictions_response.text
+            predictions_response = make_datarobot_deployment_predictions(
+                records, deployment_id, dr_token, dr_key, pred_url
             )
+
+            if predictions_response.status_code == 200:
+                pred_values = json_normalize(predictions_response.json()["data"]).prediction.values
+                # Return scalar value instead of numpy array for Optuna compatibility
+                return float(pred_values[0]) if len(pred_values) == 1 else pred_values
+
+            # Handle non-200 responses
+            try:
+                message = predictions_response.json().get(
+                    "message", predictions_response.text
+                )
+            except ValueError:
+                message = predictions_response.text
+
             status_code = predictions_response.status_code
             reason = predictions_response.reason
 
-            print(
-                "Status: {status_code} {reason}. Message: {message}.".format(
-                    message=message, status_code=status_code, reason=reason
-                )
+            # Retry on 429 (rate limit) or 5xx errors
+            if status_code == 429 or status_code >= 500:
+                if attempt < max_retries - 1:
+                    import time
+                    wait_time = (attempt + 1) * 2  # Exponential backoff: 2, 4, 6 seconds
+                    print(f"Retry {attempt + 1}/{max_retries} after {wait_time}s: {status_code} {reason}")
+                    time.sleep(wait_time)
+                    continue
+
+            # Raise exception for non-retryable errors or after max retries
+            raise DataRobotPredictionError(
+                f"Status: {status_code} {reason}. Message: {message}."
             )
-        except ValueError:
-            print("Prediction failed: {}".format(predictions_response.reason))
-            predictions_response.raise_for_status()
-    else:
-        return json_normalize(predictions_response.json()["data"]).prediction.values
+        except requests.exceptions.RequestException as e:
+            if attempt < max_retries - 1:
+                import time
+                wait_time = (attempt + 1) * 2
+                print(f"Retry {attempt + 1}/{max_retries} after {wait_time}s: {str(e)}")
+                time.sleep(wait_time)
+                continue
+            raise DataRobotPredictionError(f"Request failed after {max_retries} retries: {str(e)}")
 
 
 if __name__ == "__main__":

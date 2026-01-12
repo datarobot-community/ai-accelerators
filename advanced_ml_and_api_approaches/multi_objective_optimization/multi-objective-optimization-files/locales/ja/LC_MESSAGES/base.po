@@ -88,3 +88,27 @@ msgstr "パレート図"
 
 msgid "optimization_result"
 msgstr "最適化結果"
+
+msgid "Optimization Algorithm"
+msgstr "最適化アルゴリズム"
+
+msgid "Weight"
+msgstr "ウェイト"
+
+msgid "Parameter Reliability Statistics"
+msgstr "パラメータ信頼性統計"
+
+msgid "Shows how consistently each parameter appears in Pareto optimal solutions"
+msgstr "各パラメータがパレート最適解にどの程度一貫して現れるかを示します"
+
+msgid "Parameter Stability Score (higher = more consistent)"
+msgstr "パラメータ安定性スコア（高いほど一貫性が高い）"
+
+msgid "Parameter"
+msgstr "パラメータ"
+
+msgid "Stability Score"
+msgstr "安定性スコア"
+
+msgid "Download Reliability Statistics as CSV"
+msgstr "信頼性統計をCSVでダウンロード"
