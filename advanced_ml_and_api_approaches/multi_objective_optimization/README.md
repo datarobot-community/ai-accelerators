@@ -1,6 +1,6 @@
 # Multi-objective Optimization streamlit app
 
-**Author:** senkin.zhan@datarobot.com, yifu.gu@datarobot.com
+**Author:** senkin.zhan@datarobot.com, yifu.gu@datarobot.com, mitsuo.yamamoto@datarobot.com
 
 ## Problem framing
 
@@ -66,17 +66,16 @@ sequenceDiagram
 
 ## Optimization App Features
 
-Current capabilities and features in planning:
+Current capabilities and features:
 - [x] Localization support (EN/JP)
 - [x] Adjustable trial count
 - [x] Numexpr support for individual optimization targets
-- [ ] Numexpr support for constraints
-- [ ] Adjustable optimization algorithms
+- [x] Six types of optimization algorithms
+- [x] Objective variable weighting
+- [x] Parameter Reliability Statistics
 - [x] Display hypervolume
 - [x] Display target vs feature
 - [x] Display 2D/3D paleto front
-- [ ] Support resume optimization
-- [ ] Batch trial optimization using study.tell()
 
 ## Resources
 

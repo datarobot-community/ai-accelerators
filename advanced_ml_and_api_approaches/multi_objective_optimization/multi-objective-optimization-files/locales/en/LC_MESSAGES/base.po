@@ -88,3 +88,27 @@ msgstr "Pareto Curve"
 
 msgid "optimization_result"
 msgstr "optimization_result"
+
+msgid "Optimization Algorithm"
+msgstr "Optimization Algorithm"
+
+msgid "Weight"
+msgstr "Weight"
+
+msgid "Parameter Reliability Statistics"
+msgstr "Parameter Reliability Statistics"
+
+msgid "Shows how consistently each parameter appears in Pareto optimal solutions"
+msgstr "Shows how consistently each parameter appears in Pareto optimal solutions"
+
+msgid "Parameter Stability Score (higher = more consistent)"
+msgstr "Parameter Stability Score (higher = more consistent)"
+
+msgid "Parameter"
+msgstr "Parameter"
+
+msgid "Stability Score"
+msgstr "Stability Score"
+
+msgid "Download Reliability Statistics as CSV"
+msgstr "Download Reliability Statistics as CSV"
