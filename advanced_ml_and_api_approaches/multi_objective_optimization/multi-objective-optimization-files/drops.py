@@ -19,9 +19,21 @@ def get_deployment_info(deployment_id: str, dr_token: str, dr_url: str) -> dict:
     model_info = deployment["model"]
     project_id = model_info["projectId"]
     model_id = model_info["id"]
-    server_info = deployment["defaultPredictionServer"]
-    url = server_info["url"]
-    datarobot_key = server_info["datarobot-key"]
+    server_info = deployment.get("defaultPredictionServer")
+
+    # Handle both dedicated prediction server and serverless deployments
+    # サーバーレスデプロイメントと専用予測サーバーの両方に対応
+    if server_info is not None:
+        # Dedicated prediction server
+        url = server_info["url"]
+        datarobot_key = server_info.get("datarobot-key", "")
+    else:
+        # Serverless deployment - use API endpoint directly
+        # サーバーレスデプロイメント - APIエンドポイントを直接使用
+        # Extract base URL from dr_url (e.g., https://app.jp.datarobot.com/api/v2 -> https://app.jp.datarobot.com)
+        base_url = dr_url.replace("/api/v2", "")
+        url = base_url
+        datarobot_key = ""
 
     return {
         "deployment_id": deployment_id,
@@ -60,8 +72,11 @@ def make_datarobot_deployment_predictions(
     headers = {
         "Content-Type": "application/json; charset=UTF-8",
         "Authorization": "Bearer {}".format(dr_token),
-        "DataRobot-Key": dr_key,
     }
+    # Add DataRobot-Key header only for dedicated prediction server (not serverless)
+    # DataRobot-Keyヘッダーは専用予測サーバーの場合のみ追加（サーバーレスでは不要）
+    if dr_key:
+        headers["DataRobot-Key"] = dr_key
 
     url = pred_url.format(deployment_id=deployment_id)
     # Make API request for predictions
