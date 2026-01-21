@@ -76,6 +76,7 @@ Current capabilities and features:
 - [x] Display hypervolume
 - [x] Display target vs feature
 - [x] Display 2D/3D paleto front
+- [x] Support both dedicated prediction servers and serverless deployment
 
 ## Resources
 

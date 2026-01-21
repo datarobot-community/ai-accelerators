@@ -71,9 +71,17 @@ st.session_state.deployment_infos = get_deployment_infos(
     deploy_ids, dr_token=DATAROBOT_API_TOKEN, dr_url=DATAROBOT_ENDPOINT
 )
 
-API_URL = st.session_state.deployment_infos[0]["api_url"]
-API_URL = API_URL + "/predApi/v1.0/deployments/{deployment_id}/predictions"
+# Determine API URL based on deployment type (dedicated server vs serverless)
+# デプロイタイプに応じてAPI URLを決定（専用サーバー vs サーバーレス）
+_base_url = st.session_state.deployment_infos[0]["api_url"]
 DATAROBOT_KEY = st.session_state.deployment_infos[0]["datarobot_key"]
+
+if DATAROBOT_KEY:
+    # Dedicated prediction server
+    API_URL = _base_url + "/predApi/v1.0/deployments/{deployment_id}/predictions"
+else:
+    # Serverless deployment - use v2 API
+    API_URL = _base_url + "/api/v2/deployments/{deployment_id}/predictions"
 
 st.session_state.trials_num = sidebar.number_input(
     _("Trials Number"), step=10, format="%d", value=100, key=10002
