@@ -60,6 +60,30 @@
         { "id": "accuracy_monitoring", "displayName": "Tracing Table" },
         { "id": "notifications", "displayName": "Notifications" }
       ]
+    },
+
+    "Agentic": {
+      "Critical": [
+        { "id": "tracing", "displayName": "Tracing" },
+        { "id": "guard_configuration", "displayName": "Guard Configuration" },
+        { "id": "notifications", "displayName": "Notifications" },
+        { "id": "custom_metric", "displayName": "Custom Metric" }
+      ],
+      "High": [
+        { "id": "tracing", "displayName": "Tracing" },
+        { "id": "guard_configuration", "displayName": "Guard Configuration" },
+        { "id": "notifications", "displayName": "Notifications" },
+        { "id": "custom_metric", "displayName": "Custom Metric" }
+      ],
+      "Moderate": [
+        { "id": "tracing", "displayName": "Tracing" },
+        { "id": "notifications", "displayName": "Notifications" },
+        { "id": "custom_metric", "displayName": "Custom Metric" }
+      ],
+      "Low": [
+        { "id": "tracing", "displayName": "Tracing" },
+        { "id": "notifications", "displayName": "Notifications" }
+      ]
     }
   }
   
