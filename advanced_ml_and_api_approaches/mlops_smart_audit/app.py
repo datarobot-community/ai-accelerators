@@ -523,22 +523,15 @@ def tracing(deployment_id):
     """
     try:
         deployment = dr.Deployment.get(deployment_id)
-        
-        # Get deployment settings to check predictions data collection
+
         url = f"deployments/{deployment_id}/settings/"
         response = client.get(url)
         
         if response.status_code == 200:
             settings = response.json()
-            
-            # Check if predictions data collection is enabled
-            # This stores prediction requests and results, enabling tracing
             predictions_data_collection = settings.get("predictionsDataCollection", {})
             if predictions_data_collection.get("enabled", False):
                 return True
-        
-        # Alternative: Check for association ID settings (enables tracking)
-        # This is also related to tracing capabilities
         association_id_settings = deployment.get_association_id_settings()
         columns_set = association_id_settings.get("column_names", [])
         required_in_requests = association_id_settings.get(
