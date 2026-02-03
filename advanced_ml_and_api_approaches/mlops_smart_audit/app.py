@@ -523,15 +523,22 @@ def tracing(deployment_id):
     """
     try:
         deployment = dr.Deployment.get(deployment_id)
-
+        
+        # Get deployment settings to check predictions data collection
         url = f"deployments/{deployment_id}/settings/"
         response = client.get(url)
         
         if response.status_code == 200:
             settings = response.json()
+            
+            # Check if predictions data collection is enabled
+            # This stores prediction requests and results, enabling tracing
             predictions_data_collection = settings.get("predictionsDataCollection", {})
             if predictions_data_collection.get("enabled", False):
                 return True
+        
+        # Alternative: Check for association ID settings (enables tracking)
+        # This is also related to tracing capabilities
         association_id_settings = deployment.get_association_id_settings()
         columns_set = association_id_settings.get("column_names", [])
         required_in_requests = association_id_settings.get(
@@ -1042,7 +1049,7 @@ css_style = """
 <style>
 /* General App Styling */
 .stApp {
-    background-color: #1e1e1e;
+    background-color: #0a0a0a;
     color: #e0e0e0;
 }
 header, footer {
@@ -1050,9 +1057,9 @@ header, footer {
 }
 /* Header Boxes */
 .header-box {
-    background-color: #2c2c2c;
-    border: 1px solid #2c2c2c;
-    border-radius: 8px;
+    background: linear-gradient(135deg, #1a0f2e 0%, #2d1b4e 100%);
+    border: 1px solid #8b5cf6;
+    border-radius: 12px;
     padding: 10px;
     color: #ffffff;
     text-align: left;
@@ -1062,12 +1069,13 @@ header, footer {
     flex-direction: column;
     justify-content: flex-start;
     margin-bottom: 8px;
+    box-shadow: 0 4px 6px rgba(139, 92, 246, 0.2);
 }
 .header-box p {
     font-size: 11px;
     font-weight: bold;
     text-transform: uppercase;
-    color: #7f8c8d;
+    color: #a78bfa;
     margin: 0;
 }
 .header-box h3 {
@@ -1083,25 +1091,31 @@ header, footer {
     max-width: 100%;
 }
 .deployment-table {
-    background-color: #262626;
-    border-radius: 8px;
+    background-color: #0f0f0f;
+    border: 1px solid #8b5cf6;
+    border-radius: 12px;
     padding: 10px;
+    box-shadow: 0 4px 6px rgba(139, 92, 246, 0.15);
 }
 .table-header {
     display: flex;
     justify-content: space-between;
     font-weight: bold;
-    color: #d1d1d1;
+    color: #a78bfa;
     padding: 6px 0;
-    border-bottom: 1px solid #444;
+    border-bottom: 2px solid #8b5cf6;
 }
 .table-row {
     display: flex;
     justify-content: flex-start;
     padding: 6px 0;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid #2d1b4e;
     flex-wrap: nowrap;
     gap: 8px; 
+}
+.table-row:hover {
+    background-color: #1a0f2e;
+    border-radius: 6px;
 }
 .table-header div,
 .table-row div {
@@ -1123,10 +1137,12 @@ header, footer {
 }
 .deployment-link {
     font-size: 11px;
-    color: #3498db;
+    color: #a78bfa;
     text-decoration: none;
+    font-weight: 500;
 }
 .deployment-link:hover {
+    color: #c4b5fd;
     text-decoration: underline;
 }
 .block-container {
@@ -1137,9 +1153,10 @@ header, footer {
 }
 /* LLM Summary Styling */
 .llm-summary {
-    background-color: #262626;
+    background: linear-gradient(135deg, #1a0f2e 0%, #2d1b4e 100%);
+    border: 1px solid #8b5cf6;
     padding: 15px;
-    border-radius: 8px;
+    border-radius: 12px;
     color: #e0e0e0;
     margin-bottom: 20px;
     max-height: 200px;
@@ -1147,9 +1164,10 @@ header, footer {
 }
 /* Chatbot Styling */
 .chatbot-container {
-    background-color: #262626;
+    background: linear-gradient(135deg, #1a0f2e 0%, #2d1b4e 100%);
+    border: 1px solid #8b5cf6;
     padding: 15px;
-    border-radius: 8px;
+    border-radius: 12px;
     color: #e0e0e0;
     margin-bottom: 20px;
 }
@@ -1162,30 +1180,35 @@ header, footer {
     margin-bottom: 10px;
 }
 .user-message {
-    color: #3498db;
+    color: #a78bfa;
 }
 .bot-message {
     color: #e0e0e0;
 }
 /* Sidebar Styling */
+section[data-testid="stSidebar"] {
+    background-color: #000000 !important;
+    border-right: 1px solid #8b5cf6 !important;
+}
 .css-1d391kg, .css-1n76uvr, .css-16huue1 {
     color: #ffffff !important;
 }
 .css-1d391kg input, .css-1n76uvr input {
-    background-color: #333333 !important;
+    background-color: #1a0f2e !important;
     color: #ffffff !important;
-    border: 1px solid #555555 !important;
+    border: 1px solid #8b5cf6 !important;
     height: 30px !important;
     font-size: 12px !important;
 }
 .css-1d391kg label, .css-1n76uvr label {
-    color: #ffffff !important;
+    color: #a78bfa !important;
     font-weight: bold;
     font-size: 13px !important;
 }
 [data-baseweb="select"] > div {
-    background-color: #333333 !important;
+    background-color: #1a0f2e !important;
     color: #ffffff !important;
+    border: 1px solid #8b5cf6 !important;
     min-height: 30px !important;
 }
 [data-baseweb="select"] .css-1dimb5e-singleValue {
@@ -1203,7 +1226,27 @@ header, footer {
     height: 4px !important;
 }
 section[data-testid="stSidebar"] [data-baseweb="slider"] * {
+    color: #a78bfa !important;
+}
+/* Button Styling */
+button[kind="primary"] {
+    background-color: #8b5cf6 !important;
     color: #ffffff !important;
+    border: none !important;
+}
+button[kind="primary"]:hover {
+    background-color: #7c3aed !important;
+}
+/* Heading Colors */
+h1, h2, h3, h4, h5, h6 {
+    color: #ffffff !important;
+}
+/* Expander Styling */
+.streamlit-expanderHeader {
+    background-color: #1a0f2e !important;
+    border: 1px solid #8b5cf6 !important;
+    border-radius: 8px !important;
+    color: #a78bfa !important;
 }
 </style>
 """
@@ -1390,13 +1433,13 @@ def render_table_header():
     st.markdown(
         """
         <div class='table-header'>
-            <div style="width: 20%">Deployment</div>
-            <div style="width: 8%">Type</div>
-            <div style="width: 12%">Risk Level</div>
-            <div style="width: 15%">Owners</div>
+            <div style="width: 18%">Deployment</div>
+            <div style="width: 11%">Type</div>
+            <div style="width: 11%">Risk Level</div>
+            <div style="width: 14%">Owners</div>
             <div style="width: 7%; text-align: center;">Quality</div>
             <div style="width: 7%; text-align: center;">Compliance</div>
-            <div style="width: 31%; text-align: center;">Capabilities</div>
+            <div style="width: 32%; text-align: center;">Capabilities</div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -1437,17 +1480,17 @@ def render_table_row(
     
     html = f"""
         <div class='table-row'>
-            <div style="width: 20%;">{deployment_label_html}</div>
-            <div style="width: 8%;">{deployment['model_type']}</div>
-            <div style="width: 12%;">{deployment['model_importance']}</div>
-            <div style="width: 15%; font-size: 12px; color: #a0a0a0;">{owners}</div>
+            <div style="width: 18%;">{deployment_label_html}</div>
+            <div style="width: 11%;">{deployment['model_type']}</div>
+            <div style="width: 11%;">{deployment['model_importance']}</div>
+            <div style="width: 14%; font-size: 12px; color: #a0a0a0;">{owners}</div>
             <div style="width: 7%; text-align: center;">
                 <strong>{deployment['quality_score']}%</strong>
             </div>
             <div style="width: 7%; text-align: center;">
                 <strong>{deployment['compliance_score']}%</strong>
             </div>
-            <div class='capabilities-container' style="width: 31%; text-align: center;">
+            <div class='capabilities-container' style="width: 32%; text-align: center;">
                 {capabilities_html}
             </div>
         </div>
