@@ -1351,7 +1351,8 @@ def render_table_row(
     """
     owners = "<br>".join(deployment["model_owners"])
     deployment_id = deployment["deployment_id"]
-    deployment_url = f"https://app.datarobot.com/console-nextgen/deployments/{deployment_id}/overview"
+    base_url = DATAROBOT_ENDPOINT.rstrip('/').split('/api/')[0]
+    deployment_url = f"{base_url}/console-nextgen/deployments/{deployment_id}/overview"
     deployment_link = f"<a href='{deployment_url}' target='_blank' class='deployment-link'>View Deployment</a>"
 
     deployment_label_html = f"""
