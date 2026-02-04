@@ -80,6 +80,13 @@ TEXT_GEN_CAPS = [
     "custom_metric",
 ]
 
+AGENTIC_CAPS = [
+    "tracing",
+    "guard_configuration",
+    "notifications",
+    "custom_metric",
+]
+
 # --------------------------------------------------
 # STREAMLIT PAGE CONFIG & STYLE
 # --------------------------------------------------
@@ -120,7 +127,7 @@ def load_capability_requirements(path="capability_requirements.json"):
             "capability_requirements.json must be a dictionary at the top level."
         )
 
-    for model_type in ["Predictive", "Generative"]:
+    for model_type in ["Predictive", "Generative", "Agentic"]:
         if model_type not in capability_requirements:
             raise KeyError(
                 f"Missing '{model_type}' section in capability_requirements.json."
@@ -502,8 +509,52 @@ def compliance_test(deployment_id):
         return False
 
 
+def tracing(deployment_id):
+    """
+    Checks if tracing/observability is enabled for agent deployments.
+    
+    This checks if predictions data collection is enabled, which stores
+    incoming prediction requests and results - a fundamental requirement
+    for tracing and observability in agent workflows.
+
+    Returns:
+        - True if predictions data collection (tracing) is enabled.
+        - False otherwise.
+    """
+    try:
+        deployment = dr.Deployment.get(deployment_id)
+        
+        # Get deployment settings to check predictions data collection
+        url = f"deployments/{deployment_id}/settings/"
+        response = client.get(url)
+        
+        if response.status_code == 200:
+            settings = response.json()
+            
+            # Check if predictions data collection is enabled
+            # This stores prediction requests and results, enabling tracing
+            predictions_data_collection = settings.get("predictionsDataCollection", {})
+            if predictions_data_collection.get("enabled", False):
+                return True
+        
+        # Alternative: Check for association ID settings (enables tracking)
+        # This is also related to tracing capabilities
+        association_id_settings = deployment.get_association_id_settings()
+        columns_set = association_id_settings.get("column_names", [])
+        required_in_requests = association_id_settings.get(
+            "required_in_prediction_requests", False
+        )
+        if columns_set or required_in_requests:
+            return True
+        
+        return False
+        
+    except Exception:
+        return False
+
+
 def compute_compliance_score(
-    data, capability_requirements, standard_caps, text_gen_caps
+    data, capability_requirements, standard_caps, text_gen_caps, agentic_caps
 ):
     """
     Calculates the compliance score for a deployment.
@@ -513,6 +564,7 @@ def compute_compliance_score(
     - capability_requirements: dict loaded from the updated capability_requirements.json
     - standard_caps: list of capability IDs relevant to Predictive models
     - text_gen_caps: list of capability IDs relevant to Generative models
+    - agentic_caps: list of capability IDs relevant to Agentic models
 
     Returns:
     - compliance_score: float representing the compliance percentage
@@ -525,6 +577,8 @@ def compute_compliance_score(
 
     if model_type == "TextGeneration":
         model_type = "Generative"
+    elif model_type in ["Agentic", "AgenticWorkflow"]:
+        model_type = "Agentic"
     else:
         model_type = "Predictive"
 
@@ -548,6 +602,8 @@ def compute_compliance_score(
     # 3. Determine relevant capabilities based on model_type
     if model_type == "Generative":
         relevant_cap_ids = text_gen_caps
+    elif model_type == "Agentic":
+        relevant_cap_ids = agentic_caps
     else:
         relevant_cap_ids = standard_caps
 
@@ -582,7 +638,7 @@ def check_deployment_status(deployment_id=None):
     """
     Optimized approach:
       1. Retrieve all deployments (or one, if deployment_id is specified).
-      2. Split them by model_type: "TextGeneration" vs. others (standard).
+      2. Split them by model_type: "TextGeneration", "Agentic" (Agents), vs. others (standard).
       3. For each subset, run concurrency with the relevant checks only.
       4. Merge, compute quality/compliance, and return the results.
     """
@@ -590,16 +646,20 @@ def check_deployment_status(deployment_id=None):
     # 1) Retrieve deployments
     deployments = get_all_deployments(deployment_id)
 
-    # 2) Split into text-gen vs. standard
+    # 2) Split into text-gen, agentic, and standard
     text_gen_deployments = []
+    agentic_deployments = []
     standard_deployments = []
     for dep in deployments:
-        if dep.model.get("target_type") == "TextGeneration":
+        target_type = dep.model.get("target_type")
+        if target_type == "TextGeneration":
             text_gen_deployments.append(dep)
+        elif target_type in ["Agentic", "AgenticWorkflow"]:
+            agentic_deployments.append(dep)
         else:
             standard_deployments.append(dep)
 
-    # Define the check sets for standard vs. text-generation
+    # Define the check sets for standard, text-generation, and agentic
     standard_checks = [
         (data_drift, "data_drift"),
         (accuracy_monitoring, "accuracy_monitoring"),
@@ -619,6 +679,12 @@ def check_deployment_status(deployment_id=None):
         (notifications, "notifications"),
         (guard_configuration, "guard_configuration"),
         (compliance_test, "compliance_test"),
+        (custom_metric, "custom_metric"),
+    ]
+    agentic_checks = [
+        (tracing, "tracing"),
+        (guard_configuration, "guard_configuration"),
+        (notifications, "notifications"),
         (custom_metric, "custom_metric"),
     ]
 
@@ -678,14 +744,15 @@ def check_deployment_status(deployment_id=None):
             # In case there is no deployment
             return []
 
-    # -- Run concurrency for standard vs. text-gen separately
+    # -- Run concurrency for standard, text-gen, and agentic separately
     standard_results = run_checks_for_subset(standard_deployments, standard_checks)
     text_gen_results = run_checks_for_subset(
         text_gen_deployments, text_generation_checks
     )
+    agentic_results = run_checks_for_subset(agentic_deployments, agentic_checks)
 
     # 4) Merge the results
-    deployment_status = standard_results + text_gen_results
+    deployment_status = standard_results + text_gen_results + agentic_results
 
     # 5) Calculate quality_score & compliance_score for each deployment
     for data in deployment_status:
@@ -700,7 +767,7 @@ def check_deployment_status(deployment_id=None):
 
         # compliance
         data["compliance_score"] = compute_compliance_score(
-            data, capability_requirements, STANDARD_CAPS, TEXT_GEN_CAPS
+            data, capability_requirements, STANDARD_CAPS, TEXT_GEN_CAPS, AGENTIC_CAPS
         )
 
     return deployment_status
@@ -924,7 +991,7 @@ def load_data():
     if df.empty:
         return df, 0, {}, 0, "", "", 0, "", 0
 
-    # Define all possible capabilities from both standard and text-generation checks
+    # Define all possible capabilities from standard, text-generation, and agentic checks
     all_possible_caps = [
         "data_drift",
         "accuracy_monitoring",
@@ -939,6 +1006,7 @@ def load_data():
         "compliance_report",
         "guard_configuration",
         "compliance_test",
+        "tracing",
     ]
 
     # Some stats for entire set
@@ -981,7 +1049,7 @@ css_style = """
 <style>
 /* General App Styling */
 .stApp {
-    background-color: #1e1e1e;
+    background-color: #0a0a0a;
     color: #e0e0e0;
 }
 header, footer {
@@ -989,9 +1057,9 @@ header, footer {
 }
 /* Header Boxes */
 .header-box {
-    background-color: #2c2c2c;
-    border: 1px solid #2c2c2c;
-    border-radius: 8px;
+    background: linear-gradient(135deg, #1a0f2e 0%, #2d1b4e 100%);
+    border: 1px solid #8b5cf6;
+    border-radius: 12px;
     padding: 10px;
     color: #ffffff;
     text-align: left;
@@ -1001,12 +1069,13 @@ header, footer {
     flex-direction: column;
     justify-content: flex-start;
     margin-bottom: 8px;
+    box-shadow: 0 4px 6px rgba(139, 92, 246, 0.2);
 }
 .header-box p {
     font-size: 11px;
     font-weight: bold;
     text-transform: uppercase;
-    color: #7f8c8d;
+    color: #a78bfa;
     margin: 0;
 }
 .header-box h3 {
@@ -1022,25 +1091,31 @@ header, footer {
     max-width: 100%;
 }
 .deployment-table {
-    background-color: #262626;
-    border-radius: 8px;
+    background-color: #0f0f0f;
+    border: 1px solid #8b5cf6;
+    border-radius: 12px;
     padding: 10px;
+    box-shadow: 0 4px 6px rgba(139, 92, 246, 0.15);
 }
 .table-header {
     display: flex;
     justify-content: space-between;
     font-weight: bold;
-    color: #d1d1d1;
+    color: #a78bfa;
     padding: 6px 0;
-    border-bottom: 1px solid #444;
+    border-bottom: 2px solid #8b5cf6;
 }
 .table-row {
     display: flex;
     justify-content: flex-start;
     padding: 6px 0;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid #2d1b4e;
     flex-wrap: nowrap;
     gap: 8px; 
+}
+.table-row:hover {
+    background-color: #1a0f2e;
+    border-radius: 6px;
 }
 .table-header div,
 .table-row div {
@@ -1062,10 +1137,12 @@ header, footer {
 }
 .deployment-link {
     font-size: 11px;
-    color: #3498db;
+    color: #a78bfa;
     text-decoration: none;
+    font-weight: 500;
 }
 .deployment-link:hover {
+    color: #c4b5fd;
     text-decoration: underline;
 }
 .block-container {
@@ -1076,9 +1153,10 @@ header, footer {
 }
 /* LLM Summary Styling */
 .llm-summary {
-    background-color: #262626;
+    background: linear-gradient(135deg, #1a0f2e 0%, #2d1b4e 100%);
+    border: 1px solid #8b5cf6;
     padding: 15px;
-    border-radius: 8px;
+    border-radius: 12px;
     color: #e0e0e0;
     margin-bottom: 20px;
     max-height: 200px;
@@ -1086,9 +1164,10 @@ header, footer {
 }
 /* Chatbot Styling */
 .chatbot-container {
-    background-color: #262626;
+    background: linear-gradient(135deg, #1a0f2e 0%, #2d1b4e 100%);
+    border: 1px solid #8b5cf6;
     padding: 15px;
-    border-radius: 8px;
+    border-radius: 12px;
     color: #e0e0e0;
     margin-bottom: 20px;
 }
@@ -1101,30 +1180,35 @@ header, footer {
     margin-bottom: 10px;
 }
 .user-message {
-    color: #3498db;
+    color: #a78bfa;
 }
 .bot-message {
     color: #e0e0e0;
 }
 /* Sidebar Styling */
+section[data-testid="stSidebar"] {
+    background-color: #000000 !important;
+    border-right: 1px solid #8b5cf6 !important;
+}
 .css-1d391kg, .css-1n76uvr, .css-16huue1 {
     color: #ffffff !important;
 }
 .css-1d391kg input, .css-1n76uvr input {
-    background-color: #333333 !important;
+    background-color: #1a0f2e !important;
     color: #ffffff !important;
-    border: 1px solid #555555 !important;
+    border: 1px solid #8b5cf6 !important;
     height: 30px !important;
     font-size: 12px !important;
 }
 .css-1d391kg label, .css-1n76uvr label {
-    color: #ffffff !important;
+    color: #a78bfa !important;
     font-weight: bold;
     font-size: 13px !important;
 }
 [data-baseweb="select"] > div {
-    background-color: #333333 !important;
+    background-color: #1a0f2e !important;
     color: #ffffff !important;
+    border: 1px solid #8b5cf6 !important;
     min-height: 30px !important;
 }
 [data-baseweb="select"] .css-1dimb5e-singleValue {
@@ -1142,7 +1226,27 @@ header, footer {
     height: 4px !important;
 }
 section[data-testid="stSidebar"] [data-baseweb="slider"] * {
+    color: #a78bfa !important;
+}
+/* Button Styling */
+button[kind="primary"] {
+    background-color: #8b5cf6 !important;
     color: #ffffff !important;
+    border: none !important;
+}
+button[kind="primary"]:hover {
+    background-color: #7c3aed !important;
+}
+/* Heading Colors */
+h1, h2, h3, h4, h5, h6 {
+    color: #ffffff !important;
+}
+/* Expander Styling */
+.streamlit-expanderHeader {
+    background-color: #1a0f2e !important;
+    border: 1px solid #8b5cf6 !important;
+    border-radius: 8px !important;
+    color: #a78bfa !important;
 }
 </style>
 """
@@ -1269,10 +1373,11 @@ def render_critical_capabilities(capability_requirements):
         st.markdown("<h4>Governance Rules</h4>", unsafe_allow_html=True)
 
         # Define the model types
-        model_types = ["Predictive", "Generative"]
+        model_types = ["Predictive", "Generative", "Agentic"]
+        display_names = {"Predictive": "Predictive Models", "Generative": "Generative Models", "Agentic": "Agents"}
 
         for model_type in model_types:
-            st.markdown(f"### {model_type} Models")
+            st.markdown(f"### {display_names.get(model_type, model_type)}")
 
             # Define the known importance levels in desired order:
             importance_levels = ["Critical", "High", "Moderate", "Low"]
@@ -1328,13 +1433,13 @@ def render_table_header():
     st.markdown(
         """
         <div class='table-header'>
-            <div style="width: 20%">Deployment</div>
-            <div style="width: 8%">Type</div>
-            <div style="width: 12%">Risk Level</div>
-            <div style="width: 15%">Owners</div>
+            <div style="width: 18%">Deployment</div>
+            <div style="width: 11%">Type</div>
+            <div style="width: 11%">Risk Level</div>
+            <div style="width: 14%">Owners</div>
             <div style="width: 7%; text-align: center;">Quality</div>
             <div style="width: 7%; text-align: center;">Compliance</div>
-            <div style="width: 31%; text-align: center;">Capabilities</div>
+            <div style="width: 32%; text-align: center;">Capabilities</div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -1361,32 +1466,37 @@ def render_table_row(
     </div>
     """
 
-    st.markdown(
-        f"""
+    # Build capabilities HTML with proper handling of empty third line
+    capabilities_html_parts = [
+        f"<div class='capabilities-line'>{capabilities_line1}</div>",
+        f"<div class='capabilities-line'>{capabilities_line2}</div>"
+    ]
+    
+    # Only add third line if it has content
+    if capabilities_line3 and capabilities_line3.strip():
+        capabilities_html_parts.append(f"<div class='capabilities-line'>{capabilities_line3}</div>")
+    
+    capabilities_html = "\n".join(capabilities_html_parts)
+    
+    html = f"""
         <div class='table-row'>
-            <div style="width: 20%;">{deployment_label_html}</div>
-            <div style="width: 8%;">{deployment['model_type']}</div>
-            <div style="width: 12%;">{deployment['model_importance']}</div>
-            <div style="width: 15%; font-size: 12px; color: #a0a0a0;">{owners}</div>
+            <div style="width: 18%;">{deployment_label_html}</div>
+            <div style="width: 11%;">{deployment['model_type']}</div>
+            <div style="width: 11%;">{deployment['model_importance']}</div>
+            <div style="width: 14%; font-size: 12px; color: #a0a0a0;">{owners}</div>
             <div style="width: 7%; text-align: center;">
                 <strong>{deployment['quality_score']}%</strong>
             </div>
             <div style="width: 7%; text-align: center;">
                 <strong>{deployment['compliance_score']}%</strong>
             </div>
-            <div class='capabilities-container' style="width: 31%; text-align: center;">
-                <div class='capabilities-line'>
-                    {capabilities_line1}
-                </div>
-                <div class='capabilities-line'>
-                    {capabilities_line2}
-                </div>
-                {"<div class='capabilities-line'>" + capabilities_line3 + "</div>" if capabilities_line3 else ""}
+            <div class='capabilities-container' style="width: 32%; text-align: center;">
+                {capabilities_html}
             </div>
         </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    """
+    
+    st.markdown(html, unsafe_allow_html=True)
 
 
 def render_deployment_table(
@@ -1411,10 +1521,13 @@ def render_deployment_table(
 
     # For each deployment in the current page, figure out which capabilities to display
     for _, deployment in df_page.iterrows():
-        # Decide whether standard or text-gen
+        # Decide whether standard, text-gen, or agentic
         if deployment["model_type"] == "TextGeneration":
             caps_for_model = TEXT_GEN_CAPS
             mapped_model_type = "Generative"
+        elif deployment["model_type"] in ["Agentic", "AgenticWorkflow"]:
+            caps_for_model = AGENTIC_CAPS
+            mapped_model_type = "Agentic"
         else:
             caps_for_model = STANDARD_CAPS
             mapped_model_type = "Predictive"
@@ -1642,11 +1755,16 @@ def main():
     # Render filters
     filtered_df = render_filters(df)
 
-    # Render two sets of header boxes: Predictive vs. Generative
-    predictive_df = filtered_df[filtered_df["model_type"] != "TextGeneration"]
+    # Render three sets of header boxes: Predictive, Generative, and Agents
+    predictive_df = filtered_df[
+        (filtered_df["model_type"] != "TextGeneration") 
+        & (filtered_df["model_type"] != "Agentic")
+        & (filtered_df["model_type"] != "AgenticWorkflow")
+    ]
     generative_df = filtered_df[filtered_df["model_type"] == "TextGeneration"]
+    agentic_df = filtered_df[filtered_df["model_type"].isin(["Agentic", "AgenticWorkflow"])]
 
-    # Show two rows (one for Predictive, one for Generative)
+    # Show three rows (one for Predictive, one for Generative, one for Agentic)
     render_header_boxes(predictive_df, "Predictive Models")
     render_model_capability_summary(
         df=predictive_df,
@@ -1660,6 +1778,14 @@ def main():
         df=generative_df,
         model_type="Generative",
         capabilities=TEXT_GEN_CAPS,
+        capability_requirements=capability_requirements,
+    )
+
+    render_header_boxes(agentic_df, "Agents")
+    render_model_capability_summary(
+        df=agentic_df,
+        model_type="Agentic",
+        capabilities=AGENTIC_CAPS,
         capability_requirements=capability_requirements,
     )
 
