@@ -1,0 +1,18 @@
+---
+title: Tensile - Enhancing agent reliability through automated test synthesis
+file_name: tensile_agent_reliability.ipynb
+description: |-
+  Tensile is DataRobot's test-driven development framework for improving the reliability, task performance, and policy adherence of AI agents. This accelerator walks through the Enhanced Agent Improvement Cycle: instrumenting agents for trajectory logging, analyzing trajectories to identify testable moments, evaluating and replaying runs, and using clustering and contextual hints to remediate failures. It shows how to use the DataRobot LLM Gateway with Tensile and how to apply the trajectory analyzer workflow for iterative agent improvement.
+languages:
+  - python
+maintainers:
+  - DataRobot
+maintainers_email: []
+smoke_test:
+  run_smoke_test: false
+tags:
+  - agents
+  - observability
+  - testing
+  - trajectories
+  - LLM Gateway
