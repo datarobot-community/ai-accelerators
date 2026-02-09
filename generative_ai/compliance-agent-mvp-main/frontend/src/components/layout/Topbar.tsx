@@ -58,8 +58,8 @@ export function Topbar() {
       <div className="w-full px-8 py-4 flex items-center justify-between gap-6">
         <div className="flex items-center gap-6">
           <img 
-            src={getUrl('/du-logo.svg')}
-            alt="DU Logo" 
+            src={getUrl('/dr-icon.svg')}
+            alt="DR Logo" 
             className="h-8"
           />
           <button
