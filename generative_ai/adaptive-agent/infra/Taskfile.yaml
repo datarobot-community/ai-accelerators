@@ -1,0 +1,224 @@
+---
+# https://taskfile.dev
+version: '3'
+includes:
+  common:
+    taskfile: ../core/task-common.yaml
+    internal: true
+
+vars:
+  PULUMI_SKIP_UPDATE_CHECK:
+    # Check if PULUMI_SKIP_UPDATE_CHECK is set in the environment;
+    # if not, default to "0"
+    sh: |
+      if [ -n "${PULUMI_SKIP_UPDATE_CHECK:-}" ]; then
+        echo "${PULUMI_SKIP_UPDATE_CHECK}"
+      else
+        echo "0"
+      fi
+
+  PULUMI_DATAROBOT_PLUGIN_VERSION:
+    # Check if PULUMI_DATAROBOT_PLUGIN_VERSION is set in the environment;
+    # if not, default to preset version
+    sh: |
+      if [ -n "${PULUMI_DATAROBOT_PLUGIN_VERSION:-}" ]; then
+        echo "${PULUMI_DATAROBOT_PLUGIN_VERSION}"
+      else
+        echo "v0.10.27"
+      fi
+
+  PULUMI_DATAROBOT_DEFAULT_URL:
+    # Check if PULUMI_DATAROBOT_DEFAULT_URL is set in the environment;
+    # if not, default to preset URL
+    # This url can be specified to override the default url (e.g. air gap)
+    sh: |
+      if [ -n "${PULUMI_DATAROBOT_DEFAULT_URL:-}" ]; then
+        echo "${PULUMI_DATAROBOT_DEFAULT_URL}"
+      else
+        echo "https://github.com/datarobot-community/pulumi-datarobot/releases/download/v0.10.27"
+      fi
+
+tasks:
+
+  auth-check:
+    silent: true
+    desc: "🔐 Check authentication prerequisites"
+    cmds:
+      - |
+        if command -v dr &> /dev/null && dr auth help 2>&1 | grep -q "check"; then
+          echo "🔐 Checking authentication.."
+          dr auth check
+        else
+          echo "ℹ️  Skipping auth check (not available)"
+        fi
+
+  pulumi-datarobot-plugin-check:
+    # Prevents github rate limiting issues when installing pulumi datarobot plugin.
+    # See https://github.com/datarobot-community/pulumi-datarobot?tab=readme-ov-file#rate-limited-by-github
+    # To use this task by default, set the environment variable PULUMI_SKIP_UPDATE_CHECK=1
+    silent: true
+    # desc: "⬇️ Install DataRobot Pulumi plugins"
+    cmds:
+      - |
+        if [ "{{.PULUMI_SKIP_UPDATE_CHECK}}" = "1" ]; then
+          {{.UV_CMD}} run pulumi plugin install resource datarobot {{.PULUMI_DATAROBOT_PLUGIN_VERSION}} \
+          --server {{.PULUMI_DATAROBOT_DEFAULT_URL}}
+        fi
+
+  install:
+    desc: "🔧 Install dependencies"
+    cmds:
+      - echo "🔧 Installing dependencies.."
+      - "{{.UV_CMD}} sync --all-extras --dev"
+
+  uninstall:
+    desc: "🔧 Uninstall dependencies"
+    cmds:
+      - echo "🔧 Uninstalling dependencies.."
+      - rm -rf .venv
+
+  start:
+    silent: true
+    desc: "💻 Deploy backing infrastructure"
+    deps:
+      - auth-check
+    cmds:
+      - task: deploy-dev
+
+  lint:
+    silent: true
+    desc: "🧹 Run linters"
+    cmds:
+      - echo "🧹 Running linters.."
+      - "{{.UV_CMD}} run ruff format ."
+      - "{{.UV_CMD}} run ruff check . --fix"
+      - "{{.UV_CMD}} run mypy --pretty ."
+
+  lint-check:
+    silent: true
+    desc: "🧹 Check whether the codebase is linted"
+    cmds:
+      - "{{.UV_CMD}} run ruff format --check ."
+      - "{{.UV_CMD}} run ruff check ."
+      - "{{.UV_CMD}} run mypy --pretty ."
+
+  init:
+    silent: true
+    desc: "🆕 Initialize a new Pulumi stack"
+    cmds:
+      - "{{.UV_CMD}} run pulumi stack init {{.CLI_ARGS}}"
+
+  select:
+    silent: true
+    desc: "🚂 Select a Stack"
+    cmds:
+      - "{{.UV_CMD}} run pulumi stack select {{.CLI_ARGS}}"
+
+  up:
+    silent: true
+    aliases:
+      - deploy
+    desc: "🔨 Deploy the infrastructure"
+    deps:
+      - auth-check
+    cmds:
+      - task: pulumi-datarobot-plugin-check
+      - echo "🔨 Deploying the infrastructure.."
+      - "{{.UV_CMD}} run pulumi up {{.CLI_ARGS}}"
+
+  up-yes:
+    silent: true
+    desc: "🔨 Deploy the infrastructure (non-interactive, auto-confirm)"
+    deps:
+      - auth-check
+    cmds:
+      - task: pulumi-datarobot-plugin-check
+      - echo "🔨 Deploying the infrastructure (non-interactive).."
+      - "{{.UV_CMD}} run pulumi up -y {{.CLI_ARGS}}"
+
+  refresh:
+    silent: true
+    desc: "🔄 Refresh the infrastructure"
+    deps:
+      - auth-check
+    cmds:
+      - task: pulumi-datarobot-plugin-check
+      - echo "🔄 Refreshing the infrastructure.."
+      - "{{.UV_CMD}} run pulumi refresh {{.CLI_ARGS}}"
+
+  info:
+    silent: true
+    desc: "ℹ️ Show Pulumi stack info"
+    cmds:
+      - task: pulumi-datarobot-plugin-check
+      - "{{.UV_CMD}} run pulumi stack {{.CLI_ARGS}}"
+
+  pulumi:
+    silent: true
+    # desc: "ℹ🛠️ Execute a generic pulumi command"
+    cmds:
+      - task: pulumi-datarobot-plugin-check
+      - "{{.UV_CMD}} run pulumi {{.CLI_ARGS}}"
+
+  down:
+    silent: true
+    aliases:
+      - destroy
+    desc: "💥 Destroy the deployed infrastructure"
+    deps:
+      - auth-check
+    cmds:
+      - task: pulumi-datarobot-plugin-check
+      - echo "💥 Destroying the infrastructure.."
+      - "{{.UV_CMD}} run pulumi destroy {{.CLI_ARGS}}"
+
+  down-yes:
+    silent: true
+    desc: "💥 Destroy the deployed infrastructure (non-interactive, auto-confirm)"
+    deps:
+      - auth-check
+    cmds:
+      - task: pulumi-datarobot-plugin-check
+      - echo "💥 Destroying the infrastructure (non-interactive).."
+      - "{{.UV_CMD}} run pulumi destroy -y {{.CLI_ARGS}}"
+
+  copyright:
+    aliases:
+      - license
+    desc: 📜 Apply license headers
+    cmds:
+      - echo "📜 Applying license headers"
+      - docker run  --rm -v $PWD:/github/workspace ghcr.io/apache/skywalking-eyes/license-eye:eb0e0b091ea41213f712f622797e37526ca1e5d6
+        -v info -c .licenserc.yaml header fix
+
+  copyright-check:
+    aliases:
+      - license-check
+    desc: 📜 Checking for license headers
+    cmds:
+      - echo "📜 Checking license headers"
+      - docker run  --rm -v $PWD:/github/workspace ghcr.io/apache/skywalking-eyes/license-eye:eb0e0b091ea41213f712f622797e37526ca1e5d6
+        -v info -c .licenserc.yaml header check
+
+  deploy-dev:
+    silent: true
+    aliases: [up-dev]
+    desc: "🔨 Deploy the backend infrastructure"
+    deps:
+      - auth-check
+    cmds:
+      - task: pulumi-datarobot-plugin-check
+      - echo "🔨 Deploying the backend infrastructure.."
+      - |
+        export PULUMI_SKIP_UPDATE_CHECK=1 && {{.UV_CMD}} run pulumi up -y \
+          --target 'urn:pulumi:*::*::custom:datarobot:CustomModelDeployment::*' \
+          --target 'urn:pulumi:*::*::datarobot:index/deployment:Deployment::*LLM Blueprint Deployment*' \
+          --target 'urn:pulumi:*::*::datarobot:index/predictionEnvironment:PredictionEnvironment::*' \
+          --target 'urn:pulumi:*::*::datarobot:index/useCase:UseCase::*' \
+          --target 'urn:pulumi:*::*::datarobot:index/apiTokenCredential:ApiTokenCredential::*' \
+          --target 'urn:pulumi:*::*::datarobot:index/customModel:CustomModel::*LLM Blueprint Model*' \
+          --target 'urn:pulumi:*::*::datarobot:index/customModel:CustomModel::LLM Custom Model*' \
+          --target 'urn:pulumi:*::*::datarobot:index/llmBlueprint:LlmBlueprint::LLM Blueprint*' \
+          --target 'urn:pulumi:*::*::datarobot:index/playground:Playground::LLM Playground*' \
+          --target 'urn:pulumi:*::*::datarobot:index/registeredModel:RegisteredModel::LLM Registered Model*' \
+          --target 'urn:pulumi:*::*::datarobot:index/appOauth:AppOauth::*'

@@ -1,0 +1,13 @@
+---
+# Changes here will be overwritten by Copier
+_commit: a735f8c
+_src_path: https://github.com/datarobot/af-component-base.git
+copyright_year: 2025
+github_owner_group: '@datarobot/buzok'
+harness_org_id: buzok
+include_core: true
+oss_repo_name: datarobot-agent-application
+private_repo_name: recipe-datarobot-agent-application
+template_code_name: agentic-application-starter
+template_description: This application is a template for Generative AI agentic solutions
+template_name: Agentic Application Starter

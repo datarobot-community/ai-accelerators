@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="{{ app_base_url }}assets/datarobot_favicon.png"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Agentic Application Starter</title>
+    <script id="env-script">
+      window.ENV = {{ env | tojson }};
+    </script>
+    {% for css in css_files %}
+    <link rel="stylesheet" crossorigin href="{{ css }}" />
+    {% endfor %} {% for js in js_files %}
+    <script type="module" crossorigin src="{{ js }}"></script>
+    {% endfor %}
+  </head>
+  <body>
+    <div class="app" id="root"></div>
+  </body>
+</html>

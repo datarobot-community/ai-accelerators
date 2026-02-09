@@ -1,0 +1,35 @@
+---
+version: '3'
+tasks:
+  install:
+    desc: 🧱 Install React dependencies
+    status:
+      - test -d node_modules
+    cmds:
+      - npm install --loglevel=error
+  lint:
+    desc: 🧹 Lint React code
+    cmds:
+      - npm run lint:fix
+  lint-check:
+    desc: 🧹 Lint React code
+    cmds:
+      - npm run lint
+  test:
+    desc: 🧪 Test React code
+    cmds:
+      - npm run test
+  test-watch:
+    desc: 🧪👀 Continuously Test React code
+    cmds:
+      - npm run test:watch
+  build:
+    desc: 🏗️ Build React code
+    deps: [install]
+    cmds:
+      - npm run build
+  dev:
+    desc: 🚀 Start React development server
+    deps: [install]
+    cmds:
+      - npm run dev

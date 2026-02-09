@@ -1,0 +1,29 @@
+---
+name: YAML formatter
+on:
+  push:
+    paths:
+      - '**.yaml'
+      - '**.yml'
+    branches:
+      - main
+      - 'release/*'
+  pull_request:
+    paths:
+      - '**.yaml'
+      - '**.yml'
+  workflow_dispatch:
+
+jobs:
+  yaml-formatter:
+    name: yamlfmt
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+      - name: Install go
+        uses: actions/setup-go@v6
+      - name: Install yamlfmt
+        run: go install github.com/google/yamlfmt/cmd/yamlfmt@latest
+      - name: Run yamlfmt
+        run: yamlfmt -conf .yamlfmt.yml -lint .

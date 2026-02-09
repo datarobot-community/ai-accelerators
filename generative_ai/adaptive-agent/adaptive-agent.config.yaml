@@ -1,0 +1,15 @@
+---
+description: This repository provides a ready-to-use application template for building and deploying agentic workflows with multi-agent frameworks, a FastAPI backend server, a React frontend, and an MCP server.
+The template streamlines the process of setting up new agentic applications with minimal configuration requirements.
+It supports local development and testing, as well as one-command deployments to production environments within DataRobot.
+file_name: main.py
+languages:
+  - python
+maintainers:
+  - Will Cunningham
+maintainers_email:
+  - william.cunningham@datarobot.com
+smoke_test:
+  run_smoke_test: false
+tags: []
+title: Adaptive Agent

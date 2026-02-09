@@ -1,0 +1,196 @@
+---
+# https://taskfile.dev
+version: '3'
+vars:
+  # Cross-platform environment cleaning - uses 'env -u' on Unix systems, falls back to empty string on Windows
+  UV_CMD:
+    sh: |
+      # This command ensures compatibility with codespaces environments
+      # Cross-platform environment cleaning - uses 'env -u' on Unix systems,
+      # falls back to empty string on Windows
+      if command -v env >/dev/null 2>&1; then
+        echo "env -u PYTHONPATH -u VIRTUAL_ENV uv"
+      else
+        echo "uv"
+      fi
+tasks:
+  install:
+    desc: 🛠️ Install agent uv dependencies
+    cmds:
+      - echo "Updating local dependencies for agent"
+      - '{{.UV_CMD}} sync --extra dev'
+      - if [ -f pyproject.toml ] && [ -d docker_context ]; then cp pyproject.toml docker_context/pyproject.toml; fi
+      - if [ -f uv.lock ] && [ -d docker_context ]; then cp uv.lock docker_context/uv.lock; fi
+    aliases: [req]
+  update:
+    # Hidden to avoid showing in task list, run `task --list-all` to see it
+    # desc: 🛠️ Update local dependencies (refresh uv locks)
+    cmds: [echo "Updating local dependencies for agent", '{{.UV_CMD}} sync --extra dev -U']
+    silent: true
+  auth-check:
+    silent: true
+    desc: 🔐 Check authentication prerequisites
+    cmds:
+      - |
+        if command -v dr &> /dev/null && dr auth help 2>&1 | grep -q "check"; then
+          echo "🔐 Checking authentication.."
+          dr auth check
+        else
+          echo "ℹ️  Skipping auth check (not available)"
+        fi
+  add-dependency:
+    desc: 🛠️ Add provided packages as a new dependency to an agent
+    cmds:
+      - echo "Adding new dependency for agent into 'extras' dependency group"
+      - '{{.UV_CMD}} add --no-upgrade --group extras {{.CLI_ARGS}}'
+    silent: true
+  lint:
+    # Hidden to avoid showing in task list, run `task --list-all` to see it
+    # desc: 🧹 Lint the codebase
+    cmds:
+      - task: req
+      - echo "Linting the codebase"
+      - '{{.UV_CMD}} run ruff check . --fix'
+      - '{{.UV_CMD}} run ruff format .'
+      - '{{.UV_CMD}} run mypy --pretty .'
+      - '{{.UV_CMD}} run yamlfix .'
+    silent: true
+  lint-check:
+    # Hidden to avoid showing in task list, run `task --list-all` to see it
+    # desc: 🧹 Check whether the codebase is linted
+    cmds:
+      - task: req
+      - echo "Checking linting"
+      - '{{.UV_CMD}} run ruff format --check --diff .'
+      - '{{.UV_CMD}} run ruff check --diff .'
+      - echo "Checking type hints"
+      - '{{.UV_CMD}} run mypy --pretty .'
+    silent: true
+  test:
+    # Hidden to avoid showing in task list, run `task --list-all` to see it
+    # desc: 🧪 Run tests
+    cmds: [echo "Running pytest on tests", '{{.UV_CMD}} run pytest -vv ./tests/']
+    silent: true
+  test-coverage:
+    # Hidden to avoid showing in task list, run `task --list-all` to see it
+    # desc: 🧪 Run tests with coverage
+    cmds:
+      - echo "Running pytest on tests"
+      - '{{.UV_CMD}} run pytest -vv --cov --cov-report=html --cov-report=term --cov-report xml:.coverage.xml ./tests/'
+    silent: true
+  cli:
+    desc: 🖥️ Run the CLI with provided arguments
+    vars:
+      START_DEV: '{{.START_DEV}}'
+    deps: [auth-check]
+    cmds:
+      - echo "Running CLI {{.CLI_ARGS}}"
+      - |
+        if [ "{{.START_DEV}}" -eq "1" ]; then
+          # Kill any existing dev server processes
+          pkill -f '{{.UV_CMD}} run python dev.py' 2>/dev/null || true
+
+          # Start dev server in background
+          echo "🚀 Starting dev server in background..."
+          {{.UV_CMD}} run python dev.py &
+          DEV_SERVER_PID=$!
+          echo "Dev server started with PID: $DEV_SERVER_PID"
+
+          # Wait for server to be ready
+          echo "⏳ Waiting for dev server to be ready..."
+          _AGENT_PORT="8842"
+          if [ -n "$AGENT_PORT" ]; then
+            _AGENT_PORT="$AGENT_PORT"
+          fi
+          _AGENT_ENDPOINT="http://localhost:$_AGENT_PORT"
+          i=0
+          while [ $i -lt 30 ]; do
+            if curl --silent --fail --max-time 2 "$_AGENT_ENDPOINT/" >/dev/null 2>&1; then
+              echo "✅ Dev server is ready!"
+              break
+            fi
+            sleep 1
+            i=$((i + 1))
+            if [ $i -eq 30 ]; then
+              echo "❌ Dev server failed to start within 30 seconds"
+              pkill -f '{{.UV_CMD}} run python dev.py' 2>/dev/null || true
+              exit 1
+            fi
+          done
+        fi
+      - |
+        # Run CLI and handle cleanup regardless of exit code
+        CLI_EXIT_CODE=0
+        UV_PROJECT={{.TASKFILE_DIR}} {{.UV_CMD}} run cli.py {{.CLI_ARGS}} || CLI_EXIT_CODE=$?
+        echo "CLI exited with code: $CLI_EXIT_CODE"
+
+        # Check if command failed and contains "execute"
+        if [ $CLI_EXIT_CODE -eq 1 ] && echo "{{.CLI_ARGS}}" | grep -q "execute "; then
+          echo ""
+          echo "❌ CLI command failed with exit status 1"
+          echo "💡 It looks like you're trying to execute an agent that requires a dev server."
+          echo "   Try one of these options:"
+          echo "   1. Start the dev server first: task agent:dev"
+          echo "   2. Or run with auto dev server: task agent:cli START_DEV=1 -- {{.CLI_ARGS}}"
+          echo ""
+        fi
+
+        # Clean up dev server processes if we started them
+        if [ "{{.START_DEV}}" -eq "1" ]; then
+          echo "🛑 Stopping dev server..."
+          pkill -f '{{.UV_CMD}} run python dev.py' 2>/dev/null || true
+          echo "✅ Dev server stopped"
+        fi
+        exit $CLI_EXIT_CODE
+    silent: true
+  dev:
+    desc: 🔨 Run the development server
+    deps: [auth-check]
+    cmds: ['{{.UV_CMD}} run python dev.py --autoreload']
+  dev-stop:
+    desc: 🛑 Stop the development server
+    cmds:
+      - echo "Stopping development server"
+      - pkill -f '{{.UV_CMD}} run python dev.py' 2>/dev/null || echo "No development server process found"
+  create-docker-context:
+    desc: 🐳 Create the template for a local docker_context image
+    vars:
+      BRANCH: '{{.BRANCH}}'
+    cmds:
+      - echo "Creating docker_context folder inside agent."
+      - rm -rf ./docker_context
+      - echo "Downloading datarobot-user-models repository..."
+      - |
+        GIT_BRANCH={{.BRANCH}}
+        if [ -n "$GIT_BRANCH" ]; then
+          echo "Downloading datarobot-user-models branch: $GIT_BRANCH"
+          curl -L -o datarobot-user-models.zip "https://github.com/datarobot/datarobot-user-models/archive/refs/heads/$GIT_BRANCH.zip"
+        else
+          echo "Downloading datarobot-user-models master branch"
+          curl -L -o datarobot-user-models.zip "https://github.com/datarobot/datarobot-user-models/archive/refs/heads/master.zip"
+        fi
+      - echo "Extracting docker_context files..."
+      - |
+        TOP_FOLDER=$(unzip -qql datarobot-user-models.zip | head -n1 | awk '{print $4}' | cut -d/ -f1)
+        echo "Downloaded docker context branch name: $TOP_FOLDER"
+        unzip -q datarobot-user-models.zip "$TOP_FOLDER/public_dropin_environments/python311_genai_agents/*"
+        cp -r "$TOP_FOLDER/public_dropin_environments/python311_genai_agents" ./docker_context
+        rm -rf "$TOP_FOLDER" datarobot-user-models.zip
+      # We need to rename these from their production variants to their local variants
+      - rm ./docker_context/env_info.json
+      - mv ./docker_context/Dockerfile ./docker_context/Dockerfile.prod
+      - mv ./docker_context/Dockerfile.local ./docker_context/Dockerfile
+      - echo "Docker context created inside agent/docker_context"
+  build-docker-image:
+    # desc: 🐳 Build the Docker image
+    cmds:
+      - echo "Building Docker image"
+      - cp pyproject.toml docker_context/pyproject.toml
+      - cd docker_context && docker build --platform linux/amd64 -f Dockerfile -t agent:latest .
+  build-docker-context:
+    desc: 🐳 Build the Docker image
+    cmds:
+      - task: create-docker-context
+      - echo "Saving Docker image"
+      - docker save agent:latest | gzip -1 > docker_context.tar.gz
+    silent: true

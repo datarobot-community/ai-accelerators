@@ -1,0 +1,179 @@
+[project]
+
+name = "fastapi_server"
+version = "0.1.0"
+description = "FastAPI Server"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "ag-ui-protocol>=0.1.9",
+    "aiohttp>=3.9.0",
+    "aiosqlite>=0.21.0",
+    "alembic>=1.16.5",
+    "asyncpg>=0.30.0",
+    "core",
+    "datarobot-asgi-middleware>=0.2.0",
+    "datarobot[auth-authlib,core]>=3.9.1",
+    "fastapi[standard]>=0.115.11",
+    "greenlet>=3.2.1",
+    "httpx>=0.28.1",
+    "itsdangerous>=2.2.0",
+    "openai>=1.109.1",
+    "litellm>=1.79.0",
+    "pydantic-settings>=2.9.1",
+    "pydantic>=2.11.4",
+    "python-dotenv>=1.0.1",
+    "ruff>=0.3.0",
+    "sqlmodel>=0.0.24",
+    "uvicorn>=0.22.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "mypy>=1.8.0",
+    "pytest-asyncio>=1.0.0",
+    "pytest-cov>=6.1.1",
+    "pytest-datadir>=1.6.1",
+    "pytest>=7.4.0",
+    "respx>=0.22.0",
+    "httpx-sse>=0.4.3",
+]
+
+[tool.uv.sources]
+core = { path = "core", editable = true }
+
+[build-system]
+requires = ["hatchling>=1.18.0"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "ipdb>=0.13.13",
+    "pytest-asyncio>=1.2.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+include = ["static", "templates"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+addopts = "-p no:warnings"
+
+[tool.ruff]
+# Exclude a variety of commonly ignored directories.
+exclude = [
+  ".bzr",
+  ".direnv",
+  ".eggs",
+  ".git",
+  ".git-rewrite",
+  ".hg",
+  ".ipynb_checkpoints",
+  ".mypy_cache",
+  ".nox",
+  ".pants.d",
+  ".pyenv",
+  ".pytest_cache",
+  ".pytype",
+  ".ruff_cache",
+  ".svn",
+  ".tox",
+  ".venv",
+  ".vscode",
+  "__pypackages__",
+  "_build",
+  "buck-out",
+  "build",
+  "dist",
+  "node_modules",
+  "site-packages",
+  "venv",
+]
+
+# Same as Black.
+line-length = 88
+indent-width = 4
+
+target-version = "py311"
+
+[tool.ruff.lint]
+# Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
+# Unlike Flake8, Ruff doesn't enable pycodestyle warnings (`W`) or
+# McCabe complexity (`C901`) by default.
+select = ["E4", "E7", "E9", "F", "I"]
+ignore = []
+
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.format]
+# Like Black, use double quotes for strings.
+quote-style = "double"
+
+# Like Black, indent with spaces, rather than tabs.
+indent-style = "space"
+
+# Like Black, respect magic trailing commas.
+skip-magic-trailing-comma = false
+
+# Like Black, automatically detect the appropriate line ending.
+line-ending = "auto"
+
+# Enable auto-formatting of code examples in docstrings. Markdown,
+# reStructuredText code/literal blocks and doctests are all supported.
+#
+# This is currently disabled by default, but it is planned for this
+# to be opt-out in the future.
+docstring-code-format = false
+
+# Set the line length limit used when formatting code snippets in
+# docstrings.
+#
+# This only has an effect when the `docstring-code-format` setting is
+# enabled.
+docstring-code-line-length = "dynamic"
+
+[tool.mypy]
+strict = true
+python_version = "3.11"
+plugins = [
+    "pydantic.mypy",
+    "sqlalchemy.ext.mypy.plugin",
+]
+exclude = """(?x)(
+    output/ # exclude files starting with "output"
+    | deployment_.*/
+    | include/   # or files starting with "include."
+    | venv/
+    | .venv/
+    | .cache
+    | e2e/
+  )"""
+check_untyped_defs = true
+disallow_any_generics = true
+disallow_incomplete_defs = true
+disallow_subclassing_any = true
+disallow_untyped_calls = true
+disallow_untyped_decorators = true
+disallow_untyped_defs = true
+enable_error_code = "ignore-without-code"
+implicit_reexport = true
+ignore_missing_imports = true
+no_implicit_optional = true
+show_column_numbers = true
+warn_redundant_casts = true
+warn_return_any = true
+warn_unused_configs = true
+warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+module = "datarobot.*"
+implicit_reexport = true

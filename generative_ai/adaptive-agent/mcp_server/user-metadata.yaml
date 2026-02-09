@@ -1,0 +1,8 @@
+---
+name: runtime-params
+
+# This is a template for rendering custom model user metadata.
+
+runtimeParameterDefinitions:
+  - fieldName: user_name
+    type: string

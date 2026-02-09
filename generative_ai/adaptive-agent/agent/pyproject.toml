@@ -1,0 +1,191 @@
+[project]
+name = "agent"
+version = "0.1.0"
+description = "Implementation of agent"
+readme = "README.md"
+requires-python = ">=3.10, <3.13"
+dependencies = [
+    "datarobot-genai[langgraph]>=0.2.34,<0.3.0",
+    "datarobot-moderations>=11.2.10,<11.3.0",
+    "datarobot-drum>=1.17.5,<1.18.0",
+    "datarobot-mlops>=11.1.0",
+    "openai>=1.81.0,<2.0.0",
+    "litellm>=1.72.1,<2.0.0",
+    "langchain-litellm>=0.2.3",
+    "opentelemetry-api>=1.33.0,<2.0.0",
+    "opentelemetry-sdk>=1.33.0,<2.0.0",
+
+    "pdfminer.six>=20251230",  # CVE fix
+    "langgraph-checkpoint>=3.0.0", # CVE fix
+]
+
+[project.optional-dependencies]
+dev = [
+    "mypy>=1.15.0",
+    "pre-commit>=4.2.0",
+    "pydantic>=2.6.1",
+    "pytest-cov>=6.1.1",
+    "pytest>=7.4.0",
+    "pytest-asyncio>=1.2.0",
+    "requests-mock>=1.12.1",
+    "ruff>=0.12.0",
+    "types-requests>=2.32.4.20250913",
+    "yamlfix>=1.17.0",
+]
+# Additional dependencies required to run the agent in DataRobot Agentic playground
+agentic_playground = [
+    "fastapi[All]==0.118.2",
+    "psutil==5.9.8",
+    "ipykernel<6.29.0",
+    "jupyter-client>=8.6.3",
+    "jupyter-core>=5.8.1",
+    "jupyter-kernel-gateway>=3.0.1",
+    "ecs-logging>=2.2.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+pythonpath = ["."]
+asyncio_mode = "auto"
+
+[tool.ruff]
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".ipynb_checkpoints",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".vscode",
+    "__pycache__",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "docker_context",
+    "dist",
+    "node_modules",
+    "site-packages",
+    "venv",
+]
+
+# Same as Black.
+line-length = 88
+indent-width = 4
+
+target-version = "py311"
+
+[tool.ruff.lint]
+# Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
+# Unlike Flake8, Ruff doesn't enable pycodestyle warnings (`W`) or
+# McCabe complexity (`C901`) by default.
+select = ["E4", "E7", "E9", "F", "I"]
+ignore = []
+
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.format]
+# Like Black, use double quotes for strings.
+quote-style = "double"
+
+# Like Black, indent with spaces, rather than tabs.
+indent-style = "space"
+
+# Like Black, respect magic trailing commas.
+skip-magic-trailing-comma = false
+
+# Like Black, automatically detect the appropriate line ending.
+line-ending = "auto"
+
+# Enable auto-formatting of code examples in docstrings. Markdown,
+# reStructuredText code/literal blocks and doctests are all supported.
+#
+# This is currently disabled by default, but it is planned for this
+# to be opt-out in the future.
+docstring-code-format = false
+
+# Set the line length limit used when formatting code snippets in
+# docstrings.
+#
+# This only has an effect when the `docstring-code-format` setting is
+# enabled.
+docstring-code-line-length = "dynamic"
+
+[tool.yamlfix]
+allow_duplicate_keys = true
+line_length = 120
+
+[tool.mypy]
+strict = true
+python_version = "3.11"
+plugins = "pydantic.mypy"
+exclude = """(?x)(
+    output/ # exclude files starting with "output"
+    | deployment_.*/
+    | docker_context/
+    | include/   # or files starting with "include."
+    | venv/
+    | .venv/
+    | .cache
+    | e2e/
+    | tests/
+  )"""
+check_untyped_defs = true
+disallow_any_generics = true
+disallow_incomplete_defs = true
+disallow_subclassing_any = true
+disallow_untyped_calls = true
+disallow_untyped_decorators = true
+disallow_untyped_defs = true
+disable_error_code = ["typeddict-unknown-key"]
+enable_error_code = "ignore-without-code"
+implicit_reexport = true
+ignore_missing_imports = true
+no_implicit_optional = true
+show_column_numbers = true
+warn_redundant_casts = true
+warn_return_any = true
+warn_unused_configs = true
+warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+module = "datarobot.*"
+implicit_reexport = true
+
+[tool.uv]
+required-version = ">=0.7.0"
+override-dependencies = [
+    "fastapi>=0.118.2,<0.122.0",
+    "ragas>=0.3.8",
+    "starlette>=0.49.1",
+]
+package = true
+
+# This can be set to allow for proxy indexes in air-gapped environments
+# [tool.uv.pip]
+# extra-index-url = ["https://pypi.org/simple/"]
+
+[dependency-groups]
+extras = []
+
+[tool.setuptools.packages.find]
+include = ["agent*"]

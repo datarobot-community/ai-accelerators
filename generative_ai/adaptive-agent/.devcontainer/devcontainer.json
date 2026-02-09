@@ -1,0 +1,23 @@
+{
+	"name": "Application Framework Studio Devcontainer",
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
+    "features": {
+        "ghcr.io/devcontainers/features/node:1": {}
+    },
+    "customizations": {
+        "jetbrains": {
+            "plugins": [
+                "lechuck.intellij-plugin.task"
+            ],
+            "backend": "pycharm"
+		}
+    },
+    "forwardPorts": [51164, 8083, 8080, 8842, 5173, 9000],
+    "mounts": [
+        "type=volume,source=agentic-devcontainer-pulumi,target=/home/vscode/.pulumi",
+        "type=volume,source=agentic-devcontainer-cache,target=/home/vscode/.cache",
+        "type=volume,source=agentic-devcontainer-config,target=/home/vscode/.config"
+    ]
+}

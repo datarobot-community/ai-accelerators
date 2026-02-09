@@ -1,0 +1,25 @@
+[run]
+branch = True
+source = app
+omit = 
+    */tests/*
+    */test_*
+    */__pycache__/*
+    */.pytest_cache/*
+    */.env/*
+    */.venv/*
+    */site-packages/*
+
+[report]
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    raise NotImplementedError
+    if __name__ == .__main__.:
+    pass
+    raise ImportError
+    except ImportError:
+    if TYPE_CHECKING:
+    if typing.TYPE_CHECKING:
+    @abstractmethod
+    @abc.abstractmethod 

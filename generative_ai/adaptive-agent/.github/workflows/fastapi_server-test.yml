@@ -1,0 +1,68 @@
+---
+name: Test fastapi_server
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - 'fastapi_server/**.py'
+
+  pull_request:
+    branches: ["main"]
+    paths:
+      - 'fastapi_server/**.py'
+
+jobs:
+  tests:
+    name: "FastAPI: fastapi_server ${{ matrix.python-version }}"
+    runs-on: "ubuntu-latest"
+    defaults:
+      run:
+        working-directory: fastapi_server
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+
+    steps:
+      - uses: "actions/checkout@v6"
+
+      # Ref: https://docs.astral.sh/uv/guides/integration/github/#installation
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          working-directory: fastapi_server
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Taskfile
+        uses: arduino/setup-task@v2
+        with:
+          version: 3.x
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Dependencies
+        working-directory: fastapi_server
+        run: task install
+
+      - name: Run Static Checks
+        working-directory: fastapi_server
+        run: task lint-check
+
+      - name: Install Frontend Dependencies
+        working-directory: frontend_web
+        run: task install
+
+      - name: Build static Frontend files
+        working-directory: frontend_web
+        run: task build
+
+      - name: Test
+        working-directory: fastapi_server
+        run: task test
+
+      - name: Get Cover
+        uses: orgoro/coverage@v3.2
+        with:
+          coverageFile: fastapi_server/.coverage.xml
+          token: ${{ secrets.GITHUB_TOKEN }}

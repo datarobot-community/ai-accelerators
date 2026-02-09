@@ -1,0 +1,44 @@
+---
+name: Test frontend_web
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - 'frontend_web/**'
+
+  pull_request:
+    branches: ["main"]
+    paths:
+      - 'frontend_web/**'
+
+  workflow_dispatch:
+
+jobs:
+  tests:
+    name: "React: frontend_web node: ${{ matrix.node-version }}"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend_web
+
+    strategy:
+      matrix:
+        node-version: ["20", "22", "24"]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: frontend_web
+
+      - name: Run Vitest
+        run: npm run test
+        working-directory: frontend_web

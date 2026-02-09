@@ -1,0 +1,20 @@
+{
+  "model": "datarobot-deployed-llm",
+  "messages": [
+    {
+      "content": "You are a helpful assistant",
+      "role": "system"
+    },
+    {
+      "content": "Artificial Intelligence",
+      "role": "user"
+    }
+  ],
+  "n": 1,
+  "temperature": 0.01,
+  "extra_body": {
+    "api_key": "DATAROBOT_API_KEY",
+    "api_base": "https://app.datarobot.com",
+    "verbose": true
+  }
+}

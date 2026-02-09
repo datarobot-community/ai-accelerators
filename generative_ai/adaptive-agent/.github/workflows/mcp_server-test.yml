@@ -1,0 +1,61 @@
+---
+name: Test mcp_server
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - 'mcp_server/**.py'
+
+  pull_request:
+    branches: ["main"]
+    paths:
+      - 'mcp_server/**.py'
+
+jobs:
+  tests:
+    name: "DataRobot MCP: mcp_server ${{ matrix.python-version }}"
+    runs-on: "ubuntu-latest"
+    defaults:
+      run:
+        working-directory: mcp_server
+
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+
+    steps:
+      - uses: "actions/checkout@v6"
+
+      # Ref: https://docs.astral.sh/uv/guides/integration/github/#installation
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          working-directory: mcp_server
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Taskfile
+        uses: arduino/setup-task@v2
+        with:
+          version: 3.x
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Dependencies
+        working-directory: mcp_server
+        run: task install
+
+      - name: Run Static Checks
+        working-directory: mcp_server
+        run: task lint-check
+
+      - name: Run Unit Tests
+        working-directory: mcp_server
+        run: task unit
+
+      - name: Get Cover
+        uses: orgoro/coverage@v3.2
+        with:
+          coverageFile: mcp_server/coverage.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
