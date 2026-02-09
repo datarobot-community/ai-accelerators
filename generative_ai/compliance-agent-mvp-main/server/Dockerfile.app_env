@@ -1,0 +1,30 @@
+FROM python:3.11-slim
+
+# Avoid Python stdout buffering
+ENV PYTHONUNBUFFERED=1
+ENV LANGUAGE=en_US:en
+ENV LC_ALL=C.UTF-8
+ENV DR_REQUIREMENTS_PATH=requirements.txt
+
+WORKDIR /opt/code
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    gcc \
+    g++ \
+    libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements and install
+COPY requirements.txt .
+RUN pip install --upgrade pip \
+    && pip install --no-cache-dir -r requirements.txt
+
+COPY ./*.sh ./
+
+# Expose DataRobot expected port
+EXPOSE 8080
+
+# Default command (DataRobot will override when running models)
+CMD ["python3"]
