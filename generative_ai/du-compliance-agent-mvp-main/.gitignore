@@ -1,0 +1,19 @@
+# Environment variables
+.env
+
+# Virtual environments
+server/.venv
+
+# macOS files
+.DS_Store
+
+# D2 diagrams
+Architecture/diagrams
+
+# Build artifacts
+server/frontend_dist
+server/app/frontend_dist
+app_env.tar.gz
+server.tar.gz
+
+*.pyc

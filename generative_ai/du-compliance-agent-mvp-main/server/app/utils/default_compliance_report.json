@@ -1,0 +1,54 @@
+{
+  "type": "object",
+  "properties": {
+    "compliance_report": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "regulation_file_name": {
+            "type": "string",
+            "description": "The name/title of the regulation document."
+          },
+          "regulation_clause_section": {
+            "type": "string",
+            "description": "The specific clause or section number/name from the regulation (e.g., 'Section 3.2.1', 'Clause 5(a)', 'Article 7.3'). Include hierarchical references if applicable."
+          },
+          "regulation_clause_text": {
+            "type": "string",
+            "description": "The EXACT wording of the specific clause or section from the regulation, copied VERBATIM without any modification, interpretation, rewording, summarization, or paraphrasing. Do NOT summarize or interpret the requirement. Include the complete clause or section text, including any subsections, bullet points, or conditions that are part of the requirement. If the requirement spans multiple paragraphs, include all relevant paragraphs."
+          },
+          "cvp_evidence": {
+            "type": "string",
+            "description": "EXACT verbatim text from the input document demonstrating the issue. Copy word-for-word without modification or interpretation. Use quotation marks for direct quotes. If no relevant content exists, state: 'No relevant content found in the input document'."
+          },
+          "recommended_criticality": {
+            "type": "string",
+            "enum": ["Critical", "Medium", "Low"],
+            "description": "Criticality level based on severity. Value MUST be exactly one of: 'Critical', 'Medium', or 'Low' — no other values are allowed.\n- 'Critical': Severe violations with legal/regulatory penalties, license risk, or major business impact. Examples: missing disclosures, data protection violations.\n- 'Medium': Mandatory requirements with less severe consequences; partial compliance with gaps. Examples: incomplete documentation, unclear procedures.\n- 'Low': Best practices not strictly required; enhancement opportunities. Examples: documentation clarity, process improvements."
+          },
+          "explanation": {
+            "type": "string",
+            "description": "A clear, specific explanation of the non-compliance, missing requirement, or misalignment. Articulate the gap between what the regulation requires and what the input provides (or lacks). Explain why this is a compliance issue."
+          },
+          "recommendation": {
+            "type": "string",
+            "description": "Specific, actionable recommendations to address the non-compliance. Provide concrete steps, changes, or additions needed to achieve compliance. Prioritize recommendations and make them implementable."
+          }
+        },
+        "required": [
+          "regulation_file_name",
+          "regulation_clause_section",
+          "regulation_clause_text",
+          "cvp_evidence",
+          "recommended_criticality",
+          "explanation",
+          "recommendation"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["compliance_report"],
+  "additionalProperties": false
+}

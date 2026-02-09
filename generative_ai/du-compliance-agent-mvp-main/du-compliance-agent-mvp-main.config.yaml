@@ -1,0 +1,13 @@
+---
+description: MVP for checking documents against the TDRA regulatory and policy knowledge. You upload one or more documents (e.g. product specs, terms, process docs), choose which regulations to check against, and the app uses an LLM to produce a compliance report - a list of issues with evidence, severity, and recommendations.
+file_name: main.py
+languages:
+  - python
+maintainers:
+  - Antonio Kodsy
+maintainers_email:
+  - antonio.kodsy@datarobot.com
+smoke_test:
+  run_smoke_test: false
+tags: []
+title: Compliance Agent MVP

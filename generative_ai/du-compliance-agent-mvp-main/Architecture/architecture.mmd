@@ -1,0 +1,674 @@
+%% DU Compliance Agent MVP - Mermaid Architecture Diagrams
+%% This file contains all Mermaid diagrams for the architecture documentation
+
+%% ============================================
+%% 1. SYSTEM ARCHITECTURE DIAGRAM
+%% ============================================
+
+graph TB
+    subgraph "User Browser"
+        UI[React/TypeScript Frontend]
+        UI_COMP[FileDropZone Component]
+        UI_PROC[ProcessingView Component]
+        UI_TABLE[ComplianceTable Component]
+        UI_INVALID[InvalidDocumentView Component]
+        UI_VALID[ValidFilesSection Component]
+        UI_STREAM[StreamHandler Utility]
+    end
+
+    subgraph "Frontend Layer"
+        REACT[React Application<br/>App.tsx]
+        STATE[State Management<br/>React Hooks]
+        TYPES[Type Definitions<br/>compliance.ts]
+        UTILS[URL Utils]
+    end
+
+    subgraph "Backend API Layer"
+        FASTAPI[FastAPI Application<br/>fastapi_app.py]
+        CORS[CORS Middleware]
+        
+        subgraph "Controllers"
+            COMP_CTRL[Compliance Controller<br/>compliance_controller.py]
+            HEALTH_CTRL[Health Controller<br/>health_controller.py]
+            FRONTEND_CTRL[Frontend Controller<br/>frontend_controller.py]
+        end
+        
+        subgraph "Services"
+            COMP_SVC[Compliance Service<br/>compliance_service.py]
+        end
+        
+        subgraph "Utils"
+            LLM_CLIENT[LLM Client<br/>llm_client.py]
+            FILE_CONV[File Converter<br/>file_converter.py]
+            GATEKEEPER[Document Gatekeeper<br/>document_gatekeeper.py]
+            COMP_EVAL[Compliance Evaluator<br/>llm_compliance_evaluator.py]
+            STREAM_EMIT[Stream Emitter<br/>stream_emitter.py]
+            JSON_SCHEMA[JSON Schema<br/>json_schema.py]
+            REG_NAMES[Regulation Names<br/>regulation_names.py]
+        end
+        
+        subgraph "Models"
+            COMP_ISSUE[ComplianceIssue Model<br/>compliance.py]
+        end
+    end
+
+    subgraph "External Services"
+        LLM_GW[DataRobot LLM Gateway<br/>or Direct LLM]
+    end
+
+    subgraph "Storage Layer"
+        TMP_STORAGE[Temporary File Storage<br/>/tmp directory]
+        KB_MD[Knowledge Base<br/>Markdown Regulations<br/>knowledge-base/*.md]
+        KB_PDF[PDF Regulations<br/>regulations_pdf/*.pdf]
+    end
+
+    UI --> REACT
+    REACT --> UI_COMP
+    REACT --> UI_PROC
+    REACT --> UI_TABLE
+    REACT --> UI_INVALID
+    REACT --> UI_VALID
+    REACT --> UI_STREAM
+    REACT --> STATE
+    REACT --> TYPES
+    REACT --> UTILS
+
+    UI_STREAM -->|HTTP POST<br/>Streaming| COMP_CTRL
+    UI_COMP -->|HTTP GET| COMP_CTRL
+    UI -->|Static Files| FRONTEND_CTRL
+
+    FASTAPI --> CORS
+    FASTAPI --> COMP_CTRL
+    FASTAPI --> HEALTH_CTRL
+    FASTAPI --> FRONTEND_CTRL
+
+    COMP_CTRL --> COMP_SVC
+    COMP_CTRL --> FILE_CONV
+    COMP_CTRL --> GATEKEEPER
+    COMP_CTRL --> STREAM_EMIT
+    COMP_CTRL --> TMP_STORAGE
+
+    COMP_SVC --> LLM_CLIENT
+    COMP_SVC --> COMP_EVAL
+    COMP_SVC --> REG_NAMES
+    COMP_SVC --> KB_MD
+
+    COMP_EVAL --> JSON_SCHEMA
+    GATEKEEPER --> LLM_CLIENT
+    FILE_CONV --> TMP_STORAGE
+
+    LLM_CLIENT --> LLM_GW
+    COMP_EVAL --> LLM_GW
+    GATEKEEPER --> LLM_GW
+
+    COMP_SVC --> COMP_ISSUE
+    COMP_CTRL --> COMP_ISSUE
+
+    FRONTEND_CTRL --> KB_PDF
+
+%% ============================================
+%% 2. USER JOURNEY - STATE DIAGRAM
+%% ============================================
+
+stateDiagram-v2
+    [*] --> LandingPage: User opens application
+    
+    LandingPage --> SelectFiles: User sees upload interface
+    LandingPage --> SelectRegulations: User sees regulation list
+    
+    SelectFiles --> FilesSelected: User adds files<br/>(drag-drop or browse)
+    FilesSelected --> SelectRegulations: Files added to list
+    
+    SelectRegulations --> RegulationsSelected: User checks/unchecks regulations
+    RegulationsSelected --> ReadyToUpload: At least 1 regulation selected<br/>Files ready
+    
+    ReadyToUpload --> Uploading: User clicks "Upload & Verify"
+    
+    Uploading --> FileValidation: Files uploaded to server
+    
+    FileValidation --> FileValid: Document gatekeeper<br/>validates relevance
+    FileValidation --> FileInvalid: Document not relevant<br/>or low confidence
+    
+    FileValid --> FileConversion: Convert to Markdown<br/>(PDF/DOCX/TXT → MD)
+    FileConversion --> ComplianceVerification: For each selected regulation
+    
+    ComplianceVerification --> IssuesFound: LLM checks compliance<br/>Issues streamed in real-time
+    ComplianceVerification --> NoIssues: All regulations checked<br/>No issues found
+    
+    IssuesFound --> ResultsView: Processing complete
+    NoIssues --> ResultsView: Processing complete
+    
+    FileInvalid --> InvalidView: Show invalid files<br/>with reasons
+    
+    InvalidView --> ValidFilesProcessing: If valid files exist<br/>Continue processing
+    ValidFilesProcessing --> ComplianceVerification
+    
+    ResultsView --> ViewDetails: User can view<br/>compliance issues
+    ResultsView --> TryDifferentFile: User clicks<br/>"Try Different File"
+    ResultsView --> [*]: User closes browser
+    
+    ViewDetails --> ResultsView: User navigates back
+    TryDifferentFile --> LandingPage: Reset to initial state
+
+%% ============================================
+%% 3. USER JOURNEY - SEQUENCE DIAGRAM
+%% ============================================
+
+sequenceDiagram
+    participant User
+    participant Frontend
+    participant Backend
+    participant Gatekeeper
+    participant LLM
+    participant Storage
+
+    User->>Frontend: Opens application
+    Frontend->>Backend: GET /api/compliance/regulations
+    Backend-->>Frontend: List of regulations
+    Frontend-->>User: Display regulations list
+
+    User->>Frontend: Selects files and regulations
+    User->>Frontend: Clicks "Upload & Verify"
+    
+    Frontend->>Backend: POST /api/compliance/upload<br/>(multipart/form-data, streaming)
+    
+    Backend->>Frontend: Stream: "uploading" event
+    Frontend-->>User: Show "Uploading files..."
+    
+    Backend->>Storage: Save file to /tmp
+    Backend->>Frontend: Stream: "parsing" event
+    Frontend-->>User: Show "Parsing files..."
+    
+    Backend->>Backend: Convert file to Markdown<br/>(PDF/DOCX/TXT → MD)
+    Backend->>Frontend: Stream: "validating" event
+    Frontend-->>User: Show "Validating file relevance..."
+    
+    Backend->>Gatekeeper: Validate document relevance
+    Gatekeeper->>LLM: LLM call with document content
+    LLM-->>Gatekeeper: Validation result<br/>(status, confidence, reason)
+    Gatekeeper-->>Backend: Validation result
+    
+    alt Document Valid (confidence >= threshold)
+        Backend->>Frontend: Stream: "file_validated" event
+        Frontend-->>User: Show "Valid file: [filename]"
+        
+        Backend->>Frontend: Stream: "verifying" event<br/>(regulation 1/N)
+        Frontend-->>User: Show verification progress
+        
+        loop For each selected regulation
+            Backend->>LLM: Compliance check<br/>(regulation + document)
+            LLM-->>Backend: Compliance issues (if any)
+            Backend->>Frontend: Stream: "issues_delta" event
+            Frontend-->>User: Display issues incrementally
+        end
+        
+        Backend->>Frontend: Stream: "complete" event
+        Frontend-->>User: Show results view
+        Backend->>Storage: Clean up temporary files
+        
+    else Document Invalid (confidence < threshold)
+        Backend->>Frontend: Stream: "document_invalid" event
+        Frontend-->>User: Show invalid file with reason
+        Backend->>Storage: Clean up temporary file
+    end
+
+%% ============================================
+%% 4. FILE PROCESSING FLOW
+%% ============================================
+
+flowchart TD
+    START([User Uploads Files]) --> UPLOAD[Receive Files<br/>multipart/form-data]
+    
+    UPLOAD --> PARSE_FORM[Parse Form Data<br/>- files: List[UploadFile]<br/>- selected_regulations: JSON string]
+    
+    PARSE_FORM --> LOOP_START{For each file}
+    
+    LOOP_START --> CREATE_TMP[Create unique filename<br/>/tmp/compliance_upload_[timestamp]_[filename]]
+    
+    CREATE_TMP --> READ_FILE[Read file bytes<br/>in 8KB chunks]
+    
+    READ_FILE --> SAVE_TMP[Save to /tmp<br/>with progress tracking]
+    
+    SAVE_TMP --> EMIT_UPLOAD[Emit 'uploading' event<br/>with progress %]
+    
+    EMIT_UPLOAD --> EMIT_PARSE[Emit 'parsing' event]
+    
+    EMIT_PARSE --> CONVERT_FILE{File Type?}
+    
+    CONVERT_FILE -->|PDF| PDF_TO_MD[Extract text with pypdf<br/>Reconstruct paragraphs<br/>Convert to Markdown]
+    CONVERT_FILE -->|DOCX| DOCX_TO_MD[Convert to HTML with mammoth<br/>Convert HTML to Markdown]
+    CONVERT_FILE -->|TXT| TXT_TO_MD[Read text content<br/>Add markdown title]
+    CONVERT_FILE -->|MD| PASSTHROUGH[Return content as-is]
+    
+    PDF_TO_MD --> MD_CONTENT[Markdown Content]
+    DOCX_TO_MD --> MD_CONTENT
+    TXT_TO_MD --> MD_CONTENT
+    PASSTHROUGH --> MD_CONTENT
+    
+    MD_CONTENT --> EMIT_VALIDATE[Emit 'validating' event]
+    
+    EMIT_VALIDATE --> GATEKEEPER[Document Gatekeeper<br/>LLM Validation]
+    
+    GATEKEEPER --> GATEKEEPER_LLM[LLM Call:<br/>- System: Gatekeeper prompt<br/>- User: Document content<br/>- Response: JSON schema]
+    
+    GATEKEEPER_LLM --> CHECK_VALID{Status == VALID<br/>AND<br/>Confidence >= Threshold?}
+    
+    CHECK_VALID -->|No| EMIT_INVALID[Emit 'document_invalid' event<br/>with reason]
+    EMIT_INVALID --> CLEANUP_INVALID[Remove file from /tmp]
+    CLEANUP_INVALID --> NEXT_FILE{More files?}
+    
+    CHECK_VALID -->|Yes| EMIT_VALID[Emit 'file_validated' event]
+    EMIT_VALID --> STORE_VALID[Store in valid_files array<br/>- filename<br/>- content (markdown)<br/>- file_path]
+    
+    STORE_VALID --> NEXT_FILE
+    
+    NEXT_FILE -->|Yes| LOOP_START
+    NEXT_FILE -->|No| PROCESS_VALID{Valid files<br/>exist?}
+    
+    PROCESS_VALID -->|No| EMIT_COMPLETE[Emit 'complete' event]
+    PROCESS_VALID -->|Yes| VERIFY_LOOP{For each valid file}
+    
+    VERIFY_LOOP --> REG_LOOP{For each selected regulation}
+    
+    REG_LOOP --> EMIT_VERIFY[Emit 'verifying' event<br/>regulation_index/total]
+    
+    EMIT_VERIFY --> LOAD_REG[Load regulation from<br/>knowledge-base/*.md]
+    
+    LOAD_REG --> BUILD_PROMPT[Build compliance prompt<br/>- System: Compliance analyst role<br/>- User: Regulation + Document]
+    
+    BUILD_PROMPT --> COMP_LLM[LLM Compliance Check<br/>- Messages: Prompt<br/>- Response Format: JSON Schema<br/>- Temperature: 0.1]
+    
+    COMP_LLM --> PARSE_ISSUES[Parse compliance_report array<br/>from LLM response]
+    
+    PARSE_ISSUES --> ENRICH_ISSUES[Enrich issues with:<br/>- regulation_file_url<br/>- regulation_file_name (display name)]
+    
+    ENRICH_ISSUES --> CREATE_ISSUES[Create ComplianceIssue objects]
+    
+    CREATE_ISSUES --> EMIT_DELTA{Issues found?}
+    
+    EMIT_DELTA -->|Yes| EMIT_ISSUES[Emit 'issues_delta' event<br/>with issues array]
+    EMIT_DELTA -->|No| CHECK_NEXT_REG
+    
+    EMIT_ISSUES --> CHECK_NEXT_REG{More regulations?}
+    CHECK_NEXT_REG -->|Yes| REG_LOOP
+    CHECK_NEXT_REG -->|No| CHECK_NEXT_FILE{More files?}
+    
+    CHECK_NEXT_FILE -->|Yes| VERIFY_LOOP
+    CHECK_NEXT_FILE -->|No| CLEANUP_ALL[Clean up all /tmp files]
+    
+    CLEANUP_ALL --> EMIT_COMPLETE
+    EMIT_COMPLETE --> END([Processing Complete])
+
+%% ============================================
+%% 5. FILE PROCESSING SEQUENCE DIAGRAM
+%% ============================================
+
+sequenceDiagram
+    participant User
+    participant Frontend
+    participant Controller
+    participant FileConverter
+    participant Gatekeeper
+    participant ComplianceService
+    participant LLM
+    participant Storage
+
+    User->>Frontend: Upload files + select regulations
+    Frontend->>Controller: POST /api/compliance/upload<br/>(FormData with files + regulations)
+    
+    loop For each uploaded file
+        Controller->>Storage: Save file to /tmp<br/>(with unique name)
+        Controller->>Frontend: Stream: "uploading" (progress)
+        Controller->>Frontend: Stream: "parsing"
+        
+        Controller->>FileConverter: file_to_markdown(file_path)
+        
+        alt PDF file
+            FileConverter->>FileConverter: Extract text with pypdf
+            FileConverter->>FileConverter: Reconstruct paragraphs
+        else DOCX file
+            FileConverter->>FileConverter: Convert to HTML (mammoth)
+            FileConverter->>FileConverter: HTML to Markdown
+        else TXT/MD file
+            FileConverter->>FileConverter: Read text content
+        end
+        
+        FileConverter-->>Controller: Markdown content
+        
+        Controller->>Frontend: Stream: "validating"
+        Controller->>Gatekeeper: validate_document_relevance(markdown)
+        
+        Gatekeeper->>LLM: Chat completion<br/>(gatekeeper prompt + content)
+        LLM-->>Gatekeeper: {status, confidence, reason}
+        Gatekeeper-->>Controller: Validation result
+        
+        alt Document Valid
+            Controller->>Frontend: Stream: "file_validated"
+            Controller->>Controller: Store in valid_files array
+        else Document Invalid
+            Controller->>Frontend: Stream: "document_invalid"
+            Controller->>Storage: Remove file from /tmp
+        end
+    end
+    
+    loop For each valid file
+        loop For each selected regulation
+            Controller->>Frontend: Stream: "verifying"<br/>(regulation N/total)
+            
+            Controller->>ComplianceService: verify_against_regulations<br/>(content, regulations)
+            
+            ComplianceService->>ComplianceService: Load regulation from KB
+            ComplianceService->>ComplianceService: Build compliance prompt
+            ComplianceService->>LLM: Chat completion<br/>(compliance prompt)
+            LLM-->>ComplianceService: compliance_report array
+            ComplianceService->>ComplianceService: Create ComplianceIssue objects
+            ComplianceService-->>Controller: List of issues
+            
+            Controller->>Frontend: Stream: "issues_delta"<br/>(if issues found)
+        end
+    end
+    
+    Controller->>Storage: Clean up all /tmp files
+    Controller->>Frontend: Stream: "complete"
+    Frontend-->>User: Display results
+
+%% ============================================
+%% 6. COMPONENT INTERACTION - FRONTEND
+%% ============================================
+
+graph LR
+    subgraph "App.tsx - Main Application"
+        APP_STATE[State Management]
+        APP_HANDLERS[Event Handlers]
+    end
+    
+    subgraph "Components"
+        FILE_DROP[FileDropZone]
+        PROC_VIEW[ProcessingView]
+        COMP_TABLE[ComplianceTable]
+        INVALID_VIEW[InvalidDocumentView]
+        VALID_SECTION[ValidFilesSection]
+        PROC_STEP[ProcessingStep]
+    end
+    
+    subgraph "Utilities"
+        STREAM_HANDLER[StreamHandler]
+        URL_UTILS[urlUtils]
+    end
+    
+    subgraph "Types"
+        COMP_TYPES[compliance.ts]
+    end
+    
+    APP_STATE -->|Manages| FILE_DROP
+    APP_STATE -->|Manages| PROC_VIEW
+    APP_STATE -->|Manages| COMP_TABLE
+    APP_STATE -->|Manages| INVALID_VIEW
+    APP_STATE -->|Manages| VALID_SECTION
+    
+    APP_HANDLERS -->|onFilesSelected| FILE_DROP
+    APP_HANDLERS -->|Creates| STREAM_HANDLER
+    
+    FILE_DROP -->|Fetches| URL_UTILS
+    FILE_DROP -->|Calls| APP_HANDLERS
+    
+    STREAM_HANDLER -->|Emits events| APP_STATE
+    STREAM_HANDLER -->|Uses| URL_UTILS
+    
+    PROC_VIEW -->|Displays| PROC_STEP
+    COMP_TABLE -->|Uses| COMP_TYPES
+    INVALID_VIEW -->|Uses| COMP_TYPES
+    VALID_SECTION -->|Uses| COMP_TYPES
+    
+    APP_STATE -->|Uses| COMP_TYPES
+
+%% ============================================
+%% 7. COMPONENT INTERACTION - BACKEND
+%% ============================================
+
+graph TB
+    subgraph "FastAPI Application"
+        APP[fastapi_app.py]
+        LIFESPAN[Lifespan Handler]
+    end
+    
+    subgraph "Controllers"
+        COMP_CTRL[compliance_controller.py]
+        HEALTH_CTRL[health_controller.py]
+        FRONTEND_CTRL[frontend_controller.py]
+    end
+    
+    subgraph "Services"
+        COMP_SVC[ComplianceService]
+    end
+    
+    subgraph "Utils"
+        LLM_CLIENT[llm_client.py]
+        FILE_CONV[file_converter.py]
+        GATEKEEPER[document_gatekeeper.py]
+        COMP_EVAL[llm_compliance_evaluator.py]
+        STREAM_EMIT[stream_emitter.py]
+        JSON_SCHEMA[json_schema.py]
+        REG_NAMES[regulation_names.py]
+    end
+    
+    subgraph "Models"
+        COMP_ISSUE[ComplianceIssue]
+    end
+    
+    APP -->|Loads| LIFESPAN
+    LIFESPAN -->|Registers| COMP_CTRL
+    LIFESPAN -->|Registers| HEALTH_CTRL
+    LIFESPAN -->|Registers| FRONTEND_CTRL
+    
+    COMP_CTRL -->|Uses| COMP_SVC
+    COMP_CTRL -->|Uses| FILE_CONV
+    COMP_CTRL -->|Uses| GATEKEEPER
+    COMP_CTRL -->|Uses| STREAM_EMIT
+    COMP_CTRL -->|Creates| COMP_ISSUE
+    
+    COMP_SVC -->|Uses| LLM_CLIENT
+    COMP_SVC -->|Uses| COMP_EVAL
+    COMP_SVC -->|Uses| REG_NAMES
+    COMP_SVC -->|Creates| COMP_ISSUE
+    
+    COMP_EVAL -->|Uses| JSON_SCHEMA
+    COMP_EVAL -->|Uses| LLM_CLIENT
+    
+    GATEKEEPER -->|Uses| LLM_CLIENT
+    
+    FILE_CONV -->|Reads/Writes| TMP_STORAGE[Temp Storage]
+
+%% ============================================
+%% 8. DATA FLOW - REQUEST/RESPONSE
+%% ============================================
+
+flowchart LR
+    subgraph "Client Side"
+        USER[User]
+        BROWSER[Browser]
+        REACT[React App]
+    end
+    
+    subgraph "Network"
+        HTTP[HTTP/HTTPS]
+        SSE[Server-Sent Events<br/>Streaming]
+    end
+    
+    subgraph "Server Side"
+        FASTAPI[FastAPI]
+        CONTROLLER[Controller]
+        SERVICE[Service]
+        LLM_CLIENT[LLM Client]
+    end
+    
+    subgraph "External"
+        LLM_GW[LLM Gateway]
+    end
+    
+    USER -->|1. Select files| BROWSER
+    BROWSER -->|2. FormData| REACT
+    REACT -->|3. POST /api/compliance/upload| HTTP
+    
+    HTTP -->|4. Multipart request| FASTAPI
+    FASTAPI -->|5. Route to| CONTROLLER
+    
+    CONTROLLER -->|6. Process files| SERVICE
+    SERVICE -->|7. LLM requests| LLM_CLIENT
+    LLM_CLIENT -->|8. API calls| LLM_GW
+    
+    LLM_GW -->|9. Responses| LLM_CLIENT
+    LLM_CLIENT -->|10. Parsed results| SERVICE
+    SERVICE -->|11. Issues/Status| CONTROLLER
+    
+    CONTROLLER -->|12. Stream events| SSE
+    SSE -->|13. Real-time updates| REACT
+    REACT -->|14. UI updates| BROWSER
+    BROWSER -->|15. Display| USER
+
+%% ============================================
+%% 9. DATA FLOW - STREAMING
+%% ============================================
+
+sequenceDiagram
+    participant Frontend
+    participant StreamHandler
+    participant Backend
+    participant StreamEmitter
+    participant Processing
+
+    Frontend->>StreamHandler: new StreamHandler(config)
+    StreamHandler->>Backend: fetch(url, {method: POST, body: formData})
+    
+    Backend->>StreamEmitter: new StreamEmitter()
+    Backend->>Processing: Start async processing task
+    
+    Processing->>StreamEmitter: emit({type: "uploading", data: {...}})
+    StreamEmitter->>Backend: Queue event
+    Backend->>Frontend: SSE: {"type": "uploading", "data": {...}}\n
+    
+    Frontend->>StreamHandler: Read stream chunk
+    StreamHandler->>StreamHandler: Parse JSON line
+    StreamHandler->>Frontend: Emit event to listeners
+    
+    Processing->>StreamEmitter: emit({type: "parsing", data: {...}})
+    StreamEmitter->>Backend: Queue event
+    Backend->>Frontend: SSE: {"type": "parsing", "data": {...}}\n
+    
+    Processing->>StreamEmitter: emit({type: "validating", data: {...}})
+    Backend->>Frontend: SSE: {"type": "validating", "data": {...}}\n
+    
+    Processing->>StreamEmitter: emit({type: "verifying", data: {...}})
+    Backend->>Frontend: SSE: {"type": "verifying", "data": {...}}\n
+    
+    Processing->>StreamEmitter: emit({type: "issues_delta", data: {issues: [...]}})
+    Backend->>Frontend: SSE: {"type": "issues_delta", "data": {...}}\n
+    
+    Processing->>StreamEmitter: emit({type: "complete", data: {...}})
+    StreamEmitter->>StreamEmitter: complete()
+    Backend->>Frontend: SSE: {"type": "complete", "data": {...}}\n
+    
+    Backend->>Frontend: [Stream closes]
+    StreamHandler->>Frontend: onComplete callback
+
+%% ============================================
+%% 10. API ENDPOINTS - ARCHITECTURE
+%% ============================================
+
+graph TB
+    subgraph "Frontend Routes"
+        ROOT[/ - Root Route]
+        STATIC[/assets/* - Static Files]
+        SPA[/{path} - SPA Fallback]
+    end
+    
+    subgraph "API Endpoints"
+        REGULATIONS[GET /api/compliance/regulations]
+        UPLOAD[POST /api/compliance/upload]
+        HEALTH[GET /api/health]
+        HEALTH_STREAM[GET /api/health/stream]
+    end
+    
+    subgraph "Controller Handlers"
+        GET_REG[get_regulations<br/>Returns: List of regulations]
+        POST_UPLOAD[upload_files<br/>Returns: StreamingResponse]
+        GET_HEALTH[health_check<br/>Returns: {status: ok}]
+        GET_HEALTH_STREAM[health_stream<br/>Returns: StreamingResponse]
+    end
+    
+    subgraph "Static File Serving"
+        SERVE_ROOT[serve_root<br/>Returns: index.html]
+        SERVE_STATIC[serve_static_files<br/>Returns: FileResponse]
+    end
+    
+    ROOT --> SERVE_ROOT
+    STATIC --> SERVE_STATIC
+    SPA --> SERVE_STATIC
+    
+    REGULATIONS --> GET_REG
+    UPLOAD --> POST_UPLOAD
+    HEALTH --> GET_HEALTH
+    HEALTH_STREAM --> GET_HEALTH_STREAM
+    
+    GET_REG --> KB[Knowledge Base<br/>Read .md files]
+    
+    POST_UPLOAD --> FILE_PROC[File Processing Pipeline]
+    POST_UPLOAD --> STREAM[Stream Emitter]
+    
+    GET_HEALTH_STREAM --> STREAM
+
+%% ============================================
+%% 11. API ENDPOINTS - SEQUENCE DIAGRAM
+%% ============================================
+
+sequenceDiagram
+    participant Client
+    participant FastAPI
+    participant Controller
+    participant Service
+    participant Storage
+
+    Note over Client,Storage: GET /api/compliance/regulations
+    Client->>FastAPI: GET /api/compliance/regulations
+    FastAPI->>Controller: get_regulations()
+    Controller->>Storage: Read knowledge-base/*.md
+    Storage-->>Controller: List of regulations
+    Controller->>Controller: Map to display names
+    Controller-->>FastAPI: {regulations: [...]}
+    FastAPI-->>Client: JSON response
+
+    Note over Client,Storage: POST /api/compliance/upload (Streaming)
+    Client->>FastAPI: POST /api/compliance/upload<br/>(multipart/form-data)
+    FastAPI->>Controller: upload_files(files, regulations)
+    Controller->>Controller: Create StreamEmitter
+    Controller->>Controller: Start async process()
+    
+    loop For each file
+        Controller->>Storage: Save to /tmp
+        Controller-->>Client: Stream: {"type": "uploading"}
+        Controller->>Service: Convert file to markdown
+        Controller-->>Client: Stream: {"type": "parsing"}
+        Controller->>Service: Validate document
+        Controller-->>Client: Stream: {"type": "validating"}
+        alt Valid
+            Controller-->>Client: Stream: {"type": "file_validated"}
+            loop For each regulation
+                Controller-->>Client: Stream: {"type": "verifying"}
+                Controller->>Service: Check compliance
+                Controller-->>Client: Stream: {"type": "issues_delta"}
+            end
+        else Invalid
+            Controller-->>Client: Stream: {"type": "document_invalid"}
+        end
+    end
+    
+    Controller-->>Client: Stream: {"type": "complete"}
+    Controller->>Storage: Cleanup /tmp files
+    Controller-->>Client: [Stream closes]
+
+    Note over Client,Storage: GET /api/health
+    Client->>FastAPI: GET /api/health
+    FastAPI->>Controller: health_check()
+    Controller-->>FastAPI: {status: "ok"}
+    FastAPI-->>Client: JSON response
+
