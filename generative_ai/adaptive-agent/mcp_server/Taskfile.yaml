@@ -1,0 +1,196 @@
+---
+# https://taskfile.dev
+version: '3'
+
+includes:
+  common:
+    taskfile: ../core/task-common.yaml
+    internal: true
+
+tasks:
+  install:
+    desc: "🔧 Install dependencies"
+    cmds:
+      - echo "🔧 Installing dependencies.."
+      - "{{.UV_CMD}} sync --all-extras"
+      - task: generate-docker-requirement-file
+    silent: true
+
+  dev:
+    desc: "🔨 Running MCP locally"
+    cmds:
+      - echo "🔨 Starting development server"
+      - task: install
+      - "{{.UV_CMD}} run app/main.py"
+    silent: true
+
+  dev-background:
+    desc: "🔨 Running MCP locally in background"
+    vars:
+      PORT: 8082
+    cmds:
+      - echo "🔨 Starting development server"
+      - echo "MCP Server running on port {{.PORT}}"
+      # Kill any existing process on the port
+      - |
+        if lsof -i :{{.PORT}} > /dev/null 2>&1; then
+          echo "Killing existing process on port {{.PORT}}"
+          lsof -i :{{.PORT}} | grep LISTEN | awk '{print $2}' | xargs kill -9 2>/dev/null || true
+        fi
+      - task: install
+      # Start server
+      - |
+        OTEL_ATTRIBUTES='{"environment":"test","service.instance.id":"ete-tests"}' \
+        OTEL_COLLECTOR_BASE_URL=http://localhost:4318 \
+        OTEL_ENTITY_ID=deployment-68924b8b51102f055bef861c \
+        MCP_SERVER_PORT={{.PORT}} \
+        {{.UV_CMD}} run app/main.py &
+      # Wait for server to be ready
+      - |
+        for i in {1..30}; do
+          if curl -s http://localhost:{{.PORT}}/ > /dev/null 2>&1; then
+            echo "Server is ready"
+            break
+          fi
+          if [ $i -eq 30 ]; then
+            echo "Server failed to start"
+            exit 1
+          fi
+          sleep 1
+        done
+    silent: true
+
+  dev-otel-background:
+    desc: "🔨 Running MCP locally in background with OTEL"
+    cmds:
+      - echo "🔨 Starting development server with OTEL"
+      - >-
+        docker run -d --name jaeger -p 16686:16686 -p 4318:4318 -e COLLECTOR_OTLP_ENABLED=true jaegertracing/all-in-one:1.54
+        || docker start jaeger || true
+    silent: true
+
+  lint:
+    desc: "🧹 Run linters"
+    cmds:
+      - echo "🧹 Running linters.."
+      - "{{.UV_CMD}} sync --all-extras"
+      - "{{.UV_CMD}} run ruff format ."
+      - "{{.UV_CMD}} run ruff check . --fix"
+      - "{{.UV_CMD}} run mypy --pretty --exclude 'app/tests' ."
+    silent: true
+
+  lint-check:
+    desc: "🧹 Check whether the codebase is linted"
+    cmds:
+      - "{{.UV_CMD}} sync --all-extras"
+      - "{{.UV_CMD}} run ruff format --check ."
+      - "{{.UV_CMD}} run ruff check ."
+      - "{{.UV_CMD}} run mypy --pretty --exclude 'app/tests' ."
+    silent: true
+
+  test:
+    desc: "🧪 Run tests"
+    cmds:
+      - rm -rf .coverage .coverage.xml htmlcov
+      - echo "🧪 Running all tests.."
+      - task unit
+      - task integration
+      - task ete
+    silent: true
+
+  copyright:
+    aliases: [license]
+    desc: 📜 Apply license headers
+    cmds:
+      - echo "📜 Applying license headers"
+      - >-
+        docker run  --rm -v $PWD:/github/workspace ghcr.io/apache/skywalking-eyes/license-eye:eb0e0b091ea41213f712f622797e37526ca1e5d6
+        -v info -c .licenserc.yaml header fix
+
+  copyright-check:
+    aliases: [license-check]
+    desc: 📜 Checking for license headers
+    cmds:
+      - echo "📜 Checking license headers"
+      - >-
+        docker run  --rm -v $PWD:/github/workspace ghcr.io/apache/skywalking-eyes/license-eye:eb0e0b091ea41213f712f622797e37526ca1e5d6
+        -v info -c .licenserc.yaml header check
+
+  ete:
+    desc: "Run ETE tests"
+    cmds:
+      # Start jaeger in background
+      - task: dev-otel-background
+      # Start server with default port 8082
+      - task: dev-background
+      # Set up cleanup to run on exit
+      - defer: |
+          echo "Stopping MCP Server"
+          lsof -i :8082 | grep LISTEN | awk '{print $2}' | xargs kill -9 2>/dev/null || true
+          echo "Stopping Jaeger"
+          docker stop jaeger || true
+      # Run tests
+      - echo "Running ETE tests"
+      - >-
+        DR_MCP_SERVER_URL=http://localhost:8082/mcp/ {{.UV_CMD}} run pytest {{if .CLI_ARGS}}{{.CLI_ARGS}}{{else}}app/tests/ete/{{end}}
+        -s -vv
+    silent: true
+  integration:
+    desc: "Run integration tests"
+    cmds:
+      - echo "Running integration tests"
+      - >-
+        {{.UV_CMD}} sync --all-extras && {{.UV_CMD}} run pytest {{if .CLI_ARGS}}{{.CLI_ARGS}}{{else}}app/tests/integration/{{end}}
+        -s -vv
+    silent: true
+  unit:
+    desc: "Run unit tests"
+    cmds:
+      - rm -rf .coverage .coverage.xml htmlcov
+      - echo "Running unit tests"
+      - >-
+        {{.UV_CMD}} sync --all-extras && {{.UV_CMD}} run pytest {{if .CLI_ARGS}}{{.CLI_ARGS}}{{else}}app/tests/unit/{{end}}
+        --cov=app --cov-report=xml --cov-report=html --cov-report=term-missing -s -vv
+    silent: true
+
+  test-interactive:
+    desc: "🧪 Run interactive MCP client test"
+    cmds:
+      # Set up cleanup to run on exit
+      - defer: |
+          echo "Stopping MCP Server"
+          lsof -i :8082 | grep LISTEN | awk '{print $2}' | xargs kill -9 2>/dev/null || true
+          echo "Stopping Jaeger"
+          docker stop jaeger || true
+      - echo "🧪 Starting interactive MCP client test"
+      - |
+        if [ -z "$DR_MCP_SERVER_URL" ]; then
+          echo "DR_MCP_SERVER_URL is not set, setting it to http://localhost:8082/mcp/"
+          export DR_MCP_SERVER_URL=http://localhost:8082/mcp/
+        fi
+        if [ "$DR_MCP_SERVER_URL" = "http://localhost:8082/mcp/" ]; then
+          echo "DR_MCP_SERVER_URL is set to http://localhost:8082/mcp/, starting server in background"
+          task dev-background
+        fi
+        echo ""
+        {{.UV_CMD}} run python test_interactive.py
+    silent: true
+
+  generate-docker-requirement-file:
+    desc: "🔨 Generate docker requirements.txt file"
+    cmds:
+      - echo "🔨 Generating docker requirements.txt file..."
+      # If the content of the requirement.txt file doesn't change, don't trigger an update
+      - >-
+        {{.UV_CMD}} export --format requirements-txt --no-emit-project --project . > ./docker/requirements.txt.tmp && if !
+        cmp -s ./docker/requirements.txt.tmp ./docker/requirements.txt; then mv ./docker/requirements.txt.tmp ./docker/requirements.txt;
+        else rm ./docker/requirements.txt.tmp; fi
+    silent: true
+
+  release_files:
+    desc: "🔨 Make sure to move these files to the root of the repository before a release"
+    cmds:
+      - >-
+        echo "mkdir -p ./docs ./img && mv ./dr_mcp/docs/* ./docs/ && mv ./dr_mcp/img/* ./img/ && mv ./dr_mcp/.env.template
+        ./.env.template && mv ./dr_mcp/README.md ./README.md"
+    silent: true

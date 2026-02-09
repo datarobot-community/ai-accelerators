@@ -1,0 +1,127 @@
+---
+root:
+  - env: INFRA_ENABLE_LLM
+    type: string
+    default: "gateway_direct.py"
+    help: >
+      Choose your LLM integration.
+      
+
+      - For the simplest setup, select DataRobot's "LLM Gateway".
+
+      - If you already have a custom model deployed LLM and a deployment ID, select "DataRobot Deployed LLM".
+
+      - If you want to use your LLM provider credentials instead of the LLM gateway (e.g. Azure OpenAI,
+      
+      AWS Bedrock, GCP VertexAI, Anthropic, Cohere, TogetherAI), select "External LLM".
+
+      - If you need full DataRobot governance and monitoring with LLM Blueprint support,
+
+      select "LLM Gateway with External Model" for the most production-ready option.
+
+      - If you have an existing registered model (not yet deployed) that you want to use with
+
+      an LLM Blueprint, select "Registered Model with an LLM Blueprint".
+
+    options:
+      - name: "LLM Gateway"
+        value: "gateway_direct.py"
+      - name: "DataRobot Deployed LLM"
+        value: "deployed_llm.py"
+        requires: deployed_llm
+      - name: "External LLM"
+        value: "blueprint_with_external_llm.py"
+        requires: external_llm
+
+deployed_llm:
+  - env: TEXTGEN_DEPLOYMENT_ID
+    type: string
+    optional: false
+    help: "Enter the deployment ID of the DataRobot custom model deployed LLM (e.g., 6510c7b7c4f3f9407e24a849)."
+
+external_llm:
+  - env: LLM_DEFAULT_MODEL
+    type: string
+    default: "azure-openai-gpt-5-mini"
+    optional: true
+    help: "Enter the name of the external LLM model to use (e.g., gpt-5-mini)."
+  - key: external_llm_provider
+    optional: false
+    options:
+      - name: "Azure with OpenAI"
+        requires: azure_openai
+      - name: "Google VertexAI"
+        requires: vertexai
+      - name: "Anthropic"
+        requires: anthropic
+      - name: "Bedrock"
+        requires: bedrock
+      - name: "Cohere"
+        requires: cohere
+      - name: "TogetherAI"
+        requires: togetherai
+    help: >
+      Choose which external LLM provider to use.
+      
+      
+      Supported providers are: Azure OpenAI, AWS Bedrock, GCP VertexAI, Anthropic, Cohere, or TogetherAI.
+
+azure_openai:
+  - env: OPENAI_API_KEY
+    type: string
+    optional: false
+    help: "Enter the OpenAI API key."
+  - env: OPENAI_API_BASE
+    type: string
+    optional: false
+    help: "Enter the OpenAI API base URL (e.g., https://<your_custom_endpoint>.openai.azure.com)."
+  - env: OPENAI_API_DEPLOYMENT_ID
+    type: string
+    optional: false
+    help: "Enter the OpenAI API deployment ID (e.g., gpt-5-mini)."
+  - env: OPENAI_API_VERSION
+    type: string
+    optional: false
+    help: "Enter the OpenAI API version (e.g., 2024-08-01-preview)."
+
+bedrock:
+  - env: AWS_ACCESS_KEY_ID
+    type: string
+    optional: false
+    help: "Enter the AWS access key ID for Bedrock."
+  - env: AWS_SECRET_ACCESS_KEY
+    type: string
+    optional: false
+    help: "Enter the AWS secret access key for Bedrock."
+  - env: AWS_REGION_NAME
+    type: string
+    optional: false
+    help: "Enter the AWS region name for Bedrock (e.g., us-east-1)."
+
+vertexai:
+  - env: VERTEXAI_APPLICATION_CREDENTIALS
+    type: string
+    optional: false
+    help: "Enter the path to the VertexAI application credentials JSON file."
+  - env: VERTEXAI_SERVICE_ACCOUNT
+    type: string
+    optional: false
+    help: "Enter the Google service account email."
+
+anthropic:
+  - env: ANTHROPIC_API_KEY
+    type: string
+    optional: false
+    help: "Enter the API key for Anthropic."
+
+cohere:
+  - env: COHERE_API_KEY
+    type: string
+    optional: false
+    help: "Enter the API key for Cohere."
+
+togetherai:
+  - env: TOGETHERAI_API_KEY
+    type: string
+    optional: false
+    help: "Enter the API key for TogetherAI."

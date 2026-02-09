@@ -1,0 +1,14 @@
+---
+version: '3'
+vars:
+  # Cross-platform environment cleaning - uses 'env -u' on Unix systems, falls back to empty string on Windows
+  UV_CMD:
+    sh: |
+      # This command ensures compatibility with codespaces environments
+      # Cross-platform environment cleaning - uses 'env -u' on Unix systems,
+      # falls back to empty string on Windows
+      if command -v env >/dev/null 2>&1; then
+        echo "env -u PYTHONPATH -u VIRTUAL_ENV uv"
+      else
+        echo "uv"
+      fi

@@ -1,0 +1,58 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Pulumi: Attach Debugger (Preview)",
+            "type": "python",
+            "request": "attach",
+            "connect": {
+                "host": "localhost",
+                "port": 58791
+            },
+            "preLaunchTask": "pulumi-preview-debug",
+            "justMyCode": false,
+            "envFile": "${workspaceFolder}/../.env",
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}",
+                    "remoteRoot": "${workspaceFolder}"
+                }
+            ]
+        },
+        {
+            "name": "Pulumi: Attach Debugger (Up)",
+            "type": "python",
+            "request": "attach",
+            "connect": {
+                "host": "localhost",
+                "port": 58791
+            },
+            "preLaunchTask": "pulumi-up-debug",
+            "justMyCode": false,
+            "envFile": "${workspaceFolder}/../.env",
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}",
+                    "remoteRoot": "${workspaceFolder}"
+                }
+            ]
+        },
+        {
+            "name": "Pulumi: Manual Attach Debugger",
+            "type": "python",
+            "request": "attach",
+            "connect": {
+                "host": "localhost",
+                "port": 58791
+            },
+            "justMyCode": false,
+            "envFile": "${workspaceFolder}/../.env",
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}",
+                    "remoteRoot": "${workspaceFolder}"
+                }
+            ]
+        }
+    ]
+}

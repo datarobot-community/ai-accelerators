@@ -1,0 +1,16 @@
+---
+repos:
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: v0.11.13
+    hooks:
+      - id: ruff-check
+        args: ["--fix"]
+      - id: ruff-format
+  - repo: local
+    hooks:
+      - id: pytest-and-coverage
+        name: test-and-coverage
+        entry: bash -c 'uv sync --all-extras && uv run pytest ./app/tests/ -v --ignore=app/tests/ete'
+        language: system
+        pass_filenames: false
+        always_run: true

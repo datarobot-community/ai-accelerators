@@ -1,0 +1,7 @@
+---
+# Changes here will be overwritten by Copier
+_commit: 0.0.2
+_src_path: https://github.com/datarobot-community/af-component-datarobot-mcp.git
+copyright_year: 2025
+mcp_app_name: mcp_server
+mcp_development_port: 9000

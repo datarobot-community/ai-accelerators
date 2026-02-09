@@ -1,0 +1,47 @@
+---
+root:
+  - env: MCP_SERVER_PORT
+    type: string
+    default: "9000"
+    optional: true
+    help: "The local port to access the MCP Server. Should have a unique port."
+  - env: DATAROBOT_DEFAULT_MCP_EXECUTION_ENVIRONMENT
+    type: string
+    default: "[DataRobot] Python 3.11 GenAI Agents"
+    optional: true
+    help: "Enter the default execution environment for the MCP server."
+  - env: MCP_SERVER_REGISTER_DYNAMIC_TOOLS_ON_STARTUP
+    type: boolean
+    default: false
+    optional: true
+    help: "Whether to register DataRobot dynamic tools on startup."
+  - env: MCP_SERVER_REGISTER_DYNAMIC_PROMPTS_ON_STARTUP
+    type: boolean
+    default: false
+    optional: true
+    help: "Whether to register DataRobot dynamic prompts on startup."
+  - env: ENABLE_PREDICTIVE_TOOLS
+    type: boolean
+    default: true
+    optional: true
+    help: "Whether to register predictive tools."
+  - env: ENABLE_GDRIVE_TOOLS
+    type: boolean
+    default: true
+    optional: true
+    help: "Whether to register Google Drive tools, requires Google OAuth provider configuration."
+  - env: ENABLE_MICROSOFT_GRAPH_TOOLS
+    type: boolean
+    default: true
+    optional: true
+    help: "Whether to register Microsoft Graph tools, requires Microsoft OAuth provider configuration."
+  - env: ENABLE_JIRA_TOOLS
+    type: boolean
+    default: false
+    optional: true
+    help: "Whether to register Jira tools, requires Atlassian OAuth provider configuration."
+  - env: ENABLE_CONFLUENCE_TOOLS
+    type: boolean
+    default: false
+    optional: true
+    help: "Whether to register Confluence tools, requires Atlassian OAuth provider configuration."

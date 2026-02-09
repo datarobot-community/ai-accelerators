@@ -1,0 +1,162 @@
+{
+  "product": {
+    "name": "DataInsight Pro",
+    "tagline": "Enterprise Analytics Made Simple",
+    "description": "A cloud-based SaaS analytics platform for business intelligence and data visualization."
+  },
+  "pricing": {
+    "starter": {
+      "name": "Starter",
+      "price": "$29/month",
+      "billing": "Billed annually ($348/year) or $35/month billed monthly",
+      "features": [
+        "Up to 5 users",
+        "10 dashboards",
+        "Basic charts and visualizations",
+        "Manual data export (CSV only)",
+        "Email support",
+        "7-day data retention"
+      ],
+      "limitations": [
+        "No scheduled exports",
+        "No API access",
+        "No custom branding"
+      ]
+    },
+    "professional": {
+      "name": "Professional",
+      "price": "$99/month",
+      "billing": "Billed annually ($1,188/year) or $119/month billed monthly",
+      "features": [
+        "Up to 25 users",
+        "Unlimited dashboards",
+        "Advanced visualizations",
+        "Data export (CSV, PDF, Excel)",
+        "Scheduled automated exports",
+        "Priority email support",
+        "90-day data retention",
+        "Custom branding"
+      ],
+      "limitations": [
+        "No API access",
+        "No SSO integration"
+      ]
+    },
+    "enterprise": {
+      "name": "Enterprise",
+      "price": "Custom pricing",
+      "billing": "Contact sales for quote",
+      "features": [
+        "Unlimited users",
+        "Unlimited dashboards",
+        "All visualization types",
+        "All export formats + API access",
+        "Scheduled exports with webhooks",
+        "Dedicated account manager",
+        "Unlimited data retention",
+        "Custom branding",
+        "SSO/SAML integration",
+        "On-premise deployment option",
+        "SLA guarantees"
+      ],
+      "limitations": []
+    }
+  },
+  "features": {
+    "data_export": {
+      "description": "Export your data and reports in multiple formats",
+      "formats": {
+        "csv": {
+          "name": "CSV Export",
+          "availability": "All plans",
+          "description": "Export raw data as comma-separated values",
+          "how_to": "1. Open any dashboard or report\n2. Click the '...' menu in the top right\n3. Select 'Export' > 'CSV'\n4. Choose columns to include\n5. Click 'Download'"
+        },
+        "pdf": {
+          "name": "PDF Export",
+          "availability": "Professional and Enterprise",
+          "description": "Export formatted reports as PDF documents",
+          "how_to": "1. Open the dashboard you want to export\n2. Click the '...' menu in the top right\n3. Select 'Export' > 'PDF'\n4. Choose page size and orientation\n5. Click 'Generate PDF'"
+        },
+        "excel": {
+          "name": "Excel Export",
+          "availability": "Professional and Enterprise",
+          "description": "Export data with formatting to Microsoft Excel",
+          "how_to": "1. Open the report or data view\n2. Click the '...' menu\n3. Select 'Export' > 'Excel'\n4. Choose to include charts or data only\n5. Click 'Download'"
+        },
+        "api": {
+          "name": "API Export",
+          "availability": "Enterprise only",
+          "description": "Programmatic access to export data via REST API",
+          "endpoint": "GET /api/v1/exports/{dashboard_id}",
+          "documentation": "See developer docs at docs.datainsightpro.com/api"
+        }
+      },
+      "scheduled_exports": {
+        "availability": "Professional and Enterprise",
+        "description": "Automatically export and deliver reports on a schedule",
+        "frequencies": ["Daily", "Weekly", "Monthly"],
+        "delivery_methods": ["Email", "SFTP", "Webhook (Enterprise only)"],
+        "how_to": "1. Go to Settings > Scheduled Exports\n2. Click 'New Schedule'\n3. Select the dashboard/report\n4. Choose format (CSV, PDF, Excel)\n5. Set frequency and time\n6. Add recipients or delivery destination\n7. Click 'Save Schedule'"
+      }
+    },
+    "dashboards": {
+      "description": "Create interactive dashboards to visualize your data",
+      "chart_types": [
+        "Bar charts",
+        "Line charts",
+        "Pie charts",
+        "Area charts",
+        "Scatter plots",
+        "Heat maps (Professional+)",
+        "Geo maps (Professional+)",
+        "Custom visualizations (Enterprise)"
+      ]
+    }
+  },
+  "support": {
+    "channels": {
+      "email": {
+        "address": "support@datainsightpro.com",
+        "response_time": {
+          "starter": "48 hours",
+          "professional": "24 hours",
+          "enterprise": "4 hours"
+        }
+      },
+      "phone": {
+        "availability": "Enterprise only",
+        "hours": "24/7"
+      },
+      "chat": {
+        "availability": "Professional and Enterprise",
+        "hours": "Mon-Fri 9am-6pm EST"
+      }
+    },
+    "resources": {
+      "documentation": "docs.datainsightpro.com",
+      "tutorials": "learn.datainsightpro.com",
+      "community": "community.datainsightpro.com"
+    }
+  },
+  "common_issues": {
+    "export_not_working": {
+      "symptoms": ["Export button greyed out", "Export fails to download"],
+      "solutions": [
+        "Check your plan supports the export format",
+        "Ensure you have 'Export' permission in your role",
+        "Try a smaller date range (exports over 100k rows may timeout)",
+        "Clear browser cache and try again"
+      ]
+    },
+    "scheduled_export_not_running": {
+      "symptoms": ["Scheduled export didn't arrive", "Export shows as 'Failed'"],
+      "solutions": [
+        "Verify email address/SFTP credentials are correct",
+        "Check the dashboard hasn't been deleted",
+        "Ensure your plan still supports scheduled exports",
+        "Contact support if the issue persists"
+      ]
+    }
+  }
+}

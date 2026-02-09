@@ -1,0 +1,10 @@
+root:
+  - env: AGENT_PORT
+    type: string
+    default: "8842"
+    help: "Enter the local port to access the agent. Should be a unique value."
+  - env: DATAROBOT_DEFAULT_EXECUTION_ENVIRONMENT
+    type: string
+    default: "[DataRobot] Python 3.11 GenAI Agents"
+    optional: true
+    help: "Enter the default execution environment for the agent's custom model."

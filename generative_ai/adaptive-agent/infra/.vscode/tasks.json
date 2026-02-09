@@ -1,0 +1,67 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "pulumi-preview-debug",
+            "type": "shell",
+            "command": "bash",
+            "args": ["-c", "set -a; source ../.env; set +a; pulumi preview --attach-debugger"],
+            "group": "build",
+            "isBackground": true,
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "^(.*)$",
+                    "file": 1,
+                    "line": 1,
+                    "column": 1,
+                    "message": 1
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "^Previewing update.*$",
+                    "endsPattern": "^Waiting for debugger to attach \\(on port [0-9]+\\).*$"
+                }
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
+        },
+        {
+            "label": "pulumi-up-debug",
+            "type": "shell",
+            "command": "bash",
+            "args": ["-c", "set -a; source ../.env; set +a; pulumi up --attach-debugger"],
+            "group": "build",
+            "isBackground": true,
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "^(.*)$",
+                    "file": 1,
+                    "line": 1,
+                    "column": 1,
+                    "message": 1
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "^Previewing update.*$",
+                    "endsPattern": "^Waiting for debugger to attach \\(on port [0-9]+\\).*$"
+                }
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
+        }
+    ]
+}

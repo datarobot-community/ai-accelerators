@@ -1,0 +1,61 @@
+---
+name: runtime-params
+
+# This is a template for rendering custom model metadata.
+
+runtimeParameterDefinitions:
+  - fieldName: mcp_server_name
+    type: string
+  - fieldName: mcp_server_log_level
+    type: string
+  - fieldName: app_log_level
+    type: string
+  - fieldName: otel_collector_base_url
+    type: string
+  - fieldName: otel_entity_id
+    type: string
+  - fieldName: otel_attributes
+    type: string
+  - fieldName: otel_enabled
+    type: boolean
+  - fieldName: otel_enabled_http_instrumentors
+    type: boolean
+  - fieldName: aws_credential
+    type: credential
+    credentialType: s3
+    description: The AWS credential for accessing the S3 bucket.
+  - fieldName: aws_predictions_s3_bucket
+    type: string
+  - fieldName: aws_predictions_s3_prefix
+    type: string
+  - fieldName: enable_memory_management
+    type: boolean
+  - fieldName: tool_registration_allow_empty_schema
+    type: boolean
+  - fieldName: mcp_server_register_dynamic_tools_on_startup
+    type: boolean
+  - fieldName: tool_registration_duplicate_behavior
+    type: string
+  - fieldName: mcp_server_register_dynamic_prompts_on_startup
+    type: boolean
+  - fieldName: prompt_registration_duplicate_behavior
+    type: string
+  - fieldName: enable_predictive_tools
+    type: boolean
+  - fieldName: enable_jira_tools
+    type: boolean
+  - fieldName: enable_confluence_tools
+    type: boolean
+  - fieldName: enable_gdrive_tools
+    type: boolean
+  - fieldName: enable_microsoft_graph_tools
+    type: boolean
+  - fieldName: is_atlassian_oauth_provider_configured
+    type: boolean
+  - fieldName: is_google_oauth_provider_configured
+    type: boolean
+  - fieldName: is_microsoft_oauth_provider_configured
+    type: boolean
+  - fieldName: SESSION_SECRET_KEY
+    type: credential
+    credentialType: api_token

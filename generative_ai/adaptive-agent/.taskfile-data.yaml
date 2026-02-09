@@ -1,0 +1,16 @@
+---
+# .taskfile-data.yaml
+# Optional configuration for dr task compose
+
+# Development server ports
+# Displayed when running the dev task
+ports:
+  - name: agent
+    port: 8842
+  - name: mcp_server
+    port: 9000
+  - name: fastapi_server
+    port: 8080
+  - name: frontend_web
+    port: 5173
+    print_url: true

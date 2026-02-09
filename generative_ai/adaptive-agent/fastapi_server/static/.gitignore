@@ -1,0 +1,5 @@
+.vite/
+assets/index*
+assets/react*svg
+assets/vite*svg
+index.html

@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Run Frontend" type="TaskRunConfiguration" factoryName="TaskRunConfiguration">
+    <taskfile taskPath="$USER_HOME$/.local/bin/task" filename="$PROJECT_DIR$/Taskfile.yml" task="frontend_web:dev" workingDirectory="" arguments="" pty="false">
+      <envs />
+      <vars />
+    </taskfile>
+    <method v="2" />
+  </configuration>
+</component>

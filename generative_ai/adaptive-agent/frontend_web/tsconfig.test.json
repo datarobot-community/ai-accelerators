@@ -1,0 +1,11 @@
+{
+  "extends": ["./tsconfig.app.json", "./tsconfig.node.json"],
+  "compilerOptions": {
+    "types": ["vitest"],
+    "module": "ESNext",
+    "target": "ESNext",
+    "isolatedModules": true,
+    "noEmit": true
+  },
+  "include": ["src", "tests", "**/*.test.ts", "**/*.test.tsx"]
+}

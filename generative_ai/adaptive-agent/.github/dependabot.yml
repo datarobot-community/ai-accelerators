@@ -1,0 +1,28 @@
+---
+# This file configures the Dependabot for the repository.
+version: 2
+updates:
+  # Maintain dependencies for GitHub Actions.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "github-actions"
+
+  # Maintain dependencies for Python packages.
+  - package-ecosystem: "pip"
+    insecure-external-code-execution: allow
+    directory: "/"
+    schedule:
+      interval: "daily"
+    pull-request-branch-name:
+      separator: "/"
+    open-pull-requests-limit: 1
+    versioning-strategy: "increase-if-necessary"
+    target-branch: "main"
+    labels:
+      - "dependencies"
+      - "python"
