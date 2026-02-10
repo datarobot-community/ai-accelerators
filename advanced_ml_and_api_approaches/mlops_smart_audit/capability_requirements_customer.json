@@ -11,10 +11,13 @@
       { "id": "data_drift", "displayName": "Data Drift" }
     ],
     "Moderate": [
+      { "id": "compliance_report", "displayName": "Compliance Report" },
       { "id": "accuracy_monitoring", "displayName": "Accuracy Monitoring" },
       { "id": "data_drift", "displayName": "Data Drift" }
     ],
     "Low": [
+      { "id": "compliance_report", "displayName": "Compliance Report" },
+      { "id": "accuracy_monitoring", "displayName": "Accuracy Monitoring" },
       { "id": "data_drift", "displayName": "Data Drift" }
     ]
   },
