@@ -150,11 +150,8 @@ def load_capability_requirements(path="capability_requirements.json"):
     return capability_requirements
 
 
-# Load config file (can be customized via runtime parameter)
 config_file = os.environ.get("MLOPS_RUNTIME_PARAM_CONFIG_FILE", "capability_requirements.json")
 capability_requirements = load_capability_requirements(config_file)
-
-# Extract capabilities from config (dynamic based on config file)
 STANDARD_CAPS, TEXT_GEN_CAPS, AGENTIC_CAPS = extract_capabilities_from_config(capability_requirements)
 
 # API Helper Functions for Deployment Capabilities
@@ -599,8 +596,6 @@ def compute_compliance_score(
     mandatory_caps = capability_requirements[model_type].get(model_importance, [])
 
     if not mandatory_caps:
-        # No capabilities required for this model type/importance combination
-        # Return 100% compliance (no requirements = fully compliant)
         return 100.0
 
     # 3. Determine relevant capabilities based on model_type
@@ -617,8 +612,6 @@ def compute_compliance_score(
     ]
 
     if not relevant_mandatory_caps:
-        # No relevant capabilities required for this model type/importance combination
-        # Return 100% compliance (no requirements = fully compliant)
         return 100.0
 
     # 5. Count enabled mandatory capabilities
@@ -1767,8 +1760,7 @@ def main():
     generative_df = filtered_df[filtered_df["model_type"] == "TextGeneration"]
     agentic_df = filtered_df[filtered_df["model_type"].isin(["Agentic", "AgenticWorkflow"])]
 
-    # Show sections only for model types with defined capabilities
-    if STANDARD_CAPS:  # Only show Predictive if capabilities are defined
+    if STANDARD_CAPS:
         render_header_boxes(predictive_df, "Predictive Models")
         render_model_capability_summary(
             df=predictive_df,
@@ -1777,7 +1769,7 @@ def main():
             capability_requirements=capability_requirements,
         )
 
-    if TEXT_GEN_CAPS:  # Only show Generative if capabilities are defined
+    if TEXT_GEN_CAPS:
         render_header_boxes(generative_df, "Generative Models")
         render_model_capability_summary(
             df=generative_df,
@@ -1786,7 +1778,7 @@ def main():
             capability_requirements=capability_requirements,
         )
 
-    if AGENTIC_CAPS:  # Only show Agentic if capabilities are defined
+    if AGENTIC_CAPS:
         render_header_boxes(agentic_df, "Agents")
         render_model_capability_summary(
             df=agentic_df,
@@ -1803,10 +1795,17 @@ def main():
     # Render the critical capabilities
     render_critical_capabilities(capability_requirements)
 
+    # Filter out model types with no capabilities defined
+    table_df = filtered_df.copy()
+    if not TEXT_GEN_CAPS:
+        table_df = table_df[table_df["model_type"] != "TextGeneration"]
+    if not AGENTIC_CAPS:
+        table_df = table_df[~table_df["model_type"].isin(["Agentic", "AgenticWorkflow"])]
+
     # Render the paginated deployment table
-    page_number, page_size = render_page_selector(filtered_df, page_size_default=10)
+    page_number, page_size = render_page_selector(table_df, page_size_default=10)
     render_deployment_table(
-        filtered_df, page_number, page_size, capability_requirements
+        table_df, page_number, page_size, capability_requirements
     )
 
 
