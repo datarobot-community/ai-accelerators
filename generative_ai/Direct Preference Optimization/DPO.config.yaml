@@ -1,0 +1,13 @@
+---
+description: This notebook outlines how to take preference data and use that to update a model. It will take a dataset of query, good response, bad response and use that to update a model using DPO, in a single session.
+file_name: DPO.ipynb
+languages:
+  - python
+maintainers:
+  - Mark Steadman
+maintainers_email:
+  - mark@datarobot.com
+smoke_test:
+  run_smoke_test: false
+tags: []
+title: Direct Preference Optimization - Fine Tuning a LLM Using Preference Data
