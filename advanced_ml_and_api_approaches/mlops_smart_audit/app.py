@@ -57,35 +57,36 @@ if ENABLE_GENAI:
 
 
 # Define the sets of capabilities for each model type
-STANDARD_CAPS = [
-    "data_drift",
-    "accuracy_monitoring",
-    "notifications",
-    "challenger_model",
-    "retraining_policy",
-    "monitoring_job",
-    "custom_metric",
-    "segment_analysis",
-    "humility",
-    "fairness",
-    "compliance_report",
-]
+# These will be dynamically loaded from config file
+STANDARD_CAPS = []
+TEXT_GEN_CAPS = []
+AGENTIC_CAPS = []
 
-TEXT_GEN_CAPS = [
-    "compliance_report",
-    "accuracy_monitoring",
-    "notifications",
-    "guard_configuration",
-    "compliance_test",
-    "custom_metric",
-]
-
-AGENTIC_CAPS = [
-    "tracing",
-    "guard_configuration",
-    "notifications",
-    "custom_metric",
-]
+def extract_capabilities_from_config(capability_requirements):
+    """
+    Extracts all unique capability IDs from the config for each model type.
+    Returns sets of capability IDs for Predictive, Generative, and Agentic models.
+    """
+    standard_caps = set()
+    text_gen_caps = set()
+    agentic_caps = set()
+    
+    # Extract from Predictive
+    for importance_level in ["Critical", "High", "Moderate", "Low"]:
+        for cap in capability_requirements.get("Predictive", {}).get(importance_level, []):
+            standard_caps.add(cap["id"])
+    
+    # Extract from Generative
+    for importance_level in ["Critical", "High", "Moderate", "Low"]:
+        for cap in capability_requirements.get("Generative", {}).get(importance_level, []):
+            text_gen_caps.add(cap["id"])
+    
+    # Extract from Agentic
+    for importance_level in ["Critical", "High", "Moderate", "Low"]:
+        for cap in capability_requirements.get("Agentic", {}).get(importance_level, []):
+            agentic_caps.add(cap["id"])
+    
+    return list(standard_caps), list(text_gen_caps), list(agentic_caps)
 
 # --------------------------------------------------
 # STREAMLIT PAGE CONFIG & STYLE
@@ -149,7 +150,12 @@ def load_capability_requirements(path="capability_requirements.json"):
     return capability_requirements
 
 
-capability_requirements = load_capability_requirements()
+# Load config file (can be customized via runtime parameter)
+config_file = os.environ.get("MLOPS_RUNTIME_PARAM_CONFIG_FILE", "capability_requirements.json")
+capability_requirements = load_capability_requirements(config_file)
+
+# Extract capabilities from config (dynamic based on config file)
+STANDARD_CAPS, TEXT_GEN_CAPS, AGENTIC_CAPS = extract_capabilities_from_config(capability_requirements)
 
 # API Helper Functions for Deployment Capabilities
 
@@ -593,11 +599,9 @@ def compute_compliance_score(
     mandatory_caps = capability_requirements[model_type].get(model_importance, [])
 
     if not mandatory_caps:
-        # No capabilities found for this importance level
-        st.warning(
-            f"No capabilities found for model_type '{model_type}' with importance '{model_importance}'."
-        )
-        return 0.0
+        # No capabilities required for this model type/importance combination
+        # Return 100% compliance (no requirements = fully compliant)
+        return 100.0
 
     # 3. Determine relevant capabilities based on model_type
     if model_type == "Generative":
@@ -613,11 +617,9 @@ def compute_compliance_score(
     ]
 
     if not relevant_mandatory_caps:
-        # No relevant capabilities found
-        st.warning(
-            f"No relevant capabilities found for model_type '{model_type}' with importance '{model_importance}'."
-        )
-        return 0.0
+        # No relevant capabilities required for this model type/importance combination
+        # Return 100% compliance (no requirements = fully compliant)
+        return 100.0
 
     # 5. Count enabled mandatory capabilities
     enabled_mandatory = 0
@@ -1765,30 +1767,33 @@ def main():
     generative_df = filtered_df[filtered_df["model_type"] == "TextGeneration"]
     agentic_df = filtered_df[filtered_df["model_type"].isin(["Agentic", "AgenticWorkflow"])]
 
-    # Show three rows (one for Predictive, one for Generative, one for Agentic)
-    render_header_boxes(predictive_df, "Predictive Models")
-    render_model_capability_summary(
-        df=predictive_df,
-        model_type="Predictive",
-        capabilities=STANDARD_CAPS,
-        capability_requirements=capability_requirements,
-    )
+    # Show sections only for model types with defined capabilities
+    if STANDARD_CAPS:  # Only show Predictive if capabilities are defined
+        render_header_boxes(predictive_df, "Predictive Models")
+        render_model_capability_summary(
+            df=predictive_df,
+            model_type="Predictive",
+            capabilities=STANDARD_CAPS,
+            capability_requirements=capability_requirements,
+        )
 
-    render_header_boxes(generative_df, "Generative Models")
-    render_model_capability_summary(
-        df=generative_df,
-        model_type="Generative",
-        capabilities=TEXT_GEN_CAPS,
-        capability_requirements=capability_requirements,
-    )
+    if TEXT_GEN_CAPS:  # Only show Generative if capabilities are defined
+        render_header_boxes(generative_df, "Generative Models")
+        render_model_capability_summary(
+            df=generative_df,
+            model_type="Generative",
+            capabilities=TEXT_GEN_CAPS,
+            capability_requirements=capability_requirements,
+        )
 
-    render_header_boxes(agentic_df, "Agents")
-    render_model_capability_summary(
-        df=agentic_df,
-        model_type="Agentic",
-        capabilities=AGENTIC_CAPS,
-        capability_requirements=capability_requirements,
-    )
+    if AGENTIC_CAPS:  # Only show Agentic if capabilities are defined
+        render_header_boxes(agentic_df, "Agents")
+        render_model_capability_summary(
+            df=agentic_df,
+            model_type="Agentic",
+            capabilities=AGENTIC_CAPS,
+            capability_requirements=capability_requirements,
+        )
 
     # Optionally show LLM summary & chatbot if enabled
     if ENABLE_GENAI:
