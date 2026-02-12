@@ -57,35 +57,36 @@ if ENABLE_GENAI:
 
 
 # Define the sets of capabilities for each model type
-STANDARD_CAPS = [
-    "data_drift",
-    "accuracy_monitoring",
-    "notifications",
-    "challenger_model",
-    "retraining_policy",
-    "monitoring_job",
-    "custom_metric",
-    "segment_analysis",
-    "humility",
-    "fairness",
-    "compliance_report",
-]
+# These will be dynamically loaded from config file
+STANDARD_CAPS = []
+TEXT_GEN_CAPS = []
+AGENTIC_CAPS = []
 
-TEXT_GEN_CAPS = [
-    "compliance_report",
-    "accuracy_monitoring",
-    "notifications",
-    "guard_configuration",
-    "compliance_test",
-    "custom_metric",
-]
-
-AGENTIC_CAPS = [
-    "tracing",
-    "guard_configuration",
-    "notifications",
-    "custom_metric",
-]
+def extract_capabilities_from_config(capability_requirements):
+    """
+    Extracts all unique capability IDs from the config for each model type.
+    Returns sets of capability IDs for Predictive, Generative, and Agentic models.
+    """
+    standard_caps = set()
+    text_gen_caps = set()
+    agentic_caps = set()
+    
+    # Extract from Predictive
+    for importance_level in ["Critical", "High", "Moderate", "Low"]:
+        for cap in capability_requirements.get("Predictive", {}).get(importance_level, []):
+            standard_caps.add(cap["id"])
+    
+    # Extract from Generative
+    for importance_level in ["Critical", "High", "Moderate", "Low"]:
+        for cap in capability_requirements.get("Generative", {}).get(importance_level, []):
+            text_gen_caps.add(cap["id"])
+    
+    # Extract from Agentic
+    for importance_level in ["Critical", "High", "Moderate", "Low"]:
+        for cap in capability_requirements.get("Agentic", {}).get(importance_level, []):
+            agentic_caps.add(cap["id"])
+    
+    return list(standard_caps), list(text_gen_caps), list(agentic_caps)
 
 # --------------------------------------------------
 # STREAMLIT PAGE CONFIG & STYLE
@@ -149,7 +150,9 @@ def load_capability_requirements(path="capability_requirements.json"):
     return capability_requirements
 
 
-capability_requirements = load_capability_requirements()
+config_file = os.environ.get("MLOPS_RUNTIME_PARAM_CONFIG_FILE", "capability_requirements.json")
+capability_requirements = load_capability_requirements(config_file)
+STANDARD_CAPS, TEXT_GEN_CAPS, AGENTIC_CAPS = extract_capabilities_from_config(capability_requirements)
 
 # API Helper Functions for Deployment Capabilities
 
@@ -593,11 +596,7 @@ def compute_compliance_score(
     mandatory_caps = capability_requirements[model_type].get(model_importance, [])
 
     if not mandatory_caps:
-        # No capabilities found for this importance level
-        st.warning(
-            f"No capabilities found for model_type '{model_type}' with importance '{model_importance}'."
-        )
-        return 0.0
+        return 100.0
 
     # 3. Determine relevant capabilities based on model_type
     if model_type == "Generative":
@@ -613,11 +612,7 @@ def compute_compliance_score(
     ]
 
     if not relevant_mandatory_caps:
-        # No relevant capabilities found
-        st.warning(
-            f"No relevant capabilities found for model_type '{model_type}' with importance '{model_importance}'."
-        )
-        return 0.0
+        return 100.0
 
     # 5. Count enabled mandatory capabilities
     enabled_mandatory = 0
@@ -1765,30 +1760,32 @@ def main():
     generative_df = filtered_df[filtered_df["model_type"] == "TextGeneration"]
     agentic_df = filtered_df[filtered_df["model_type"].isin(["Agentic", "AgenticWorkflow"])]
 
-    # Show three rows (one for Predictive, one for Generative, one for Agentic)
-    render_header_boxes(predictive_df, "Predictive Models")
-    render_model_capability_summary(
-        df=predictive_df,
-        model_type="Predictive",
-        capabilities=STANDARD_CAPS,
-        capability_requirements=capability_requirements,
-    )
+    if STANDARD_CAPS:
+        render_header_boxes(predictive_df, "Predictive Models")
+        render_model_capability_summary(
+            df=predictive_df,
+            model_type="Predictive",
+            capabilities=STANDARD_CAPS,
+            capability_requirements=capability_requirements,
+        )
 
-    render_header_boxes(generative_df, "Generative Models")
-    render_model_capability_summary(
-        df=generative_df,
-        model_type="Generative",
-        capabilities=TEXT_GEN_CAPS,
-        capability_requirements=capability_requirements,
-    )
+    if TEXT_GEN_CAPS:
+        render_header_boxes(generative_df, "Generative Models")
+        render_model_capability_summary(
+            df=generative_df,
+            model_type="Generative",
+            capabilities=TEXT_GEN_CAPS,
+            capability_requirements=capability_requirements,
+        )
 
-    render_header_boxes(agentic_df, "Agents")
-    render_model_capability_summary(
-        df=agentic_df,
-        model_type="Agentic",
-        capabilities=AGENTIC_CAPS,
-        capability_requirements=capability_requirements,
-    )
+    if AGENTIC_CAPS:
+        render_header_boxes(agentic_df, "Agents")
+        render_model_capability_summary(
+            df=agentic_df,
+            model_type="Agentic",
+            capabilities=AGENTIC_CAPS,
+            capability_requirements=capability_requirements,
+        )
 
     # Optionally show LLM summary & chatbot if enabled
     if ENABLE_GENAI:
@@ -1798,10 +1795,17 @@ def main():
     # Render the critical capabilities
     render_critical_capabilities(capability_requirements)
 
+    # Filter out model types with no capabilities defined
+    table_df = filtered_df.copy()
+    if not TEXT_GEN_CAPS:
+        table_df = table_df[table_df["model_type"] != "TextGeneration"]
+    if not AGENTIC_CAPS:
+        table_df = table_df[~table_df["model_type"].isin(["Agentic", "AgenticWorkflow"])]
+
     # Render the paginated deployment table
-    page_number, page_size = render_page_selector(filtered_df, page_size_default=10)
+    page_number, page_size = render_page_selector(table_df, page_size_default=10)
     render_deployment_table(
-        filtered_df, page_number, page_size, capability_requirements
+        table_df, page_number, page_size, capability_requirements
     )
 
 

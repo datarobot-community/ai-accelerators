@@ -1,6 +1,9 @@
 ---
 name: runtime-params
 runtimeParameterDefinitions:
+  - fieldName: CONFIG_FILE
+    type: string
+    description: Config file to use (capability_requirements.json or capability_requirements_customer.json)
   - fieldName: ENABLE_GENAI
     type: string
     description: control setting True/False
