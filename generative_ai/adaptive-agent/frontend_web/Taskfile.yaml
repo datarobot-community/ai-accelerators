@@ -25,11 +25,13 @@ tasks:
       - npm run test:watch
   build:
     desc: 🏗️ Build React code
-    deps: [install]
+    deps:
+      - install
     cmds:
       - npm run build
   dev:
     desc: 🚀 Start React development server
-    deps: [install]
+    deps:
+      - install
     cmds:
       - npm run dev

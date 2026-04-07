@@ -56,7 +56,9 @@ def assert_no_missing_values(
                 f"❌ Found {sum(missing_counts.values())} missing values across {len(missing_counts)} columns:"
             )
             for col, count in missing_counts.items():
-                print(f"  - {col}: {count} missing values ({count/len(df):.1%} of data)")
+                print(
+                    f"  - {col}: {count} missing values ({count/len(df):.1%} of data)"
+                )
                 # Show a few rows with missing values as examples
                 if count > 0:
                     example_indices = df[df[col].isna()].index[:3]
@@ -217,7 +219,9 @@ def assert_no_missing_dates(
         if missing_dates:
             print(f"❌ Missing {len(missing_dates)} dates with frequency '{freq}':")
             # Print a subset of missing dates if there are many
-            display_dates = missing_dates[:10] if len(missing_dates) > 10 else missing_dates
+            display_dates = (
+                missing_dates[:10] if len(missing_dates) > 10 else missing_dates
+            )
             for date in display_dates:
                 print(f"  - {date}")
             if len(missing_dates) > 10:
@@ -226,7 +230,9 @@ def assert_no_missing_dates(
             print(f"✅ No missing dates found with frequency '{freq}'")
 
         if extra_dates:
-            print(f"⚠️ Found {len(extra_dates)} extra dates not matching frequency '{freq}'")
+            print(
+                f"⚠️ Found {len(extra_dates)} extra dates not matching frequency '{freq}'"
+            )
             if len(extra_dates) <= 5:
                 for date in extra_dates:
                     print(f"  - {date}")
@@ -266,7 +272,9 @@ def run_all_data_checks(
     print("=" * 50)
     print("CHECKING FOR MISSING VALUES")
     print("=" * 50)
-    values_result, missing_counts = assert_no_missing_values(df, columns=required_columns)
+    values_result, missing_counts = assert_no_missing_values(
+        df, columns=required_columns
+    )
     results["missing_values"] = {"passed": values_result, "details": missing_counts}
 
     # Check for missing dates
@@ -342,7 +350,9 @@ def delayed_adstock_transformation(
 
     # Apply the adstock effect
     # Reversing weights order because the weight at l=0 should be applied to x_t
-    adstocked_x = [np.dot(x[i - L + 1 : i + 1], weights[::-1]) for i in range(L - 1, len(x))]
+    adstocked_x = [
+        np.dot(x[i - L + 1 : i + 1], weights[::-1]) for i in range(L - 1, len(x))
+    ]
 
     # Apply min value
     values = np.array(adstocked_x)
@@ -451,7 +461,9 @@ def add_rolling_means(
     else:
         # Check if index is already a datetime type
         if not pd.api.types.is_datetime64_any_dtype(result_df.index):
-            raise ValueError("Index must be a datetime type if date_col is not provided")
+            raise ValueError(
+                "Index must be a datetime type if date_col is not provided"
+            )
         had_date_index = True
 
     # Ensure index is sorted
@@ -767,7 +779,9 @@ def reformat_prediction_row(row: pd.Series) -> pd.Series:
     )
 
     # Drop explanation columns
-    new_row = row.drop(labels=[col for col in row.index if "EXPLANATION_" in col]).copy()
+    new_row = row.drop(
+        labels=[col for col in row.index if "EXPLANATION_" in col]
+    ).copy()
 
     # Add explanations in shap matrix format
     for i in range(1, n_explanations + 1):
@@ -830,7 +844,9 @@ def post_process_incremental_values(
     )
 
     # Rename the columns back to their original for clarity
-    shap_values.columns = [extract_channel_name(x) for x in shap_values.columns.tolist()]
+    shap_values.columns = [
+        extract_channel_name(x) for x in shap_values.columns.tolist()
+    ]
 
     # Set any remaining negatives to 0 (invalid attribution)
     shap_values[shap_values <= 0] = 0
@@ -937,11 +953,15 @@ def prepare_summary_data(df: pd.DataFrame) -> pd.DataFrame:
     - Results are sorted by ROAS in descending order for better visualization
     - ROAS calculation assumes spend > 0 for all channels
     """
-    summary = df.groupby("channel").agg({"spend": "sum", "contribution": "sum"}).reset_index()
+    summary = (
+        df.groupby("channel").agg({"spend": "sum", "contribution": "sum"}).reset_index()
+    )
 
     # Calculate percentages
     summary["spend_pct"] = (summary["spend"] / summary["spend"].sum()) * 100
-    summary["contribution_pct"] = (summary["contribution"] / summary["contribution"].sum()) * 100
+    summary["contribution_pct"] = (
+        summary["contribution"] / summary["contribution"].sum()
+    ) * 100
     summary["roas"] = summary["contribution"] / summary["spend"]
 
     # Sort by ROAS for better visualization

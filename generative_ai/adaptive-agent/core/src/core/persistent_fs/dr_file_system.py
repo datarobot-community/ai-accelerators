@@ -19,23 +19,15 @@ import os
 import shutil
 import tempfile
 import time
+from typing import Any, BinaryIO, Callable, cast, ParamSpec, TypeVar
 import uuid
-from typing import (
-    Any,
-    BinaryIO,
-    Callable,
-    ParamSpec,
-    TypeVar,
-    cast,
-)
-
-import datarobot as dr
-from fsspec import AbstractFileSystem
 
 from core.persistent_fs.kv_custom_app_implementattion import (
     KeyValue,
     KeyValueEntityType,
 )
+import datarobot as dr
+from fsspec import AbstractFileSystem
 
 Path = str
 NodeInfo = dict[str, str | int | float]
@@ -130,9 +122,9 @@ class DRFileSystem(AbstractFileSystem):  # type: ignore[misc]
             None  # remotely stored timestamp
         )
 
-        self._sync_stack: list[
-            str
-        ] = []  # making sure that local metadata fetched for first and updated for last nested call
+        self._sync_stack: list[str] = (
+            []
+        )  # making sure that local metadata fetched for first and updated for last nested call
 
         logger.debug("Initialized DRFileSystem.", extra={"tmp_dir": self._temp_dir})
 

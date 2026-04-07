@@ -11,16 +11,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from datetime import UTC, datetime, timedelta
+from datetime import datetime, timedelta, UTC
 from unittest.mock import AsyncMock
-
-import pytest
-from datarobot.auth.identity import Identity
-from datarobot.auth.oauth import OAuthToken
 
 from app import Deps
 from app.users.identity import IdentityCreate
 from app.users.tokens import Tokens
+from datarobot.auth.identity import Identity
+from datarobot.auth.oauth import OAuthToken
+import pytest
 
 
 async def test__tokens__custom_token_mgmt__no_cached_token(

@@ -4,11 +4,10 @@ includes:
   common:
     taskfile: ../core/task-common.yaml
     internal: true
-
 tasks:
   auth-check:
     silent: true
-    desc: "🔐 Check authentication prerequisites"
+    desc: 🔐 Check authentication prerequisites
     cmds:
       - |
         if command -v dr &> /dev/null && dr auth help 2>&1 | grep -q "check"; then
@@ -17,32 +16,30 @@ tasks:
         else
           echo "ℹ️  Skipping auth check (not available)"
         fi
-
   install:
     desc: 🔧 Install dependencies
     cmds:
       - echo "🔧 Installing dependencies.."
-      - "{{.UV_CMD}} sync --all-extras --dev"
+      - '{{.UV_CMD}} sync --all-extras --dev'
   uninstall:
-    desc: "🔧 Uninstall dependencies"
+    desc: 🔧 Uninstall dependencies
     cmds:
       - echo "🔧 Uninstalling dependencies.."
       - rm -rf .venv
-
   start:
     silent: true
-    desc: "💻 Installing prior to start"
+    desc: 💻 Installing prior to start
     cmds:
       - task: migrate
   dev:
     silent: true
-    desc: "🔨 Run the development server"
+    desc: 🔨 Run the development server
     deps:
       - auth-check
       - migrate
     cmds:
       - echo "🔨 Starting development server"
-      - "{{.UV_CMD}} run uvicorn app.main:app --host 0.0.0.0 --port 8080 --reload"
+      - '{{.UV_CMD}} run uvicorn app.main:app --host 0.0.0.0 --port 8080 --reload'
     env:
       TEST_USER_EMAIL: developer@example.com
   lint:
@@ -50,25 +47,25 @@ tasks:
     desc: 🧹 Run linters
     cmds:
       - echo "🧹 Running linters.."
-      - "{{.UV_CMD}} run ruff format ."
-      - "{{.UV_CMD}} run ruff check . --fix"
-      - "{{.UV_CMD}} run mypy --pretty ."
+      - '{{.UV_CMD}} run ruff format .'
+      - '{{.UV_CMD}} run ruff check . --fix'
+      - '{{.UV_CMD}} run mypy --pretty .'
   lint-check:
     silent: true
     desc: 🧹 Check whether the codebase is linted
     cmds:
-      - "{{.UV_CMD}} run ruff format --check ."
-      - "{{.UV_CMD}} run ruff check ."
-      - "{{.UV_CMD}} run mypy --pretty ."
+      - '{{.UV_CMD}} run ruff format --check .'
+      - '{{.UV_CMD}} run ruff check .'
+      - '{{.UV_CMD}} run mypy --pretty .'
   test:
     silent: true
-    desc: "🧪 Run tests"
+    desc: 🧪 Run tests
     env:
       SESSION_SECRET_KEY: test-secret-key
     cmds:
       - echo "🧪 Running tests.."
-      - "{{.UV_CMD}} run pytest --disable-warnings -s --cov --cov-report=html --cov-report=term --cov-report xml:.coverage.xml"
-
+      - '{{.UV_CMD}} run pytest --disable-warnings -s --cov --cov-report=html --cov-report=term --cov-report
+        xml:.coverage.xml'
   copyright:
     aliases:
       - license
@@ -96,9 +93,10 @@ tasks:
       - migrate
     cmds:
       - echo "🔨 Starting development server"
-      - "PYTHONPATH=$CALCULATED_PYTHONPATH {{.UV_CMD}} run uvicorn app.main:app --host 0.0.0.0 --port 8080 --reload"
+      - PYTHONPATH=$CALCULATED_PYTHONPATH {{.UV_CMD}} run uvicorn app.main:app --host 0.0.0.0 --port 8080
+        --reload
   migrate:
     desc: 🛠️ Migrate the database
     cmds:
       - echo "🛠️  Running migrations.."
-      - "{{.UV_CMD}} run python alembic_migration.py"
+      - '{{.UV_CMD}} run python alembic_migration.py'

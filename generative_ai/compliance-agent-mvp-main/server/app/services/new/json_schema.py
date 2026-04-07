@@ -13,32 +13,32 @@ def get_json_schema() -> Dict:
                     "properties": {
                         "claim": {
                             "type": "string",
-                            "description": "The claim or statement from the input that needs compliance verification"
+                            "description": "The claim or statement from the input that needs compliance verification",
                         },
                         "regulation": {
                             "type": "string",
-                            "description": "The relevant regulation document name"
+                            "description": "The relevant regulation document name",
                         },
                         "clause_section": {
                             "type": "string",
-                            "description": "The specific clause or section number/name from the regulation"
+                            "description": "The specific clause or section number/name from the regulation",
                         },
                         "requirement": {
                             "type": "string",
-                            "description": "The exact wording of the specific clause or section from the regulation, copied verbatim without interpretation or rewording"
+                            "description": "The exact wording of the specific clause or section from the regulation, copied verbatim without interpretation or rewording",
                         },
                         "compliance_status": {
                             "type": "string",
-                            "description": "The compliance status of the claim, should be 'Non-Compliant' for non-compliant claims"
+                            "description": "The compliance status of the claim, should be 'Non-Compliant' for non-compliant claims",
                         },
                         "non_compliance_description": {
                             "type": "string",
-                            "description": "Description of the non-compliance, missing, or misaligned aspects"
+                            "description": "Description of the non-compliance, missing, or misaligned aspects",
                         },
                         "recommendation": {
                             "type": "string",
-                            "description": "Recommendations to address the non-compliance"
-                        }
+                            "description": "Recommendations to address the non-compliance",
+                        },
                     },
                     "required": [
                         "claim",
@@ -56,5 +56,3 @@ def get_json_schema() -> Dict:
         "required": ["compliance_report"],
         "additionalProperties": False,
     }
-
-

@@ -3,7 +3,7 @@ version: '3'
 vars:
   # Cross-platform environment cleaning - uses 'env -u' on Unix systems, falls back to empty string on Windows
   UV_CMD:
-    sh: |
+    sh: |-
       # This command ensures compatibility with codespaces environments
       # Cross-platform environment cleaning - uses 'env -u' on Unix systems,
       # falls back to empty string on Windows

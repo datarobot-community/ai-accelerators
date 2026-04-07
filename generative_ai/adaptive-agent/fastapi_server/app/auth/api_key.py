@@ -14,10 +14,10 @@
 import logging
 from urllib.parse import urljoin
 
-import httpx
 from datarobot.auth.oauth import Profile
 from fastapi import status
 from fastapi.security import HTTPBearer
+import httpx
 from pydantic import BaseModel, Field
 
 logger = logging.getLogger(__name__)

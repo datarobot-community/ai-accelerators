@@ -13,11 +13,10 @@
 # limitations under the License.
 
 import asyncio
-import uuid
 from typing import Any, AsyncIterator, Callable, Coroutine, Iterator
 from unittest.mock import patch
+import uuid
 
-import pytest
 from ag_ui.core import (
     BaseEvent,
     CustomEvent,
@@ -31,6 +30,8 @@ from ag_ui.core import (
     TextMessageStartEvent,
     ToolCallChunkEvent,
 )
+from app.ag_ui.dr import DataRobotAGUIAgent
+from app.config import Config
 from openai.types.chat.chat_completion_chunk import (
     ChatCompletionChunk,
     Choice,
@@ -38,9 +39,7 @@ from openai.types.chat.chat_completion_chunk import (
     ChoiceDeltaToolCall,
     ChoiceDeltaToolCallFunction,
 )
-
-from app.ag_ui.dr import DataRobotAGUIAgent
-from app.config import Config
+import pytest
 
 
 @pytest.fixture(scope="function")

@@ -32,9 +32,7 @@ def check_missing_values(df: pd.DataFrame) -> Dict:
             severity = (
                 "High"
                 if missing_percentage > 25
-                else "Moderate"
-                if missing_percentage > 5
-                else "Low"
+                else "Moderate" if missing_percentage > 5 else "Low"
             )
 
             missing_data.append(
@@ -52,11 +50,11 @@ def check_missing_values(df: pd.DataFrame) -> Dict:
         results_df = results_df.sort_values(
             by=["Severity", "Missing Count"],
             ascending=[False, False],
-            key=lambda x: pd.Categorical(
-                x, categories=["High", "Moderate", "Low"], ordered=True
-            )
-            if x.name == "Severity"
-            else x,
+            key=lambda x: (
+                pd.Categorical(x, categories=["High", "Moderate", "Low"], ordered=True)
+                if x.name == "Severity"
+                else x
+            ),
         )
 
         # Add total row
@@ -261,9 +259,11 @@ def check_date_consistency(df: pd.DataFrame) -> Dict:
             "date_columns": {
                 row["Column"]: {
                     "current_type": row["Current Type"],
-                    "detected_format": row["Issue"].split(" in ")[-1]
-                    if "format" in row["Issue"]
-                    else None,
+                    "detected_format": (
+                        row["Issue"].split(" in ")[-1]
+                        if "format" in row["Issue"]
+                        else None
+                    ),
                     "needs_conversion": row["Current Type"] == "object",
                     "has_timezone": "timezone" not in row["Issue"],
                     "sample_values": row["Sample Values"].split(", "),
@@ -423,26 +423,38 @@ def check_string_values(df: pd.DataFrame) -> Dict:
             "problematic_columns": {  # Keep for compatibility
                 row["Column"]: {
                     "issues": {
-                        "leading_spaces": row["Affected Rows"]
-                        if row["Issue Type"] == "Leading spaces"
-                        else 0,
-                        "trailing_spaces": row["Affected Rows"]
-                        if row["Issue Type"] == "Trailing spaces"
-                        else 0,
-                        "consecutive_spaces": row["Affected Rows"]
-                        if row["Issue Type"] == "Consecutive spaces"
-                        else 0,
+                        "leading_spaces": (
+                            row["Affected Rows"]
+                            if row["Issue Type"] == "Leading spaces"
+                            else 0
+                        ),
+                        "trailing_spaces": (
+                            row["Affected Rows"]
+                            if row["Issue Type"] == "Trailing spaces"
+                            else 0
+                        ),
+                        "consecutive_spaces": (
+                            row["Affected Rows"]
+                            if row["Issue Type"] == "Consecutive spaces"
+                            else 0
+                        ),
                     },
                     "samples": {
-                        "leading_spaces": row["Sample Values"].split(", ")
-                        if row["Issue Type"] == "Leading spaces"
-                        else [],
-                        "trailing_spaces": row["Sample Values"].split(", ")
-                        if row["Issue Type"] == "Trailing spaces"
-                        else [],
-                        "consecutive_spaces": row["Sample Values"].split(", ")
-                        if row["Issue Type"] == "Consecutive spaces"
-                        else [],
+                        "leading_spaces": (
+                            row["Sample Values"].split(", ")
+                            if row["Issue Type"] == "Leading spaces"
+                            else []
+                        ),
+                        "trailing_spaces": (
+                            row["Sample Values"].split(", ")
+                            if row["Issue Type"] == "Trailing spaces"
+                            else []
+                        ),
+                        "consecutive_spaces": (
+                            row["Sample Values"].split(", ")
+                            if row["Issue Type"] == "Consecutive spaces"
+                            else []
+                        ),
                     },
                     "total_rows": len(
                         df
@@ -556,9 +568,11 @@ def check_for_special_characters(df: pd.DataFrame) -> Dict:
                         row["Character"]: {
                             "count": row["Occurrences"],
                             "description": row["Description"],
-                            "percentage": float(row["Percentage"].rstrip("%"))
-                            if "Percentage" in row
-                            else 0,
+                            "percentage": (
+                                float(row["Percentage"].rstrip("%"))
+                                if "Percentage" in row
+                                else 0
+                            ),
                         }
                     },
                     "sample_values": {
@@ -872,9 +886,9 @@ def check_statistical_quality(df: pd.DataFrame) -> Dict:
                             "Column 1": numeric_cols[i],
                             "Column 2": numeric_cols[j],
                             "Correlation": f"{correlation:.2f}",
-                            "Strength": "Very Strong"
-                            if abs(correlation) > 0.9
-                            else "Strong",
+                            "Strength": (
+                                "Very Strong" if abs(correlation) > 0.9 else "Strong"
+                            ),
                         }
                     )
 

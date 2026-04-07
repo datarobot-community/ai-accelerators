@@ -1,4 +1,5 @@
 from pathlib import Path
+
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import FileResponse
 
@@ -7,7 +8,6 @@ router = APIRouter()
 # Resolve paths
 knowledge_base_dir = Path(__file__).resolve().parents[1] / "knowledge-base"
 regulations_pdf_dir = Path(__file__).resolve().parents[1] / "regulations_pdf"
-
 
 
 @router.get("/api/regulations_pdf/{filename}")
@@ -26,7 +26,5 @@ async def get_regulation_pdf(filename: str) -> FileResponse:
     return FileResponse(
         str(file_path),
         media_type="application/pdf",
-        headers={"Content-Disposition": f"inline; filename=\"{filename}\""}
+        headers={"Content-Disposition": f'inline; filename="{filename}"'},
     )
-
-

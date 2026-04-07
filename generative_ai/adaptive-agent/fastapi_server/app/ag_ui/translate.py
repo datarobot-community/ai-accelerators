@@ -15,7 +15,6 @@
 from typing import Iterable
 
 from ag_ui.core import AssistantMessage, BaseMessage, FunctionCall, ToolCall
-
 from app.messages import Message, Role
 
 

@@ -14,25 +14,20 @@
 import logging
 import uuid
 
-from datarobot.auth.oauth import (
-    OAuthData,
-    OAuthProvider,
-    OAuthToken,
-)
+from app.api.v1.schema import ErrorCodes, ErrorSchema
+from app.auth.api_key import APIKeyValidator, dr_api_key_schema, DRUser
+from app.auth.ctx import AUTH_SESS_KEY, get_auth_ctx, must_get_auth_ctx
+from app.auth.session import restore_oauth_session, store_oauth_sess
+from app.users.identity import AuthSchema, Identity, IdentityUpdate
+from app.users.tokens import Tokens
+from app.users.user import User, UserCreate
+from datarobot.auth.oauth import OAuthData, OAuthProvider, OAuthToken
 from datarobot.auth.session import AuthCtx
 from datarobot.auth.typing import Metadata
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials
 from pydantic import BaseModel, Field
 from sqlalchemy.exc import IntegrityError
-
-from app.api.v1.schema import ErrorCodes, ErrorSchema
-from app.auth.api_key import APIKeyValidator, DRUser, dr_api_key_schema
-from app.auth.ctx import AUTH_SESS_KEY, get_auth_ctx, must_get_auth_ctx
-from app.auth.session import restore_oauth_session, store_oauth_sess
-from app.users.identity import AuthSchema, Identity, IdentityUpdate
-from app.users.tokens import Tokens
-from app.users.user import User, UserCreate
 
 logger = logging.getLogger(name=__name__)
 

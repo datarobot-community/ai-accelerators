@@ -15,9 +15,8 @@ import os
 from types import TracebackType
 from typing import Any, Self
 
+from core.persistent_fs.dr_file_system import calculate_checksum, DRFileSystem
 import duckdb
-
-from core.persistent_fs.dr_file_system import DRFileSystem, calculate_checksum
 
 
 def _get_fs_entity() -> DRFileSystem | None:

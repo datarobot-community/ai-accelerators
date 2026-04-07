@@ -1,18 +1,16 @@
 ---
 name: Shellcheck
-
 on:
   push:
     paths:
       - '**.sh'
     branches:
       - main
-      - 'release/*'
+      - release/*
   pull_request:
     paths:
       - '**.sh'
-  workflow_dispatch:
-
+  workflow_dispatch: null
 jobs:
   shellcheck:
     runs-on: ubuntu-latest
@@ -24,5 +22,5 @@ jobs:
           sudo install -o root -g root -m 0755 shellcheck-stable/shellcheck /usr/local/bin
           shellcheck --version
       - name: Run shellcheck
-        run: |
+        run: |-
           find . -type f -name "*.sh" -exec shellcheck {} +

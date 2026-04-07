@@ -17,11 +17,10 @@ import os
 import sys
 from typing import Any
 
-from datarobot_genai.drmcp import create_mcp_server
-
 from app.core.server_lifecycle import ServerLifecycle
 from app.core.user_config import get_user_config
 from app.core.user_credentials import get_user_credentials
+from datarobot_genai.drmcp import create_mcp_server
 
 
 def suppress_keyboard_interrupt_traceback(

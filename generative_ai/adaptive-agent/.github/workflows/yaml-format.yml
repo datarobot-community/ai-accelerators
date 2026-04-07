@@ -7,13 +7,12 @@ on:
       - '**.yml'
     branches:
       - main
-      - 'release/*'
+      - release/*
   pull_request:
     paths:
       - '**.yaml'
       - '**.yml'
-  workflow_dispatch:
-
+  workflow_dispatch: null
 jobs:
   yaml-formatter:
     name: yamlfmt

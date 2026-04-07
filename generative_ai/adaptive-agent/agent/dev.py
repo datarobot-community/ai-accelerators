@@ -14,15 +14,14 @@
 
 import argparse
 import os
-import sys
 from pathlib import Path
+import sys
 
+from agent import Config
 from datarobot_drum.drum.adapters.model_adapters import (
     python_model_adapter as _python_model_adapter,
 )
 from datarobot_drum.drum.root_predictors.prediction_server import PredictionServer
-
-from agent import Config
 
 _original_load_custom_hooks = _python_model_adapter.PythonModelAdapter.load_custom_hooks
 

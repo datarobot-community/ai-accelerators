@@ -17,8 +17,8 @@ from agent import Config, AdaptiveAgent
 # isort: on
 # ------------------------------------------------------------------------------
 import asyncio
-import os
 from concurrent.futures import ThreadPoolExecutor
+import os
 from typing import Any, AsyncGenerator, Iterator, Union
 
 from datarobot_genai.core.chat import (
@@ -63,15 +63,17 @@ def _reset_all_agents() -> None:
 
 
 def chat(
-    completion_create_params: CompletionCreateParams
-    | CompletionCreateParamsNonStreaming
-    | CompletionCreateParamsStreaming,
+    completion_create_params: (
+        CompletionCreateParams
+        | CompletionCreateParamsNonStreaming
+        | CompletionCreateParamsStreaming
+    ),
     load_model_result: tuple[ThreadPoolExecutor, asyncio.AbstractEventLoop],
     **kwargs: Any,
 ) -> Union[CustomModelChatResponse, Iterator[CustomModelStreamingResponse]]:
     """
     When using the chat endpoint, this function is called.
-    
+
     This version uses the AdaptiveAgent which:
     1. Analyzes conversation history for user corrections
     2. Toggles Qwen3's /think or /no_think mode accordingly
@@ -106,8 +108,9 @@ def chat(
     if not session_id:
         # Generate a unique session ID if none provided
         import uuid
+
         session_id = str(uuid.uuid4())
-    
+
     print(f"[ADAPTIVE] Using session_id: {session_id}")
 
     # Get or create adaptive agent for this session
@@ -128,7 +131,9 @@ def chat(
     else:
         # Handle extended result with reflection metadata
         if len(result) >= 4:
-            response_text, pipeline_interactions, usage_metrics, adaptive_metadata = result
+            response_text, pipeline_interactions, usage_metrics, adaptive_metadata = (
+                result
+            )
         else:
             response_text, pipeline_interactions, usage_metrics = result
             adaptive_metadata = None
@@ -141,7 +146,7 @@ def chat(
         )
 
         # Inject adaptive metadata into response for frontend consumption
-        if adaptive_metadata and hasattr(response, '__dict__'):
-            response.__dict__['adaptive_state'] = adaptive_metadata
+        if adaptive_metadata and hasattr(response, "__dict__"):
+            response.__dict__["adaptive_state"] = adaptive_metadata
 
         return response

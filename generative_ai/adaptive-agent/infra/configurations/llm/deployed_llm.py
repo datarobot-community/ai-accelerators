@@ -19,16 +19,14 @@ For that, you'll need to choose the "registered_model_llm.py" option
 """
 
 import os
+
 from datarobot_pulumi_utils.pulumi import export
 from datarobot_pulumi_utils.pulumi.stack import PROJECT_NAME
 import pulumi
 import pulumi_datarobot as datarobot
 
 from . import use_case
-from .libllm import (
-    validate_feature_flags,
-    verify_llm,
-)
+from .libllm import validate_feature_flags, verify_llm
 
 __all__ = [
     "custom_model_runtime_parameters",

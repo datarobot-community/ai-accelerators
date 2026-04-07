@@ -5,8 +5,8 @@ Reflection service that analyzes conversation history to detect user corrections
 Uses gpt-4o-mini to determine if the agent should enable deep thinking mode.
 """
 
-import json
 from dataclasses import dataclass
+import json
 from typing import Any
 
 from langchain_litellm.chat_models import ChatLiteLLM
@@ -15,6 +15,7 @@ from langchain_litellm.chat_models import ChatLiteLLM
 @dataclass
 class ReflectionResult:
     """Result from the reflection model analysis."""
+
     needs_thinking: bool
     reason: str
     confidence: float = 0.0
@@ -95,16 +96,16 @@ class ReflectionService:
     ) -> ReflectionResult:
         """
         Analyze the last N turns of conversation to detect corrections.
-        
+
         Args:
             history: Full conversation history as list of message dicts
             max_turns: Number of recent turns to analyze (default 3)
-            
+
         Returns:
             ReflectionResult with thinking mode decision
         """
-        recent_messages = history[-(max_turns * 2):]
-        
+        recent_messages = history[-(max_turns * 2) :]
+
         if len(recent_messages) < 2:
             return ReflectionResult(
                 needs_thinking=False,
@@ -117,17 +118,19 @@ class ReflectionService:
 
         try:
             response = await self.llm.ainvoke(prompt)
-            content = response.content if hasattr(response, 'content') else str(response)
-            
+            content = (
+                response.content if hasattr(response, "content") else str(response)
+            )
+
             content = content.strip()
             if content.startswith("```"):
                 content = content.split("```")[1]
                 if content.startswith("json"):
                     content = content[4:]
             content = content.strip()
-            
+
             result = json.loads(content)
-            
+
             return ReflectionResult(
                 needs_thinking=result.get("needs_thinking", False),
                 reason=result.get("reason", "No reason provided"),
@@ -155,13 +158,11 @@ class ReflectionService:
     ) -> ReflectionResult:
         """Synchronous wrapper for analyze_conversation."""
         import asyncio
-        
+
         try:
             loop = asyncio.get_event_loop()
         except RuntimeError:
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
-        
-        return loop.run_until_complete(
-            self.analyze_conversation(history, max_turns)
-        )
+
+        return loop.run_until_complete(self.analyze_conversation(history, max_turns))

@@ -50,7 +50,7 @@ async def get_adaptive_state():
             reason=ref.get("reason", ""),
             confidence=ref.get("confidence", 0.0),
         )
-    
+
     return AdaptiveStateResponse(
         thinkMode=_adaptive_state.get("think_mode", False),
         currentModel=_adaptive_state.get("current_model", "gpt-4o-mini"),

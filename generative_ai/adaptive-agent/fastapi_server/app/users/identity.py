@@ -11,18 +11,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import uuid as uuidpkg
 from datetime import datetime, timedelta, timezone
 from enum import Enum
 from typing import Final
-
-from datarobot.auth.identity import Identity as IdentityData
-from sqlalchemy import Column, DateTime, UniqueConstraint
-from sqlalchemy.exc import IntegrityError
-from sqlmodel import Field, Relationship, SQLModel, select
+import uuid as uuidpkg
 
 from app.db import DBCtx
 from app.users.user import User
+from datarobot.auth.identity import Identity as IdentityData
+from sqlalchemy import Column, DateTime, UniqueConstraint
+from sqlalchemy.exc import IntegrityError
+from sqlmodel import Field, Relationship, select, SQLModel
 
 UPSERT_RETRIES: Final = 3
 

@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import asyncio
-import threading
 from contextlib import asynccontextmanager, contextmanager
+import threading
 from typing import AsyncIterator, Iterator
 
 

@@ -12,15 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import logging
-from typing import TYPE_CHECKING, Awaitable, Callable, Final
-
-from authlib.jose import jwt
-from datarobot.auth.oauth import OAuthToken, Profile
-from datarobot.auth.session import AuthCtx
-from datarobot.auth.typing import Metadata
-from fastapi import Depends, HTTPException, Request, status
-from pydantic import BaseModel
-from sqlalchemy.exc import IntegrityError
+from typing import Awaitable, Callable, Final, TYPE_CHECKING
 
 from app.api.v1.schema import ErrorCodes, ErrorSchema
 from app.auth.api_key import APIKeyValidator
@@ -32,6 +24,13 @@ from app.users.identity import (
 )
 from app.users.tokens import Tokens
 from app.users.user import UserCreate, UserRepository
+from authlib.jose import jwt
+from datarobot.auth.oauth import OAuthToken, Profile
+from datarobot.auth.session import AuthCtx
+from datarobot.auth.typing import Metadata
+from fastapi import Depends, HTTPException, Request, status
+from pydantic import BaseModel
+from sqlalchemy.exc import IntegrityError
 
 if TYPE_CHECKING:
     from app import Config

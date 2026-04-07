@@ -14,7 +14,11 @@
 import threading
 import time
 
-from core.utils.rw_lock import AbstractReadWriteLock, MockReadWriteLock, ThreadReadWriteLock
+from core.utils.rw_lock import (
+    AbstractReadWriteLock,
+    MockReadWriteLock,
+    ThreadReadWriteLock,
+)
 
 
 def thread_read_process(

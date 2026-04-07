@@ -11,11 +11,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from app.config import Config
+from app.db import create_db_ctx, DBCtx
+from app.users.user import User, UserCreate, UserRepository
 import pytest
 
-from app.config import Config
-from app.db import DBCtx, create_db_ctx
-from app.users.user import User, UserCreate, UserRepository
 from tests.conftest import migrate_tables_to_db
 
 

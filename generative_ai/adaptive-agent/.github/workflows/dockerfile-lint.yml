@@ -1,6 +1,5 @@
 ---
 name: Dockerfile Lint
-
 on:
   push:
     paths:
@@ -8,13 +7,12 @@ on:
       - '**Dockerfile.*'
     branches:
       - main
-      - 'release/*'
+      - release/*
   pull_request:
     paths:
       - '**Dockerfile'
       - '**Dockerfile.*'
-  workflow_dispatch:
-
+  workflow_dispatch: null
 jobs:
   hadolint:
     name: lint-dockerfile

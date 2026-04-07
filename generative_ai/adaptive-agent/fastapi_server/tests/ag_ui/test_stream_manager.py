@@ -14,11 +14,10 @@
 
 from typing import AsyncGenerator
 
-import pytest
 from ag_ui.core import BaseEvent, RunAgentInput, RunFinishedEvent, RunStartedEvent
-
 from app.ag_ui.base import AGUIAgent
 from app.ag_ui.stream_manager import AGUIStreamManager
+import pytest
 
 
 class StubAgent(AGUIAgent):

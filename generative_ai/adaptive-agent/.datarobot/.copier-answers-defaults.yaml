@@ -1,3 +1,4 @@
+---
 defaults:
   https://github.com/datarobot-community/af-component-agent.git:
     base_answers_file: .datarobot/answers/base.yml

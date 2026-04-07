@@ -12,17 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from datetime import datetime, timedelta, UTC
 import os
-from datetime import UTC, datetime, timedelta
 from typing import AsyncGenerator, Awaitable, Callable, Generator, TypeVar
 from unittest.mock import AsyncMock
-
-import pytest
-from datarobot.auth.datarobot.oauth import AsyncOAuth
-from datarobot.auth.oauth import OAuthFlowSession, OAuthToken
-from fastapi import FastAPI, Request
-from fastapi.testclient import TestClient
-from sqlmodel import SQLModel
 
 from app import create_app
 from app.ag_ui.stream_manager import AGUIStreamManager
@@ -30,11 +23,17 @@ from app.auth.api_key import APIKeyValidator, DRUser
 from app.chats import ChatRepository
 from app.config import Config
 from app.db import DBCtx
-from app.deps import Deps, create_deps
+from app.deps import create_deps, Deps
 from app.messages import MessageRepository
 from app.users.identity import AuthSchema, Identity, IdentityCreate, IdentityRepository
 from app.users.tokens import Tokens
 from app.users.user import User, UserCreate, UserRepository
+from datarobot.auth.datarobot.oauth import AsyncOAuth
+from datarobot.auth.oauth import OAuthFlowSession, OAuthToken
+from fastapi import FastAPI, Request
+from fastapi.testclient import TestClient
+import pytest
+from sqlmodel import SQLModel
 
 
 async def migrate_tables_to_db(db: DBCtx) -> None:

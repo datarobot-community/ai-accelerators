@@ -14,7 +14,6 @@
 
 from typing import AsyncGenerator, NamedTuple
 
-import pytest
 from ag_ui.core import (
     BaseEvent,
     Message,
@@ -40,15 +39,15 @@ from ag_ui.core import (
     ToolCallStartEvent,
     UserMessage,
 )
-from sqlalchemy.ext.asyncio import create_async_engine
-from sqlmodel import SQLModel
-
 from app.ag_ui.base import AGUIAgent
 from app.ag_ui.storage import AGUIAgentWithStorage
 from app.chats import ChatRepository
 from app.db import DBCtx
 from app.messages import MessageRepository, Role
 from app.users.user import User, UserCreate, UserRepository
+import pytest
+from sqlalchemy.ext.asyncio import create_async_engine
+from sqlmodel import SQLModel
 
 
 @pytest.fixture(scope="function")
@@ -544,35 +543,35 @@ async def test_parameterized(
 
     for expected_chat in expected:
         chat = await chat_repo.get_chat_by_thread_id(user.uuid, expected_chat.thread_id)
-        assert chat is not None, (
-            f"Expected thread with ID {expected_chat.thread_id} to be created."
-        )
+        assert (
+            chat is not None
+        ), f"Expected thread with ID {expected_chat.thread_id} to be created."
         for expected_message in expected_chat.messages:
             message = await message_repo.get_message_by_agui_id(
                 chat.uuid, expected_message.agui_id
             )
-            assert message is not None, (
-                f"Expected message {expected_message.agui_id} to exist in thread {expected_chat.thread_id}"
-            )
-            assert message.name == expected_message.name, (
-                f"Context: {expected_chat.thread_id}-{expected_message.agui_id}. {message.name} == {expected_message.name}"
-            )
-            assert message.role == expected_message.role, (
-                f"Context: {expected_chat.thread_id}-{expected_message.agui_id}. {message.role} == {expected_message.role}"
-            )
-            assert message.content == expected_message.content, (
-                f"Context: {expected_chat.thread_id}-{expected_message.agui_id}. {repr(message.content)} == {repr(expected_message.content)}"
-            )
-            assert message.step == expected_message.step, (
-                f"Context: {expected_chat.thread_id}-{expected_message.agui_id}: '{message.step}' == '{expected_message.step}'"
-            )
+            assert (
+                message is not None
+            ), f"Expected message {expected_message.agui_id} to exist in thread {expected_chat.thread_id}"
+            assert (
+                message.name == expected_message.name
+            ), f"Context: {expected_chat.thread_id}-{expected_message.agui_id}. {message.name} == {expected_message.name}"
+            assert (
+                message.role == expected_message.role
+            ), f"Context: {expected_chat.thread_id}-{expected_message.agui_id}. {message.role} == {expected_message.role}"
+            assert (
+                message.content == expected_message.content
+            ), f"Context: {expected_chat.thread_id}-{expected_message.agui_id}. {repr(message.content)} == {repr(expected_message.content)}"
+            assert (
+                message.step == expected_message.step
+            ), f"Context: {expected_chat.thread_id}-{expected_message.agui_id}: '{message.step}' == '{expected_message.step}'"
 
-            assert len(message.reasonings) == len(expected_message.reasonings), (
-                f"Context: {expected_chat.thread_id}-{expected_message.agui_id}"
-            )
-            assert len(message.tool_calls) == len(expected_message.tool_calls), (
-                f"Context: {expected_chat.thread_id}-{expected_message.agui_id}"
-            )
+            assert len(message.reasonings) == len(
+                expected_message.reasonings
+            ), f"Context: {expected_chat.thread_id}-{expected_message.agui_id}"
+            assert len(message.tool_calls) == len(
+                expected_message.tool_calls
+            ), f"Context: {expected_chat.thread_id}-{expected_message.agui_id}"
 
             actual_tool_calls = {
                 TC(
@@ -586,14 +585,14 @@ async def test_parameterized(
                 for tc in message.tool_calls
             }
 
-            assert actual_tool_calls == set(expected_message.tool_calls), (
-                f"Context: {expected_chat.thread_id}-{expected_message.agui_id}. {actual_tool_calls}=={set(expected_message.tool_calls)}"
-            )
+            assert actual_tool_calls == set(
+                expected_message.tool_calls
+            ), f"Context: {expected_chat.thread_id}-{expected_message.agui_id}. {actual_tool_calls}=={set(expected_message.tool_calls)}"
 
             actual_reasonings = {
                 R(r.name, r.content, r.in_progress, r.error) for r in message.reasonings
             }
 
-            assert actual_reasonings == set(expected_message.reasonings), (
-                f"Context: {expected_chat.thread_id}-{expected_message.agui_id}. {actual_reasonings}=={set(expected_message.reasonings)}"
-            )
+            assert actual_reasonings == set(
+                expected_message.reasonings
+            ), f"Context: {expected_chat.thread_id}-{expected_message.agui_id}. {actual_reasonings}=={set(expected_message.reasonings)}"

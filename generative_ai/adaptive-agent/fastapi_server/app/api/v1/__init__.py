@@ -14,9 +14,9 @@
 
 from fastapi import APIRouter
 
+from .adaptive import adaptive_router
 from .auth import auth_router
 from .chat import chat_router
-from .adaptive import adaptive_router
 
 router = APIRouter(prefix="/v1")
 

@@ -17,11 +17,10 @@
 from contextlib import asynccontextmanager
 from typing import Any
 
-from sqlalchemy.exc import IntegrityError
-
 from app import Deps
 from app.users.identity import AuthSchema, IdentityRepository, IdentityUpdate
 from app.users.user import UserCreate
+from sqlalchemy.exc import IntegrityError
 
 
 async def test_upsert_identity_create(db_deps: Deps) -> None:
@@ -96,7 +95,9 @@ async def test_upsert_identity_concurrent_insert_simulated(
 
     @asynccontextmanager
     async def wrapped_session(writable: bool = False):  # type: ignore[no-untyped-def]
-        async with original_session_ctx(writable) as sess:  # noqa: SIM117 (explicit for clarity)
+        async with original_session_ctx(
+            writable
+        ) as sess:  # noqa: SIM117 (explicit for clarity)
             original_commit = sess.commit
 
             async def failing_commit():  # type: ignore[no-untyped-def]

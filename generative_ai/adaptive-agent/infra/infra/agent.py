@@ -15,12 +15,9 @@ import os
 from pathlib import Path
 import re
 import shutil
-from typing import cast, Final, Optional, Any, Sequence
-import yaml  # type: ignore[import-untyped]
+from typing import Any, cast, Final, Optional, Sequence
 
 import datarobot as dr
-import pulumi
-import pulumi_datarobot
 from datarobot_pulumi_utils.pulumi import export
 from datarobot_pulumi_utils.pulumi.custom_model_deployment import CustomModelDeployment
 from datarobot_pulumi_utils.pulumi.stack import PROJECT_NAME
@@ -29,10 +26,11 @@ from datarobot_pulumi_utils.schema.custom_models import (
     RegisteredModelArgs,
 )
 from datarobot_pulumi_utils.schema.exec_envs import RuntimeEnvironments
-
+import pulumi
+import pulumi_datarobot
+import yaml  # type: ignore[import-untyped]
 
 from . import project_dir, use_case
-
 from .llm import custom_model_runtime_parameters as llm_custom_model_runtime_parameters
 
 DEFAULT_EXECUTION_ENVIRONMENT = "Python 3.11 GenAI Agents"
@@ -190,9 +188,9 @@ def maybe_import_from_module(module: str, object_name: str) -> Optional[Any]:
         return None
 
 
-def get_mcp_runtime_parameters_from_env() -> list[
-    pulumi_datarobot.CustomModelRuntimeParameterValueArgs
-]:
+def get_mcp_runtime_parameters_from_env() -> (
+    list[pulumi_datarobot.CustomModelRuntimeParameterValueArgs]
+):
     mcp_runtime_parameters: list[
         pulumi_datarobot.CustomModelRuntimeParameterValueArgs
     ] = []
@@ -250,9 +248,9 @@ def get_mcp_runtime_parameters_from_env() -> list[
     return mcp_runtime_parameters
 
 
-def get_mcp_custom_model_runtime_parameters() -> list[
-    pulumi_datarobot.CustomModelRuntimeParameterValueArgs
-]:
+def get_mcp_custom_model_runtime_parameters() -> (
+    list[pulumi_datarobot.CustomModelRuntimeParameterValueArgs]
+):
     """
     Load MCP runtime parameters from the MCP Deployment module if available,
     otherwise fall back to environment variables.
@@ -337,7 +335,9 @@ else:
 # Prepare runtime parameters for agent custom model deployment
 agent_runtime_parameter_values: list[
     pulumi_datarobot.CustomModelRuntimeParameterValueArgs
-] = [] + llm_custom_model_runtime_parameters + get_mcp_custom_model_runtime_parameters()
+] = (
+    [] + llm_custom_model_runtime_parameters + get_mcp_custom_model_runtime_parameters()
+)
 
 # Handle session secret key credential
 SESSION_SECRET_KEY: Final[str] = "SESSION_SECRET_KEY"

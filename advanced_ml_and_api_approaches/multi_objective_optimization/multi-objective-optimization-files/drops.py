@@ -112,7 +112,9 @@ def get_prediction(df, deployment_id, dr_token, dr_key, pred_url, max_retries=3)
             )
 
             if predictions_response.status_code == 200:
-                pred_values = json_normalize(predictions_response.json()["data"]).prediction.values
+                pred_values = json_normalize(
+                    predictions_response.json()["data"]
+                ).prediction.values
                 # Return scalar value instead of numpy array for Optuna compatibility
                 return float(pred_values[0]) if len(pred_values) == 1 else pred_values
 
@@ -131,8 +133,13 @@ def get_prediction(df, deployment_id, dr_token, dr_key, pred_url, max_retries=3)
             if status_code == 429 or status_code >= 500:
                 if attempt < max_retries - 1:
                     import time
-                    wait_time = (attempt + 1) * 2  # Exponential backoff: 2, 4, 6 seconds
-                    print(f"Retry {attempt + 1}/{max_retries} after {wait_time}s: {status_code} {reason}")
+
+                    wait_time = (
+                        attempt + 1
+                    ) * 2  # Exponential backoff: 2, 4, 6 seconds
+                    print(
+                        f"Retry {attempt + 1}/{max_retries} after {wait_time}s: {status_code} {reason}"
+                    )
                     time.sleep(wait_time)
                     continue
 
@@ -143,11 +150,14 @@ def get_prediction(df, deployment_id, dr_token, dr_key, pred_url, max_retries=3)
         except requests.exceptions.RequestException as e:
             if attempt < max_retries - 1:
                 import time
+
                 wait_time = (attempt + 1) * 2
                 print(f"Retry {attempt + 1}/{max_retries} after {wait_time}s: {str(e)}")
                 time.sleep(wait_time)
                 continue
-            raise DataRobotPredictionError(f"Request failed after {max_retries} retries: {str(e)}")
+            raise DataRobotPredictionError(
+                f"Request failed after {max_retries} retries: {str(e)}"
+            )
 
 
 if __name__ == "__main__":

@@ -4,7 +4,8 @@ repos:
     rev: v0.11.13
     hooks:
       - id: ruff-check
-        args: ["--fix"]
+        args:
+          - --fix
       - id: ruff-format
   - repo: local
     hooks:

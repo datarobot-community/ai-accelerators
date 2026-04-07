@@ -11,17 +11,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from datetime import datetime, timezone
 import json
 import logging
+from typing import Any, cast, Sequence
 import uuid as uuidpkg
-from datetime import datetime, timezone
-from typing import Any, Sequence, cast
-
-from sqlalchemy import Column, DateTime, ForeignKey, UniqueConstraint
-from sqlmodel import Field, Index, SQLModel, select
 
 from app.db import DBCtx
 from app.users.user import User
+from sqlalchemy import Column, DateTime, ForeignKey, UniqueConstraint
+from sqlmodel import Field, Index, select, SQLModel
 
 logger = logging.getLogger(__name__)
 

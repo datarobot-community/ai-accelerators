@@ -13,11 +13,10 @@
 # limitations under the License.
 from unittest.mock import AsyncMock
 
+from app.auth.session import restore_oauth_session, store_oauth_sess
 from datarobot.auth.oauth import OAuthFlowSession
 from fastapi import Request
 from fastapi.testclient import TestClient
-
-from app.auth.session import restore_oauth_session, store_oauth_sess
 
 
 def test__oauth_sess__storing(client: TestClient, oauth_sess: OAuthFlowSession) -> None:

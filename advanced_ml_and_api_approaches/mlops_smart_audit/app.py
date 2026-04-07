@@ -62,6 +62,7 @@ STANDARD_CAPS = []
 TEXT_GEN_CAPS = []
 AGENTIC_CAPS = []
 
+
 def extract_capabilities_from_config(capability_requirements):
     """
     Extracts all unique capability IDs from the config for each model type.
@@ -70,23 +71,28 @@ def extract_capabilities_from_config(capability_requirements):
     standard_caps = set()
     text_gen_caps = set()
     agentic_caps = set()
-    
+
     # Extract from Predictive
     for importance_level in ["Critical", "High", "Moderate", "Low"]:
-        for cap in capability_requirements.get("Predictive", {}).get(importance_level, []):
+        for cap in capability_requirements.get("Predictive", {}).get(
+            importance_level, []
+        ):
             standard_caps.add(cap["id"])
-    
+
     # Extract from Generative
     for importance_level in ["Critical", "High", "Moderate", "Low"]:
-        for cap in capability_requirements.get("Generative", {}).get(importance_level, []):
+        for cap in capability_requirements.get("Generative", {}).get(
+            importance_level, []
+        ):
             text_gen_caps.add(cap["id"])
-    
+
     # Extract from Agentic
     for importance_level in ["Critical", "High", "Moderate", "Low"]:
         for cap in capability_requirements.get("Agentic", {}).get(importance_level, []):
             agentic_caps.add(cap["id"])
-    
+
     return list(standard_caps), list(text_gen_caps), list(agentic_caps)
+
 
 # --------------------------------------------------
 # STREAMLIT PAGE CONFIG & STYLE
@@ -150,9 +156,13 @@ def load_capability_requirements(path="capability_requirements.json"):
     return capability_requirements
 
 
-config_file = os.environ.get("MLOPS_RUNTIME_PARAM_CONFIG_FILE", "capability_requirements.json")
+config_file = os.environ.get(
+    "MLOPS_RUNTIME_PARAM_CONFIG_FILE", "capability_requirements.json"
+)
 capability_requirements = load_capability_requirements(config_file)
-STANDARD_CAPS, TEXT_GEN_CAPS, AGENTIC_CAPS = extract_capabilities_from_config(capability_requirements)
+STANDARD_CAPS, TEXT_GEN_CAPS, AGENTIC_CAPS = extract_capabilities_from_config(
+    capability_requirements
+)
 
 # API Helper Functions for Deployment Capabilities
 
@@ -515,7 +525,7 @@ def compliance_test(deployment_id):
 def tracing(deployment_id):
     """
     Checks if tracing/observability is enabled for agent deployments.
-    
+
     This checks if predictions data collection is enabled, which stores
     incoming prediction requests and results - a fundamental requirement
     for tracing and observability in agent workflows.
@@ -526,20 +536,20 @@ def tracing(deployment_id):
     """
     try:
         deployment = dr.Deployment.get(deployment_id)
-        
+
         # Get deployment settings to check predictions data collection
         url = f"deployments/{deployment_id}/settings/"
         response = client.get(url)
-        
+
         if response.status_code == 200:
             settings = response.json()
-            
+
             # Check if predictions data collection is enabled
             # This stores prediction requests and results, enabling tracing
             predictions_data_collection = settings.get("predictionsDataCollection", {})
             if predictions_data_collection.get("enabled", False):
                 return True
-        
+
         # Alternative: Check for association ID settings (enables tracking)
         # This is also related to tracing capabilities
         association_id_settings = deployment.get_association_id_settings()
@@ -549,9 +559,9 @@ def tracing(deployment_id):
         )
         if columns_set or required_in_requests:
             return True
-        
+
         return False
-        
+
     except Exception:
         return False
 
@@ -1369,7 +1379,11 @@ def render_critical_capabilities(capability_requirements):
 
         # Define the model types
         model_types = ["Predictive", "Generative", "Agentic"]
-        display_names = {"Predictive": "Predictive Models", "Generative": "Generative Models", "Agentic": "Agents"}
+        display_names = {
+            "Predictive": "Predictive Models",
+            "Generative": "Generative Models",
+            "Agentic": "Agents",
+        }
 
         for model_type in model_types:
             st.markdown(f"### {display_names.get(model_type, model_type)}")
@@ -1451,7 +1465,7 @@ def render_table_row(
     """
     owners = "<br>".join(deployment["model_owners"])
     deployment_id = deployment["deployment_id"]
-    base_url = DATAROBOT_ENDPOINT.rstrip('/').split('/api/')[0]
+    base_url = DATAROBOT_ENDPOINT.rstrip("/").split("/api/")[0]
     deployment_url = f"{base_url}/console-nextgen/deployments/{deployment_id}/overview"
     deployment_link = f"<a href='{deployment_url}' target='_blank' class='deployment-link'>View Deployment</a>"
 
@@ -1465,15 +1479,17 @@ def render_table_row(
     # Build capabilities HTML with proper handling of empty third line
     capabilities_html_parts = [
         f"<div class='capabilities-line'>{capabilities_line1}</div>",
-        f"<div class='capabilities-line'>{capabilities_line2}</div>"
+        f"<div class='capabilities-line'>{capabilities_line2}</div>",
     ]
-    
+
     # Only add third line if it has content
     if capabilities_line3 and capabilities_line3.strip():
-        capabilities_html_parts.append(f"<div class='capabilities-line'>{capabilities_line3}</div>")
-    
+        capabilities_html_parts.append(
+            f"<div class='capabilities-line'>{capabilities_line3}</div>"
+        )
+
     capabilities_html = "\n".join(capabilities_html_parts)
-    
+
     html = f"""
         <div class='table-row'>
             <div style="width: 18%;">{deployment_label_html}</div>
@@ -1491,7 +1507,7 @@ def render_table_row(
             </div>
         </div>
     """
-    
+
     st.markdown(html, unsafe_allow_html=True)
 
 
@@ -1725,9 +1741,11 @@ def render_page_selector(df, page_size_default=10):
             page_size = st.selectbox(
                 "Page Size",
                 options=[5, 10, 20, 50, 100],
-                index=[5, 10, 20, 50, 100].index(page_size_default)
-                if page_size_default in [5, 10, 20, 50, 100]
-                else 1,
+                index=(
+                    [5, 10, 20, 50, 100].index(page_size_default)
+                    if page_size_default in [5, 10, 20, 50, 100]
+                    else 1
+                ),
             )
 
     return int(page_number), int(page_size)
@@ -1753,12 +1771,14 @@ def main():
 
     # Render three sets of header boxes: Predictive, Generative, and Agents
     predictive_df = filtered_df[
-        (filtered_df["model_type"] != "TextGeneration") 
+        (filtered_df["model_type"] != "TextGeneration")
         & (filtered_df["model_type"] != "Agentic")
         & (filtered_df["model_type"] != "AgenticWorkflow")
     ]
     generative_df = filtered_df[filtered_df["model_type"] == "TextGeneration"]
-    agentic_df = filtered_df[filtered_df["model_type"].isin(["Agentic", "AgenticWorkflow"])]
+    agentic_df = filtered_df[
+        filtered_df["model_type"].isin(["Agentic", "AgenticWorkflow"])
+    ]
 
     if STANDARD_CAPS:
         render_header_boxes(predictive_df, "Predictive Models")
@@ -1800,13 +1820,13 @@ def main():
     if not TEXT_GEN_CAPS:
         table_df = table_df[table_df["model_type"] != "TextGeneration"]
     if not AGENTIC_CAPS:
-        table_df = table_df[~table_df["model_type"].isin(["Agentic", "AgenticWorkflow"])]
+        table_df = table_df[
+            ~table_df["model_type"].isin(["Agentic", "AgenticWorkflow"])
+        ]
 
     # Render the paginated deployment table
     page_number, page_size = render_page_selector(table_df, page_size_default=10)
-    render_deployment_table(
-        table_df, page_number, page_size, capability_requirements
-    )
+    render_deployment_table(table_df, page_number, page_size, capability_requirements)
 
 
 if __name__ == "__main__":

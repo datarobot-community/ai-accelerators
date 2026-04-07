@@ -14,12 +14,12 @@
 
 from .logging import (
     FormatType,
-    JsonFormatter,
-    LogLevel,
-    TextFormatter,
     get_logger,
     init_logging,
+    JsonFormatter,
     log_api_call,
+    LogLevel,
+    TextFormatter,
 )
 from .uvicorn_filter import configure_uvicorn_logging
 
