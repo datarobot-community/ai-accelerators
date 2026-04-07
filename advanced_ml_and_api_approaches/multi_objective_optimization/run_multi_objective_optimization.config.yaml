@@ -1,6 +1,6 @@
 ---
-description: This accelerator introduces an approach to build a streamlit application
-  using DataRobot deploments for multi-objective optimization.
+description: This accelerator introduces an approach to build a streamlit application using DataRobot
+  deploments for multi-objective optimization.
 file_name: run_multi_objective_optimization.ipynb
 languages:
   - python

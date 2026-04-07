@@ -1,7 +1,6 @@
 ---
 # .taskfile-data.yaml
 # Optional configuration for dr task compose
-
 # Development server ports
 # Displayed when running the dev task
 ports:

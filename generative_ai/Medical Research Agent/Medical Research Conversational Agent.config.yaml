@@ -1,9 +1,8 @@
 ---
-description: This accelerator aims to provide instructions on how to build this type
-  of system using DataRobot's generative AI solution framework. The accelerator shows
-  how you can build a pipeline to create a knowledge base with only trusted research
-  papers, and build a conversational agent that can answer questions from medical
-  professionals.
+description: This accelerator aims to provide instructions on how to build this type of system using DataRobot's
+  generative AI solution framework. The accelerator shows how you can build a pipeline to create a knowledge
+  base with only trusted research papers, and build a conversational agent that can answer questions from
+  medical professionals.
 file_name: Medical Research Conversational Agent.ipynb
 languages:
   - python

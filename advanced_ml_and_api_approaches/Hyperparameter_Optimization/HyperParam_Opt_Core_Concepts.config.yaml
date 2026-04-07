@@ -1,6 +1,6 @@
 ---
-description: This notebook and the functions in 'helpers.py' provide a repeatable
-  framework for executing hyperparameter search via DataRobot's Python client.
+description: This notebook and the functions in 'helpers.py' provide a repeatable framework for executing
+  hyperparameter search via DataRobot's Python client.
 file_name: HyperParam_Opt_Core_concepts.ipynb
 languages:
   - python

@@ -12,8 +12,7 @@ on:
     paths:
       - '**.yaml'
       - '**.yml'
-  workflow_dispatch:
-
+  workflow_dispatch: null
 jobs:
   yaml-formatter:
     name: yamlfmt

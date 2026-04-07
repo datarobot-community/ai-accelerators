@@ -28,8 +28,7 @@ runtimeParameterDefinitions:
     type: numeric
     defaultValue: 4096
     minValue: 1
-    description: Max number of symbols in response (only applicable when using legacy
-      predAPI).
+    description: Max number of symbols in response (only applicable when using legacy predAPI).
   - fieldName: system_prompt
     type: string
     description: |-

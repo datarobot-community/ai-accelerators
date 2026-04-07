@@ -3,8 +3,9 @@
 version: '3'
 env:
   ENV: testing
-dotenv: [.env, '.env.{{.ENV}}']
-
+dotenv:
+  - .env
+  - .env.{{.ENV}}
 includes:
   common:
     taskfile: ./core/task-common.yaml
@@ -27,14 +28,12 @@ includes:
   mcp_server:
     taskfile: ./mcp_server/Taskfile.yaml
     dir: ./mcp_server
-
 tasks:
   default:
     desc: ℹ️ Show all available tasks (run `task --list-all` to see hidden tasks)
     silent: true
     cmds:
       - task --list --sort none
-
   start:
     desc: 💻 Prepare local development environment
     cmds:
@@ -56,8 +55,8 @@ tasks:
       - dr dotenv update
       - task install
       - dr task run start
-      - echo '✅ You are all set. Run `task dev` to start developing, or run `task
-        deploy` to deploy to DataRobot.'
+      - echo '✅ You are all set. Run `task dev` to start developing, or run `task deploy` to deploy to
+        DataRobot.'
   build-agents-md:
     desc: 📄 Build AGENTS.md file
     cmds:
@@ -66,12 +65,15 @@ tasks:
           [ -f agent/AGENTS.md ] && cat agent/AGENTS.md >> AGENTS.md
           [ -f infra/AGENTS.md ] && cat infra/AGENTS.md >> AGENTS.md
           true
-        platforms: [linux, darwin]
+        platforms:
+          - linux
+          - darwin
       - cmd: |
           Copy-Item "AGENTS.md.template" "AGENTS.md"
           if (Test-Path "agent\AGENTS.md") { Get-Content "agent\AGENTS.md" | Add-Content "AGENTS.md" }
           if (Test-Path "infra\AGENTS.md") { Get-Content "infra\AGENTS.md" | Add-Content "AGENTS.md" }
-        platforms: [windows]
+        platforms:
+          - windows
   lint:
     desc: 🧹 Run linters
     cmds:
@@ -92,28 +94,24 @@ tasks:
     desc: 🧪 Run tests across all components
     cmds:
       - dr task run test
-
   auth-check:
     silent: true
     desc: 🔐 Check authentication prerequisites
     cmds:
       - echo "🔐 Checking authentication.."
       - dr auth check
-
   dev:
     desc: 🚀 Run all services together
     deps:
       - auth-check
     cmds:
       - drdev
-
   deploy:
     desc: 🚀 Deploy all services
     env:
       AGENT_DEPLOY: '1'
     cmds:
       - task: infra:deploy
-
   deploy-dev:
     desc: 🚀 Deploy infrastructure and services to development
     cmds:

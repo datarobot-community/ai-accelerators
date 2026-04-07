@@ -5,28 +5,18 @@ root:
     default: gateway_direct.py
     help: >
       Choose your LLM integration.
-
-
       - For the simplest setup, select DataRobot's "LLM Gateway".
-
       - If you already have a custom model deployed LLM and a deployment ID, select
       "DataRobot Deployed LLM".
-
       - If you want to use your LLM provider credentials instead of the LLM gateway
       (e.g. Azure OpenAI,
-
       AWS Bedrock, GCP VertexAI, Anthropic, Cohere, TogetherAI), select "External
       LLM".
-
       - If you need full DataRobot governance and monitoring with LLM Blueprint support,
-
       select "LLM Gateway with External Model" for the most production-ready option.
-
       - If you have an existing registered model (not yet deployed) that you want
       to use with
-
       an LLM Blueprint, select "Registered Model with an LLM Blueprint".
-
     options:
       - name: LLM Gateway
         value: gateway_direct.py
@@ -36,14 +26,11 @@ root:
       - name: External LLM
         value: blueprint_with_external_llm.py
         requires: external_llm
-
 deployed_llm:
   - env: TEXTGEN_DEPLOYMENT_ID
     type: string
     optional: false
-    help: Enter the deployment ID of the DataRobot custom model deployed LLM (e.g.,
-      6510c7b7c4f3f9407e24a849).
-
+    help: Enter the deployment ID of the DataRobot custom model deployed LLM (e.g., 6510c7b7c4f3f9407e24a849).
 external_llm:
   - env: LLM_DEFAULT_MODEL
     type: string
@@ -67,11 +54,8 @@ external_llm:
         requires: togetherai
     help: >
       Choose which external LLM provider to use.
-
-
       Supported providers are: Azure OpenAI, AWS Bedrock, GCP VertexAI, Anthropic,
       Cohere, or TogetherAI.
-
 azure_openai:
   - env: OPENAI_API_KEY
     type: string
@@ -89,7 +73,6 @@ azure_openai:
     type: string
     optional: false
     help: Enter the OpenAI API version (e.g., 2024-08-01-preview).
-
 bedrock:
   - env: AWS_ACCESS_KEY_ID
     type: string
@@ -103,7 +86,6 @@ bedrock:
     type: string
     optional: false
     help: Enter the AWS region name for Bedrock (e.g., us-east-1).
-
 vertexai:
   - env: VERTEXAI_APPLICATION_CREDENTIALS
     type: string
@@ -113,19 +95,16 @@ vertexai:
     type: string
     optional: false
     help: Enter the Google service account email.
-
 anthropic:
   - env: ANTHROPIC_API_KEY
     type: string
     optional: false
     help: Enter the API key for Anthropic.
-
 cohere:
   - env: COHERE_API_KEY
     type: string
     optional: false
     help: Enter the API key for Cohere.
-
 togetherai:
   - env: TOGETHERAI_API_KEY
     type: string

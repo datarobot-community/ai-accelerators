@@ -4,7 +4,6 @@ includes:
   common:
     taskfile: ../core/task-common.yaml
     internal: true
-
 tasks:
   auth-check:
     silent: true
@@ -17,7 +16,6 @@ tasks:
         else
           echo "ℹ️  Skipping auth check (not available)"
         fi
-
   install:
     desc: 🔧 Install dependencies
     cmds:
@@ -28,7 +26,6 @@ tasks:
     cmds:
       - echo "🔧 Uninstalling dependencies.."
       - rm -rf .venv
-
   start:
     silent: true
     desc: 💻 Installing prior to start
@@ -67,9 +64,8 @@ tasks:
       SESSION_SECRET_KEY: test-secret-key
     cmds:
       - echo "🧪 Running tests.."
-      - '{{.UV_CMD}} run pytest --disable-warnings -s --cov --cov-report=html --cov-report=term
-        --cov-report xml:.coverage.xml'
-
+      - '{{.UV_CMD}} run pytest --disable-warnings -s --cov --cov-report=html --cov-report=term --cov-report
+        xml:.coverage.xml'
   copyright:
     aliases:
       - license
@@ -97,8 +93,8 @@ tasks:
       - migrate
     cmds:
       - echo "🔨 Starting development server"
-      - PYTHONPATH=$CALCULATED_PYTHONPATH {{.UV_CMD}} run uvicorn app.main:app --host
-        0.0.0.0 --port 8080 --reload
+      - PYTHONPATH=$CALCULATED_PYTHONPATH {{.UV_CMD}} run uvicorn app.main:app --host 0.0.0.0 --port 8080
+        --reload
   migrate:
     desc: 🛠️ Migrate the database
     cmds:

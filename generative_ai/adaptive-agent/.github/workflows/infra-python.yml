@@ -1,21 +1,21 @@
 ---
 name: Python Infra Checks
-
 on:
-  push:
-  pull_request:
-  workflow_dispatch:
-
+  push: null
+  pull_request: null
+  workflow_dispatch: null
 jobs:
   python-checks:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.11', '3.12', '3.13']
+        python-version:
+          - '3.11'
+          - '3.12'
+          - '3.13'
     defaults:
       run:
         working-directory: infra
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -26,17 +26,14 @@ jobs:
         with:
           working-directory: infra
           python-version: ${{ matrix.python-version }}
-
       - name: Install Taskfile
         uses: arduino/setup-task@v2
         with:
           version: 3.x
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Install Dependencies
         working-directory: infra
         run: task install
-
       - name: Run Static Checks
         working-directory: infra
         run: task lint-check

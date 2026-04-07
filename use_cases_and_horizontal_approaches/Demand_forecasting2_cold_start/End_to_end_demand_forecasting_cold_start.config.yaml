@@ -1,7 +1,7 @@
 ---
-description: "This notebook illustrates an end-to-end demand forecasting workflow\
-  \ in DataRobot.\nTime series forecasting in DataRobot has a suite of tools and approaches\
-  \ to handle highly complex multiseries problems."
+description: "This notebook illustrates an end-to-end demand forecasting workflow in DataRobot.\nTime\
+  \ series forecasting in DataRobot has a suite of tools and approaches to handle highly complex multiseries\
+  \ problems."
 file_name: End_to_end_demand_forecasting_cold_start.ipynb
 languages:
   - python

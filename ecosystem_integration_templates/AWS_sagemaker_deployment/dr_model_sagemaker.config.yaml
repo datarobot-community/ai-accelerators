@@ -1,8 +1,7 @@
 ---
-description: In this AI Accelerator notebook, you will build an AI/ML model within
-  DataRobot which will then be deployed and hosted within AWS SageMaker. This will
-  include uploading data for model training, model development, and exporting from
-  DataRobot into SageMaker.
+description: In this AI Accelerator notebook, you will build an AI/ML model within DataRobot which will
+  then be deployed and hosted within AWS SageMaker. This will include uploading data for model training,
+  model development, and exporting from DataRobot into SageMaker.
 file_name: dr_model_sagemaker.ipynb
 languages:
   - python

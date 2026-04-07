@@ -1,21 +1,21 @@
 ---
 name: Python Core Checks
-
 on:
-  push:
-  pull_request:
-  workflow_dispatch:
-
+  push: null
+  pull_request: null
+  workflow_dispatch: null
 jobs:
   python-checks:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.11', '3.12', '3.13']
+        python-version:
+          - '3.11'
+          - '3.12'
+          - '3.13'
     defaults:
       run:
         working-directory: core
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -25,18 +25,14 @@ jobs:
         uses: astral-sh/setup-uv@v7
         with:
           python-version: ${{ matrix.python-version }}
-
       - name: Install Taskfile
         uses: arduino/setup-task@v2
         with:
           version: 3.x
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Install Dependencies
         run: task install
-
       - name: Run Static Checks
         run: task lint-check
-
       - name: Run Tests
         run: task test

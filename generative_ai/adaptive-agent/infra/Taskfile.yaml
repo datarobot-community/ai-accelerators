@@ -5,7 +5,6 @@ includes:
   common:
     taskfile: ../core/task-common.yaml
     internal: true
-
 vars:
   PULUMI_SKIP_UPDATE_CHECK:
     # Check if PULUMI_SKIP_UPDATE_CHECK is set in the environment;
@@ -16,7 +15,6 @@ vars:
       else
         echo "0"
       fi
-
   PULUMI_DATAROBOT_PLUGIN_VERSION:
     # Check if PULUMI_DATAROBOT_PLUGIN_VERSION is set in the environment;
     # if not, default to preset version
@@ -26,7 +24,6 @@ vars:
       else
         echo "v0.10.27"
       fi
-
   PULUMI_DATAROBOT_DEFAULT_URL:
     # Check if PULUMI_DATAROBOT_DEFAULT_URL is set in the environment;
     # if not, default to preset URL
@@ -37,9 +34,7 @@ vars:
       else
         echo "https://github.com/datarobot-community/pulumi-datarobot/releases/download/v0.10.27"
       fi
-
 tasks:
-
   auth-check:
     silent: true
     desc: 🔐 Check authentication prerequisites
@@ -51,7 +46,6 @@ tasks:
         else
           echo "ℹ️  Skipping auth check (not available)"
         fi
-
   pulumi-datarobot-plugin-check:
     # Prevents github rate limiting issues when installing pulumi datarobot plugin.
     # See https://github.com/datarobot-community/pulumi-datarobot?tab=readme-ov-file#rate-limited-by-github
@@ -64,19 +58,16 @@ tasks:
           {{.UV_CMD}} run pulumi plugin install resource datarobot {{.PULUMI_DATAROBOT_PLUGIN_VERSION}} \
           --server {{.PULUMI_DATAROBOT_DEFAULT_URL}}
         fi
-
   install:
     desc: 🔧 Install dependencies
     cmds:
       - echo "🔧 Installing dependencies.."
       - '{{.UV_CMD}} sync --all-extras --dev'
-
   uninstall:
     desc: 🔧 Uninstall dependencies
     cmds:
       - echo "🔧 Uninstalling dependencies.."
       - rm -rf .venv
-
   start:
     silent: true
     desc: 💻 Deploy backing infrastructure
@@ -84,7 +75,6 @@ tasks:
       - auth-check
     cmds:
       - task: deploy-dev
-
   lint:
     silent: true
     desc: 🧹 Run linters
@@ -93,7 +83,6 @@ tasks:
       - '{{.UV_CMD}} run ruff format .'
       - '{{.UV_CMD}} run ruff check . --fix'
       - '{{.UV_CMD}} run mypy --pretty .'
-
   lint-check:
     silent: true
     desc: 🧹 Check whether the codebase is linted
@@ -101,19 +90,16 @@ tasks:
       - '{{.UV_CMD}} run ruff format --check .'
       - '{{.UV_CMD}} run ruff check .'
       - '{{.UV_CMD}} run mypy --pretty .'
-
   init:
     silent: true
     desc: 🆕 Initialize a new Pulumi stack
     cmds:
       - '{{.UV_CMD}} run pulumi stack init {{.CLI_ARGS}}'
-
   select:
     silent: true
     desc: 🚂 Select a Stack
     cmds:
       - '{{.UV_CMD}} run pulumi stack select {{.CLI_ARGS}}'
-
   up:
     silent: true
     aliases:
@@ -125,7 +111,6 @@ tasks:
       - task: pulumi-datarobot-plugin-check
       - echo "🔨 Deploying the infrastructure.."
       - '{{.UV_CMD}} run pulumi up {{.CLI_ARGS}}'
-
   up-yes:
     silent: true
     desc: 🔨 Deploy the infrastructure (non-interactive, auto-confirm)
@@ -135,7 +120,6 @@ tasks:
       - task: pulumi-datarobot-plugin-check
       - echo "🔨 Deploying the infrastructure (non-interactive).."
       - '{{.UV_CMD}} run pulumi up -y {{.CLI_ARGS}}'
-
   refresh:
     silent: true
     desc: 🔄 Refresh the infrastructure
@@ -145,21 +129,18 @@ tasks:
       - task: pulumi-datarobot-plugin-check
       - echo "🔄 Refreshing the infrastructure.."
       - '{{.UV_CMD}} run pulumi refresh {{.CLI_ARGS}}'
-
   info:
     silent: true
     desc: ℹ️ Show Pulumi stack info
     cmds:
       - task: pulumi-datarobot-plugin-check
       - '{{.UV_CMD}} run pulumi stack {{.CLI_ARGS}}'
-
   pulumi:
     silent: true
     # desc: "ℹ🛠️ Execute a generic pulumi command"
     cmds:
       - task: pulumi-datarobot-plugin-check
       - '{{.UV_CMD}} run pulumi {{.CLI_ARGS}}'
-
   down:
     silent: true
     aliases:
@@ -171,7 +152,6 @@ tasks:
       - task: pulumi-datarobot-plugin-check
       - echo "💥 Destroying the infrastructure.."
       - '{{.UV_CMD}} run pulumi destroy {{.CLI_ARGS}}'
-
   down-yes:
     silent: true
     desc: 💥 Destroy the deployed infrastructure (non-interactive, auto-confirm)
@@ -181,7 +161,6 @@ tasks:
       - task: pulumi-datarobot-plugin-check
       - echo "💥 Destroying the infrastructure (non-interactive).."
       - '{{.UV_CMD}} run pulumi destroy -y {{.CLI_ARGS}}'
-
   copyright:
     aliases:
       - license
@@ -190,7 +169,6 @@ tasks:
       - echo "📜 Applying license headers"
       - docker run  --rm -v $PWD:/github/workspace ghcr.io/apache/skywalking-eyes/license-eye:eb0e0b091ea41213f712f622797e37526ca1e5d6
         -v info -c .licenserc.yaml header fix
-
   copyright-check:
     aliases:
       - license-check
@@ -199,10 +177,10 @@ tasks:
       - echo "📜 Checking license headers"
       - docker run  --rm -v $PWD:/github/workspace ghcr.io/apache/skywalking-eyes/license-eye:eb0e0b091ea41213f712f622797e37526ca1e5d6
         -v info -c .licenserc.yaml header check
-
   deploy-dev:
     silent: true
-    aliases: [up-dev]
+    aliases:
+      - up-dev
     desc: 🔨 Deploy the backend infrastructure
     deps:
       - auth-check

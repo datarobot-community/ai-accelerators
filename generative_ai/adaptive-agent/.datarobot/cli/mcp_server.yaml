@@ -34,8 +34,7 @@ root:
     type: boolean
     default: true
     optional: true
-    help: Whether to register Microsoft Graph tools, requires Microsoft OAuth provider
-      configuration.
+    help: Whether to register Microsoft Graph tools, requires Microsoft OAuth provider configuration.
   - env: ENABLE_JIRA_TOOLS
     type: boolean
     default: false
@@ -45,5 +44,4 @@ root:
     type: boolean
     default: false
     optional: true
-    help: Whether to register Confluence tools, requires Atlassian OAuth provider
-      configuration.
+    help: Whether to register Confluence tools, requires Atlassian OAuth provider configuration.

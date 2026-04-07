@@ -12,5 +12,5 @@ root:
     type: string
     default: ''
     optional: true
-    help: Enter the default Use Case for this application. If not set, a new Use Case
-      will be created automatically.
+    help: Enter the default Use Case for this application. If not set, a new Use Case will be created
+      automatically.

@@ -7,7 +7,6 @@ root:
     help: |
       Enter a secret key used to sign session cookies. This should be a long, random string.
       The default value is randomly generated if the secret key is not already configured.
-
   - env: DATABASE_URI
     type: string
     default: sqlite+aiosqlite:///.data/database.sqlite
@@ -15,7 +14,6 @@ root:
     help: |
       Enter the URI of the database to use for the application.
       The default value is a SQLite database in the .data folder.
-
   - env: INFRA_ENABLE_OAUTH
     type: string
     optional: true
@@ -25,10 +23,9 @@ root:
     options:
       - name: DataRobot OAuth Provider
         value: datarobot_provider.py
-
   - key: OAuth_Providers
     type: string
-    default:
+    default: null
     optional: true
     multiple: true
     help: |
@@ -38,37 +35,32 @@ root:
         requires: google_auth_server
       - name: Box
         requires: box_auth_server
-
-
 google_auth_server:
   - env: GOOGLE_CLIENT_ID
     type: string
-    default:
+    default: null
     optional: false
     help: |
       Enter the client ID for the Google data source.
       For more information on setting up the provider, see "OAuth Applications" in the README.
   - env: GOOGLE_CLIENT_SECRET
     type: secret_string
-    default:
+    default: null
     optional: false
     help: |
       Enter the client secret for the Google data source.
       For more information on setting up the provider, see "OAuth Applications" in the README.
-
-
 box_auth_server:
   - env: BOX_CLIENT_ID
     type: string
-    default:
+    default: null
     optional: false
     help: |
       Enter the client ID for the Box data source.
       For more information on setting up the provider, see "OAuth Applications" in the README.
-
   - env: BOX_CLIENT_SECRET
     type: secret_string
-    default:
+    default: null
     optional: false
     help: |-
       Enter the client secret for the Box data source.

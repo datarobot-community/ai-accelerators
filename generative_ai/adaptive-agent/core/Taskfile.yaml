@@ -1,15 +1,12 @@
 ---
 # https://taskfile.dev
 version: '3'
-
 env:
   SRCDIR: ./src/
-
 includes:
   common:
     taskfile: ./task-common.yaml
     internal: true
-
 tasks:
   install:
     desc: 🔧 Install dependencies
@@ -33,7 +30,6 @@ tasks:
       - '{{.UV_CMD}} run ruff format "$SRCDIR"'
       - '{{.UV_CMD}} run ruff check "$SRCDIR" --fix'
       - '{{.UV_CMD}} run mypy --pretty "$SRCDIR"'
-
   lint-check:
     desc: 🧹 Check whether the codebase is linted
     cmds:
@@ -41,11 +37,9 @@ tasks:
       - '{{.UV_CMD}} run ruff format --check "$SRCDIR"'
       - '{{.UV_CMD}} run ruff check "$SRCDIR"'
       - '{{.UV_CMD}} run mypy --pretty "$SRCDIR"'
-
   test:
     silent: true
     desc: 🧪 Run tests
     cmds:
       - echo "🧪 Running tests.."
-      - '{{.UV_CMD}} run pytest --cov --cov-report=html --cov-report=term --cov-report
-        xml:.coverage.xml'
+      - '{{.UV_CMD}} run pytest --cov --cov-report=html --cov-report=term --cov-report xml:.coverage.xml'
