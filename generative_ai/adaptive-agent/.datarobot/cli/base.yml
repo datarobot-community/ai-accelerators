@@ -2,13 +2,15 @@
 root:
   - env: PULUMI_CONFIG_PASSPHRASE
     type: secret_string
-    default: ""
+    default: ''
     optional: true
     help: >
-      Enter the passphrase used to encrypt and decrypt the private key. This value is required if you're not using Pulumi
+      Enter the passphrase used to encrypt and decrypt the private key. This value
+      is required if you're not using Pulumi
       Cloud.
   - env: DATAROBOT_DEFAULT_USE_CASE
     type: string
-    default: ""
+    default: ''
     optional: true
-    help: "Enter the default Use Case for this application. If not set, a new Use Case will be created automatically."
+    help: Enter the default Use Case for this application. If not set, a new Use Case
+      will be created automatically.

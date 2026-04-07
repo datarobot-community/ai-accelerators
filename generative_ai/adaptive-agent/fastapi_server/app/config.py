@@ -15,11 +15,10 @@
 
 from typing import Sequence
 
+from app.auth.oauth import OAuthImpl
 from core.telemetry.logging import FormatType, LogLevel
 from datarobot.core.config import DataRobotAppFrameworkBaseSettings
-from pydantic import Field, ValidationInfo, field_validator
-
-from app.auth.oauth import OAuthImpl
+from pydantic import Field, field_validator, ValidationInfo
 
 
 class Config(DataRobotAppFrameworkBaseSettings):

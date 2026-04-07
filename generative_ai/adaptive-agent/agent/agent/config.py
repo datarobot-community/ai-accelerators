@@ -40,19 +40,19 @@ class Config(DataRobotAppFrameworkBaseSettings):
     # Adaptive Agent Demo settings
     main_model: str = Field(
         default="datarobot/azure/gpt-4o",
-        description="Main model for agent responses (used when thinking mode is active)"
+        description="Main model for agent responses (used when thinking mode is active)",
     )
     fast_model: str = Field(
         default="datarobot/azure/gpt-4o-mini",
-        description="Faster model for simple responses (used when thinking mode is off)"
+        description="Faster model for simple responses (used when thinking mode is off)",
     )
     reflection_model: str = Field(
         default="datarobot/azure/gpt-4o-mini",
-        description="Model for reflection/correction detection"
+        description="Model for reflection/correction detection",
     )
     enable_adaptive_thinking: bool = Field(
         default=True,
-        description="Enable adaptive think mode toggling based on conversation analysis"
+        description="Enable adaptive think mode toggling based on conversation analysis",
     )
 
     local_dev_port: int = Field(

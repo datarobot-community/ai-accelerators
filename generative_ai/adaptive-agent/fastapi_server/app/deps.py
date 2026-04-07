@@ -11,26 +11,25 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import logging
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
+import logging
 from pathlib import Path
 from typing import AsyncGenerator, Dict
 from urllib.parse import urlparse
 from uuid import UUID
-
-from datarobot.auth.oauth import AsyncOAuthComponent
 
 from app.ag_ui.stream_manager import AGUIStreamManager, create_stream_manager
 from app.auth.api_key import APIKeyValidator
 from app.auth.oauth import get_oauth
 from app.chats import ChatRepository
 from app.config import Config
-from app.db import DBCtx, create_db_ctx
+from app.db import create_db_ctx, DBCtx
 from app.messages import MessageRepository
 from app.users.identity import IdentityRepository
 from app.users.tokens import Tokens
 from app.users.user import UserRepository
+from datarobot.auth.oauth import AsyncOAuthComponent
 
 logger = logging.getLogger(__name__)
 

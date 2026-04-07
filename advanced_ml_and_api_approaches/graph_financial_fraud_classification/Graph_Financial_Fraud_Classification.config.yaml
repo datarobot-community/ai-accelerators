@@ -1,7 +1,8 @@
 ---
-description: This accelerator demonstrates the end-to-end implementation and integration of a Graph Isomorphism
-  Network (GIN) as a custom model task in DataRobot. It serves multiple purposes, including model development,
-  local testing, and integration with DataRobot’s custom modeling framework.
+description: This accelerator demonstrates the end-to-end implementation and integration
+  of a Graph Isomorphism Network (GIN) as a custom model task in DataRobot. It serves
+  multiple purposes, including model development, local testing, and integration with
+  DataRobot’s custom modeling framework.
 file_name: Graph_Financial_Fraud_Classification.ipynb
 languages:
   - python

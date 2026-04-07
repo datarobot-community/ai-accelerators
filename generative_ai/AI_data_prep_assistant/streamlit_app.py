@@ -103,9 +103,9 @@ def main():
             df = pd.read_csv(uploaded_file)
             st.session_state["datasets"][uploaded_file.name] = df
             # Store metadata for each dataset
-            st.session_state["datasets_metadata"][
-                uploaded_file.name
-            ] = get_dataset_metadata(df)
+            st.session_state["datasets_metadata"][uploaded_file.name] = (
+                get_dataset_metadata(df)
+            )
 
     # Add title
     st.title("AI Data Preparation Assistant")

@@ -19,10 +19,10 @@ REGULATION_NAMES = {
 def get_regulation_display_name(filename: str) -> str:
     """
     Get the human-readable display name for a regulation file.
-    
+
     Args:
         filename: The regulation filename (e.g., "AEDAPOL001v11CommonDefinitions.md")
-    
+
     Returns:
         Human-readable name if mapping exists, otherwise returns the filename
     """

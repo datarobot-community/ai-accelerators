@@ -14,8 +14,8 @@
 
 import asyncio
 import logging
-import uuid
 from typing import Any, AsyncGenerator, Dict
+import uuid
 
 from ag_ui.core import (
     BaseEvent,
@@ -31,12 +31,11 @@ from ag_ui.core import (
     TextMessageStartEvent,
     ToolCallChunkEvent,
 )
+from app.ag_ui.base import AGUIAgent
+from app.config import Config
 from openai import AsyncOpenAI, AsyncStream
 from openai.types.chat import ChatCompletionChunk
 from pydantic import TypeAdapter
-
-from app.ag_ui.base import AGUIAgent
-from app.config import Config
 
 logger = logging.getLogger(__name__)
 
@@ -172,10 +171,10 @@ class DataRobotAGUIAgent(AGUIAgent):
 
             logger.debug("Sending request to agent's chat completion endpoint")
 
-            generator: AsyncStream[
-                ChatCompletionChunk
-            ] = await self.client.chat.completions.create(
-                **self._prepare_chat_completions_input(input)
+            generator: AsyncStream[ChatCompletionChunk] = (
+                await self.client.chat.completions.create(
+                    **self._prepare_chat_completions_input(input)
+                )
             )
             chunks = 0
             async for chunk in generator:
@@ -209,12 +208,14 @@ class DataRobotAGUIAgent(AGUIAgent):
                     for tool_call in choice.delta.tool_calls:
                         yield ToolCallChunkEvent(
                             tool_call_id=tool_call.id,
-                            tool_call_name=tool_call.function.name
-                            if tool_call.function
-                            else None,
-                            delta=tool_call.function.arguments
-                            if tool_call.function
-                            else None,
+                            tool_call_name=(
+                                tool_call.function.name if tool_call.function else None
+                            ),
+                            delta=(
+                                tool_call.function.arguments
+                                if tool_call.function
+                                else None
+                            ),
                             parent_message_id=message_id,
                         )
             if chunks == 0:

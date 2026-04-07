@@ -1,3 +1,4 @@
+---
 root:
   - env: SESSION_SECRET_KEY
     type: secret_string
@@ -22,8 +23,8 @@ root:
       Choose your backend OAuth provider.
       You can choose DataRobot (default), or you can choose Authlib and host it in the app for more customization.
     options:
-      - name: "DataRobot OAuth Provider"
-        value: "datarobot_provider.py"
+      - name: DataRobot OAuth Provider
+        value: datarobot_provider.py
 
   - key: OAuth_Providers
     type: string
@@ -33,9 +34,9 @@ root:
     help: |
       Which authorization servers do you want in the application?
     options:
-      - name: "Google"
+      - name: Google
         requires: google_auth_server
-      - name: "Box"
+      - name: Box
         requires: box_auth_server
 
 
@@ -69,6 +70,6 @@ box_auth_server:
     type: secret_string
     default:
     optional: false
-    help: |
+    help: |-
       Enter the client secret for the Box data source.
       For more information on setting up the provider, see "OAuth Applications" in the README.

@@ -13,28 +13,29 @@
 # limitations under the License.
 from unittest.mock import AsyncMock, patch
 
+from app import create_app, Deps
+from app.api.v1.auth import (
+    IdentitySchema,
+    OAuthProviderListSchema,
+    OAuthRedirectSchema,
+    UserSchema,
+    validate_dr_api_key,
+    ValidateOAuthIdentitiesResponse,
+)
+from app.auth.api_key import DRUser
+from app.auth.ctx import get_auth_ctx, must_get_auth_ctx
+from app.auth.session import get_oauth_sess_key
+from app.users.identity import AuthSchema
+from app.users.identity import Identity as AppIdentity
+from app.users.identity import IdentityCreate
+from app.users.user import User as AppUser
+from app.users.user import UserCreate
 from datarobot.auth.oauth import OAuthData, OAuthFlowSession, OAuthProvider, OAuthToken
 from datarobot.auth.session import AuthCtx
 from datarobot.auth.typing import Metadata
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from app import Deps, create_app
-from app.api.v1.auth import (
-    IdentitySchema,
-    OAuthProviderListSchema,
-    OAuthRedirectSchema,
-    UserSchema,
-    ValidateOAuthIdentitiesResponse,
-    validate_dr_api_key,
-)
-from app.auth.api_key import DRUser
-from app.auth.ctx import get_auth_ctx, must_get_auth_ctx
-from app.auth.session import get_oauth_sess_key
-from app.users.identity import AuthSchema, IdentityCreate
-from app.users.identity import Identity as AppIdentity
-from app.users.user import User as AppUser
-from app.users.user import UserCreate
 from tests.conftest import dep
 from tests.session import sess_client
 
@@ -376,9 +377,9 @@ async def test__auth__oauth_callback__multiple_requests_same_code(
             set_sess({get_oauth_sess_key(oauth_sess.state): oauth_sess.model_dump()})
 
             resp1 = client.post("/api/v1/oauth/callback/", params=callback_params)
-            assert resp1.status_code == 200, (
-                f"First request should succeed: {resp1.text}"
-            )
+            assert (
+                resp1.status_code == 200
+            ), f"First request should succeed: {resp1.text}"
 
             # Verify user was created successfully
             user_data = UserSchema(**resp1.json())
@@ -399,9 +400,9 @@ async def test__auth__oauth_callback__multiple_requests_same_code(
             )
 
             # Verify the mock was called twice (reproducing the double exchange_code calls from logs)
-            assert mock_exchange_code.call_count == 2, (
-                f"exchange_code should be called twice, got {mock_exchange_code.call_count} calls"
-            )
+            assert (
+                mock_exchange_code.call_count == 2
+            ), f"exchange_code should be called twice, got {mock_exchange_code.call_count} calls"
 
 
 async def test__auth__validate_oauth_identities__success(

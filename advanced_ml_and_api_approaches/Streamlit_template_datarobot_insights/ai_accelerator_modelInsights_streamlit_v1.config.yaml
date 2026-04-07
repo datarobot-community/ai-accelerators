@@ -1,7 +1,7 @@
 ---
-description: "This notebook shows how to build an app presenting Datarobot predictions and explanation\
-  \ for your business stakeholders.\nThis workflow uses churn prediction use case as an example to build\
-  \ an app using prediction output."
+description: "This notebook shows how to build an app presenting Datarobot predictions\
+  \ and explanation for your business stakeholders.\nThis workflow uses churn prediction\
+  \ use case as an example to build an app using prediction output."
 file_name: ai_accelerator_modelInsights_streamlit_v1.ipynb
 languages:
   - python

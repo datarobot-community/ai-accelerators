@@ -12,12 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import pytest
 from datarobot.auth.identity import Identity
 from datarobot.auth.oauth import OAuthData, OAuthProvider, OAuthToken, Profile
 from datarobot.auth.session import AuthCtx
 from datarobot.auth.typing import Metadata
 from datarobot.auth.users import User
+import pytest
 
 
 @pytest.fixture

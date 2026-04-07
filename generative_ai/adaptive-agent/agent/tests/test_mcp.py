@@ -20,12 +20,11 @@ import asyncio
 import os
 from types import SimpleNamespace
 from typing import Any
-from unittest.mock import AsyncMock, MagicMock, PropertyMock, patch
-
-import pytest
-from langchain_core.messages import AIMessage
+from unittest.mock import AsyncMock, MagicMock, patch, PropertyMock
 
 from agent import MyAgent
+from langchain_core.messages import AIMessage
+import pytest
 
 
 def create_mock_mcp_tool(name: str):
@@ -222,9 +221,9 @@ class TestMyAgentLangGraphMCPIntegration:
             _ = agent.agent_writer
 
         assert agent._mcp_tools == mock_tools
-        assert access_count["count"] >= 2, (
-            f"Expected at least 2 accesses (one per agent), got {access_count['count']}"
-        )
+        assert (
+            access_count["count"] >= 2
+        ), f"Expected at least 2 accesses (one per agent), got {access_count['count']}"
 
     @patch("datarobot_genai.langgraph.mcp.load_mcp_tools", new_callable=AsyncMock)
     def test_mcp_tool_execution_makes_request_to_server(

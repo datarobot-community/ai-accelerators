@@ -14,9 +14,9 @@
 import os
 from typing import Final
 
+from datarobot_pulumi_utils.pulumi.stack import PROJECT_NAME
 import pulumi
 import pulumi_datarobot as datarobot
-from datarobot_pulumi_utils.pulumi.stack import PROJECT_NAME
 
 # these configs are expected in the web application
 DATAROBOT_OAUTH_PROVIDERS: Final[str] = "DATAROBOT_OAUTH_PROVIDERS"

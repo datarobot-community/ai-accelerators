@@ -1,7 +1,8 @@
 ---
-description: "This example notebook outlines how to read in an Amazon Athena table and upload it to DataRobot's\
-  \ AI Catalog.\nThen, using this dataset, we'll create a project, deploy the top performing model to\
-  \ a DataRobot prediction server, and make batch predictions with a test dataset."
+description: "This example notebook outlines how to read in an Amazon Athena table\
+  \ and upload it to DataRobot's AI Catalog.\nThen, using this dataset, we'll create\
+  \ a project, deploy the top performing model to a DataRobot prediction server, and\
+  \ make batch predictions with a test dataset."
 file_name: Amazon_S3_End_to_End.ipynb
 languages:
   - python

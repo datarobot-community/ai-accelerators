@@ -5,46 +5,46 @@ Based on server/services/new/evaluate_compliance.py
 
 import json
 import os
+from pathlib import Path
 import re
 import sys
-from pathlib import Path
-from typing import List, Tuple, Optional, Dict
+from typing import Dict, List, Optional, Tuple
 
-from app.utils.json_schema import sanitize_column_name, get_default_columns
+from app.utils.json_schema import get_default_columns, sanitize_column_name
 
 
 def _get_reasoning_effort() -> Optional[str]:
     """
     Get reasoning effort setting from environment.
     Only applies when MODE=direct-llm.
-    
+
     Returns:
         Reasoning effort value ('low', 'medium', 'high') or None if not applicable.
     """
     mode = os.environ.get("MODE", "dr-gateway").lower()
-    
+
     # Only apply reasoning_effort for direct-llm mode
     # LLM gateways typically don't support this parameter
     if mode != "direct-llm":
         return None
-    
+
     reasoning_effort = os.environ.get("REASONING_EFFORT", "").lower()
-    
+
     # Validate the value
     valid_values = {"low", "medium", "high"}
     if reasoning_effort in valid_values:
         return reasoning_effort
-    
+
     return None
 
 
 def read_markdown_files(directory: Path) -> List[Tuple[str, str]]:
     """
     Read all markdown files from a directory.
-    
+
     Args:
         directory: Path to directory containing markdown files
-    
+
     Returns:
         List of tuples (filename, content)
     """
@@ -61,10 +61,10 @@ def read_markdown_files(directory: Path) -> List[Tuple[str, str]]:
 def _build_column_keys_description(columns: List[Dict]) -> str:
     """
     Build a string listing column keys for the prompt.
-    
+
     Args:
         columns: List of column dicts with 'name' and 'description'
-        
+
     Returns:
         Comma-separated list of sanitized column names
     """
@@ -75,10 +75,10 @@ def _build_column_keys_description(columns: List[Dict]) -> str:
 def _build_column_descriptions(columns: List[Dict]) -> str:
     """
     Build detailed column descriptions for the prompt.
-    
+
     Args:
         columns: List of column dicts with 'name' and 'description'
-        
+
     Returns:
         Formatted string with column descriptions
     """
@@ -160,16 +160,16 @@ DEFAULT_USER_PROMPT = "Conduct a comprehensive compliance evaluation based on th
 
 
 def build_compliance_prompt(
-    regulation_name: str, 
-    regulation_content: str, 
+    regulation_name: str,
+    regulation_content: str,
     input_sample: str,
     custom_columns: Optional[List[Dict]] = None,
     custom_system_prompt: Optional[str] = None,
-    custom_user_prompt: Optional[str] = None
+    custom_user_prompt: Optional[str] = None,
 ) -> List[dict]:
     """
     Build the prompt messages for LLM compliance evaluation.
-    
+
     Args:
         regulation_name: Name of the regulation file
         regulation_content: Content of the regulation
@@ -179,32 +179,36 @@ def build_compliance_prompt(
                               Will be prefixed with FIXED_SYSTEM_PREFIX.
         custom_user_prompt: Optional custom user prompt. Will be appended with
                             regulation name, content, and input sample.
-    
+
     Returns:
         List of message dicts for LLM API
     """
     # Use custom columns if provided, otherwise use defaults from JSON schema
     columns = custom_columns if custom_columns else get_default_columns()
-    
+
     # Build column keys list and descriptions
     column_keys = _build_column_keys_description(columns)
     column_descriptions = _build_column_descriptions(columns)
-    
+
     # Format column definitions section
     column_definitions_section = (
         f"Each object in the array must have the following keys: {column_keys}.\n\n"
         f"Column definitions:\n{column_descriptions}"
     )
-    
+
     # Use custom system prompt if provided, otherwise use default
-    editable_system_prompt = custom_system_prompt if custom_system_prompt else DEFAULT_SYSTEM_PROMPT
-    
+    editable_system_prompt = (
+        custom_system_prompt if custom_system_prompt else DEFAULT_SYSTEM_PROMPT
+    )
+
     # Build complete system message: Fixed prefix + system prompt + column definitions (auto-appended)
     system_msg = f"{FIXED_SYSTEM_PREFIX} {editable_system_prompt}\n\n{column_definitions_section}"
 
     # Use custom user prompt if provided, otherwise use default
-    editable_user_prompt = custom_user_prompt if custom_user_prompt else DEFAULT_USER_PROMPT
-    
+    editable_user_prompt = (
+        custom_user_prompt if custom_user_prompt else DEFAULT_USER_PROMPT
+    )
+
     # Build complete user message: editable portion + regulation and input content
     user_msg = (
         f"{editable_user_prompt}\n\n"
@@ -221,32 +225,40 @@ def build_compliance_prompt(
     ]
 
 
-def evaluate_compliance(client, model: str, messages: List[dict], json_schema: dict) -> List[dict]:
+def evaluate_compliance(
+    client, model: str, messages: List[dict], json_schema: dict
+) -> List[dict]:
     """
     Evaluate compliance using LLM with structured output.
-    
+
     Args:
         client: OpenAI-compatible client
         model: Model name to use
         messages: List of message dicts for the LLM
         json_schema: JSON schema for structured output
-    
+
     Returns:
         List of compliance issue dicts
     """
     # Try structured output with JSON schema - handle different API formats
     response = None
     format_attempts = [
-        {"type": "json_object", "schema": json_schema},             # Alternative format
-        {"type": "json_schema", "json_schema": {"name": "compliance_report", "schema": json_schema}},
-        {"type": "json_schema", "json_schema": {"schema": json_schema}},    # OpenAI-style JSON Schema format (strict)
-        {"type": "json_object", "json_schema": json_schema},        # Meta Llama format
-        {"type": "json_object"},                                    # Basic JSON mode
+        {"type": "json_object", "schema": json_schema},  # Alternative format
+        {
+            "type": "json_schema",
+            "json_schema": {"name": "compliance_report", "schema": json_schema},
+        },
+        {
+            "type": "json_schema",
+            "json_schema": {"schema": json_schema},
+        },  # OpenAI-style JSON Schema format (strict)
+        {"type": "json_object", "json_schema": json_schema},  # Meta Llama format
+        {"type": "json_object"},  # Basic JSON mode
     ]
-    
+
     # Get reasoning effort from environment (only applies in direct-llm mode)
     reasoning_effort = _get_reasoning_effort()
-    
+
     for attempt, format_param in enumerate(format_attempts):
         try:
             # Build kwargs for the API call
@@ -256,32 +268,37 @@ def evaluate_compliance(client, model: str, messages: List[dict], json_schema: d
                 "temperature": 0.1,
                 "response_format": format_param,
             }
-            
+
             # Add reasoning_effort if configured (direct-llm mode only)
             if reasoning_effort:
                 create_kwargs["reasoning_effort"] = reasoning_effort
-            
+
             response = client.chat.completions.create(**create_kwargs)
             if attempt > 0:
-                print(f"Info: Compliance Evaluator - Using response_format attempt {attempt + 1}", file=sys.stderr)
+                print(
+                    f"Info: Compliance Evaluator - Using response_format attempt {attempt + 1}",
+                    file=sys.stderr,
+                )
             break
         except Exception as e:
             if attempt < len(format_attempts) - 1:
                 continue  # Try next format
             else:
-                raise RuntimeError(f"Failed to create chat completion with all response_format attempts. Last error: {e}")
-    
+                raise RuntimeError(
+                    f"Failed to create chat completion with all response_format attempts. Last error: {e}"
+                )
+
     if response is None:
         raise RuntimeError("Failed to get response from API")
 
     # Parse the JSON response
     content = response.choices[0].message.content if response.choices else ""
-    
+
     def _normalize_and_extract(content_text: str) -> List[dict]:
         """Normalize content and extract compliance report from JSON."""
         if not content_text or not content_text.strip():
             return []
-        
+
         try:
             # Remove markdown code blocks using regex (handles BOM, whitespace, case variations)
             # Matches patterns like: \ufeff```json, ```json, ```JSON, ```, with optional whitespace/newlines
@@ -292,32 +309,29 @@ def evaluate_compliance(client, model: str, messages: List[dict], json_schema: d
             # - Optional trailing whitespace/newlines
             # - Closing ``` markers
             # Include BOM character directly in the pattern (it's not a regex metacharacter)
-            bom_char = '\ufeff'
+            bom_char = "\ufeff"
             content_clean = re.sub(
-                rf'^\s*{bom_char}?\s*```\s*(?:json\s*)?',
-                '',
+                rf"^\s*{bom_char}?\s*```\s*(?:json\s*)?",
+                "",
                 content_text,
-                flags=re.IGNORECASE | re.DOTALL
+                flags=re.IGNORECASE | re.DOTALL,
             )
-            content_clean = re.sub(
-                r'```\s*$',
-                '',
-                content_clean,
-                flags=re.DOTALL
-            )
+            content_clean = re.sub(r"```\s*$", "", content_clean, flags=re.DOTALL)
             content_clean = content_clean.strip()
-            
+
             if not content_clean:
                 return []
-            
+
             # Try to parse JSON
             parsed = json.loads(content_clean)
-            
+
             # Extract compliance_report array
             if isinstance(parsed, list):
                 return parsed
             if isinstance(parsed, dict):
-                if "compliance_report" in parsed and isinstance(parsed["compliance_report"], list):
+                if "compliance_report" in parsed and isinstance(
+                    parsed["compliance_report"], list
+                ):
                     return parsed["compliance_report"]
                 # Try to find any list value
                 for value in parsed.values():
@@ -328,10 +342,10 @@ def evaluate_compliance(client, model: str, messages: List[dict], json_schema: d
             return []
         except Exception:
             return []
-    
+
     # Try to parse the initial response
     report_items = _normalize_and_extract(content)
-    
+
     # Fallback: retry without response_format if initial parse failed or returned empty
     if not report_items:
         try:
@@ -340,16 +354,20 @@ def evaluate_compliance(client, model: str, messages: List[dict], json_schema: d
                 "messages": messages,
                 "temperature": 0.1,
             }
-            
+
             # Add reasoning_effort if configured (direct-llm mode only)
             if reasoning_effort:
                 fallback_kwargs["reasoning_effort"] = reasoning_effort
-            
+
             fallback_response = client.chat.completions.create(**fallback_kwargs)
-            fallback_content = fallback_response.choices[0].message.content if fallback_response.choices else ""
+            fallback_content = (
+                fallback_response.choices[0].message.content
+                if fallback_response.choices
+                else ""
+            )
             report_items = _normalize_and_extract(fallback_content)
         except Exception as e:
             print(f"Fallback request failed: {e}", file=sys.stderr)
             return []
-    
+
     return report_items

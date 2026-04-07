@@ -13,9 +13,9 @@
 # limitations under the License.
 
 import asyncio
+from concurrent.futures import ThreadPoolExecutor
 import json
 import os
-from concurrent.futures import ThreadPoolExecutor
 from unittest.mock import ANY, AsyncMock, MagicMock, Mock, patch
 
 import pytest

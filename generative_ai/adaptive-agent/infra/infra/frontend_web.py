@@ -12,12 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import time
 from pathlib import Path
+import time
 
+from datarobot_pulumi_utils.pulumi.stack import PROJECT_NAME
 import pulumi
 import pulumi_command as command
-from datarobot_pulumi_utils.pulumi.stack import PROJECT_NAME
 
 project_dir = Path(__file__).parent.parent.parent
 

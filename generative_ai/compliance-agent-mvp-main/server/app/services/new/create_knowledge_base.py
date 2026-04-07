@@ -1,7 +1,7 @@
 import argparse
+from pathlib import Path
 import re
 import sys
-from pathlib import Path
 
 try:
     import fitz  # PyMuPDF  # type: ignore
@@ -112,7 +112,9 @@ def convert_folder(input_dir: Path, output_dir: Path) -> int:
             out_name = sanitize_stem(pdf_path.stem) + ".md"
             out_path = output_dir / out_name
             out_path.write_text(md_content, encoding="utf-8")
-            print(f"Converted: {pdf_path.name} -> {out_path.relative_to(output_dir.parent)}")
+            print(
+                f"Converted: {pdf_path.name} -> {out_path.relative_to(output_dir.parent)}"
+            )
             successes += 1
         except Exception as e:
             print(f"Failed to convert {pdf_path.name}: {e}", file=sys.stderr)
@@ -150,7 +152,10 @@ def main() -> None:
     output_dir = args.output.resolve()
 
     if not input_dir.exists() or not input_dir.is_dir():
-        print(f"Input directory does not exist or is not a directory: {input_dir}", file=sys.stderr)
+        print(
+            f"Input directory does not exist or is not a directory: {input_dir}",
+            file=sys.stderr,
+        )
         sys.exit(1)
 
     num = convert_folder(input_dir, output_dir)
@@ -159,5 +164,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
-

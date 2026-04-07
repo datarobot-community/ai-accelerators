@@ -1,7 +1,7 @@
 ---
-description: This notebook started its life as a simple way to extract the data from the DataRobot User
-  Activity Monitor and evolved in to a method of dropping a column or make the column in to a random,
-  yet consistent way to allow for reporting
+description: This notebook started its life as a simple way to extract the data from
+  the DataRobot User Activity Monitor and evolved in to a method of dropping a column
+  or make the column in to a random, yet consistent way to allow for reporting
 file_name: Simple_Log_Lister.ipynb
 languages:
   - python

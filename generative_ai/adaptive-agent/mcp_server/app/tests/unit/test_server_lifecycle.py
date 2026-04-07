@@ -14,10 +14,9 @@
 
 from unittest.mock import MagicMock
 
-import pytest
-from mcp.server.fastmcp import FastMCP
-
 from app.core.server_lifecycle import ServerLifecycle
+from mcp.server.fastmcp import FastMCP
+import pytest
 
 
 @pytest.fixture

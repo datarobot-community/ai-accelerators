@@ -14,16 +14,13 @@
 from datetime import datetime
 from typing import Any
 
-from datarobot_genai.core.agents import (
-    make_system_prompt,
-)
+from agent.config import Config
+from datarobot_genai.core.agents import make_system_prompt
 from datarobot_genai.langgraph.agent import LangGraphAgent
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_litellm.chat_models import ChatLiteLLM
-from langgraph.graph import END, START, MessagesState, StateGraph
+from langgraph.graph import END, MessagesState, START, StateGraph
 from langgraph.prebuilt import create_react_agent
-
-from agent.config import Config
 
 config = Config()
 

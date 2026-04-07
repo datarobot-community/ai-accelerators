@@ -16,24 +16,22 @@ Utility functions for creating needed runtime parameters, credentials, and valid
 the LLM configuration is functional prior to deployment.
 """
 
-from dataclasses import dataclass, field
-import os
-import tempfile
 from collections import namedtuple
-from pathlib import Path
+from dataclasses import dataclass, field
 import logging
+import os
+from pathlib import Path
+import tempfile
 
 import datarobot
-import pulumi
-import pulumi_datarobot
-from litellm import completion
-
-
-from datarobot_pulumi_utils.pulumi.stack import PROJECT_NAME
 from datarobot_pulumi_utils.common.feature_flags import (
     eval_feature_flag_statuses,
     FeatureFlagSet,
 )
+from datarobot_pulumi_utils.pulumi.stack import PROJECT_NAME
+from litellm import completion
+import pulumi
+import pulumi_datarobot
 
 INFRA_DIR = Path(__file__).parent
 

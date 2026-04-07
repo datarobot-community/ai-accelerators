@@ -1,6 +1,7 @@
 ---
-description: This notebook outlines how to use zero-shot text classification with large language models
-  (LLMs), focusing on its application in error analysis of supervised text classification models.
+description: This notebook outlines how to use zero-shot text classification with
+  large language models (LLMs), focusing on its application in error analysis of supervised
+  text classification models.
 file_name: Zero Shot Test Classification for Error Analysis.ipynb
 languages:
   - python

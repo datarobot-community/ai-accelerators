@@ -173,9 +173,11 @@ with st.expander("Configuration", expanded=True):
         key="RowsRequired",
         min_value=100,
         max_value=1000000,
-        value=st.session_state["RowsRequired"]
-        if "RowsRequired" in st.session_state
-        else 1000,
+        value=(
+            st.session_state["RowsRequired"]
+            if "RowsRequired" in st.session_state
+            else 1000
+        ),
         step=100,
         disabled=True if "Result" in st.session_state else False,
     )

@@ -13,14 +13,13 @@
 # limitations under the License.
 
 import asyncio
-import queue
 from collections.abc import AsyncGenerator
 from functools import partial
-from typing import Callable, Dict, Generic, ParamSpec, final
+import queue
+from typing import Callable, Dict, final, Generic, ParamSpec
 from uuid import UUID
 
 from ag_ui.core import BaseEvent, RunAgentInput
-
 from app.ag_ui.base import AGUIAgent
 from app.ag_ui.dr import DataRobotAGUIAgent
 from app.ag_ui.storage import AGUIAgentWithStorage

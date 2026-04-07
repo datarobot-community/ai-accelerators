@@ -9,23 +9,23 @@ includes:
 
 tasks:
   install:
-    desc: "🔧 Install dependencies"
+    desc: 🔧 Install dependencies
     cmds:
       - echo "🔧 Installing dependencies.."
-      - "{{.UV_CMD}} sync --all-extras"
+      - '{{.UV_CMD}} sync --all-extras'
       - task: generate-docker-requirement-file
     silent: true
 
   dev:
-    desc: "🔨 Running MCP locally"
+    desc: 🔨 Running MCP locally
     cmds:
       - echo "🔨 Starting development server"
       - task: install
-      - "{{.UV_CMD}} run app/main.py"
+      - '{{.UV_CMD}} run app/main.py'
     silent: true
 
   dev-background:
-    desc: "🔨 Running MCP locally in background"
+    desc: 🔨 Running MCP locally in background
     vars:
       PORT: 8082
     cmds:
@@ -61,35 +61,36 @@ tasks:
     silent: true
 
   dev-otel-background:
-    desc: "🔨 Running MCP locally in background with OTEL"
+    desc: 🔨 Running MCP locally in background with OTEL
     cmds:
       - echo "🔨 Starting development server with OTEL"
       - >-
-        docker run -d --name jaeger -p 16686:16686 -p 4318:4318 -e COLLECTOR_OTLP_ENABLED=true jaegertracing/all-in-one:1.54
+        docker run -d --name jaeger -p 16686:16686 -p 4318:4318 -e COLLECTOR_OTLP_ENABLED=true
+        jaegertracing/all-in-one:1.54
         || docker start jaeger || true
     silent: true
 
   lint:
-    desc: "🧹 Run linters"
+    desc: 🧹 Run linters
     cmds:
       - echo "🧹 Running linters.."
-      - "{{.UV_CMD}} sync --all-extras"
-      - "{{.UV_CMD}} run ruff format ."
-      - "{{.UV_CMD}} run ruff check . --fix"
+      - '{{.UV_CMD}} sync --all-extras'
+      - '{{.UV_CMD}} run ruff format .'
+      - '{{.UV_CMD}} run ruff check . --fix'
       - "{{.UV_CMD}} run mypy --pretty --exclude 'app/tests' ."
     silent: true
 
   lint-check:
-    desc: "🧹 Check whether the codebase is linted"
+    desc: 🧹 Check whether the codebase is linted
     cmds:
-      - "{{.UV_CMD}} sync --all-extras"
-      - "{{.UV_CMD}} run ruff format --check ."
-      - "{{.UV_CMD}} run ruff check ."
+      - '{{.UV_CMD}} sync --all-extras'
+      - '{{.UV_CMD}} run ruff format --check .'
+      - '{{.UV_CMD}} run ruff check .'
       - "{{.UV_CMD}} run mypy --pretty --exclude 'app/tests' ."
     silent: true
 
   test:
-    desc: "🧪 Run tests"
+    desc: 🧪 Run tests
     cmds:
       - rm -rf .coverage .coverage.xml htmlcov
       - echo "🧪 Running all tests.."
@@ -117,7 +118,7 @@ tasks:
         -v info -c .licenserc.yaml header check
 
   ete:
-    desc: "Run ETE tests"
+    desc: Run ETE tests
     cmds:
       # Start jaeger in background
       - task: dev-otel-background
@@ -136,7 +137,7 @@ tasks:
         -s -vv
     silent: true
   integration:
-    desc: "Run integration tests"
+    desc: Run integration tests
     cmds:
       - echo "Running integration tests"
       - >-
@@ -144,17 +145,18 @@ tasks:
         -s -vv
     silent: true
   unit:
-    desc: "Run unit tests"
+    desc: Run unit tests
     cmds:
       - rm -rf .coverage .coverage.xml htmlcov
       - echo "Running unit tests"
       - >-
         {{.UV_CMD}} sync --all-extras && {{.UV_CMD}} run pytest {{if .CLI_ARGS}}{{.CLI_ARGS}}{{else}}app/tests/unit/{{end}}
-        --cov=app --cov-report=xml --cov-report=html --cov-report=term-missing -s -vv
+        --cov=app --cov-report=xml --cov-report=html --cov-report=term-missing -s
+        -vv
     silent: true
 
   test-interactive:
-    desc: "🧪 Run interactive MCP client test"
+    desc: 🧪 Run interactive MCP client test
     cmds:
       # Set up cleanup to run on exit
       - defer: |
@@ -177,20 +179,23 @@ tasks:
     silent: true
 
   generate-docker-requirement-file:
-    desc: "🔨 Generate docker requirements.txt file"
+    desc: 🔨 Generate docker requirements.txt file
     cmds:
       - echo "🔨 Generating docker requirements.txt file..."
       # If the content of the requirement.txt file doesn't change, don't trigger an update
       - >-
-        {{.UV_CMD}} export --format requirements-txt --no-emit-project --project . > ./docker/requirements.txt.tmp && if !
-        cmp -s ./docker/requirements.txt.tmp ./docker/requirements.txt; then mv ./docker/requirements.txt.tmp ./docker/requirements.txt;
+        {{.UV_CMD}} export --format requirements-txt --no-emit-project --project .
+        > ./docker/requirements.txt.tmp && if !
+        cmp -s ./docker/requirements.txt.tmp ./docker/requirements.txt; then mv ./docker/requirements.txt.tmp
+        ./docker/requirements.txt;
         else rm ./docker/requirements.txt.tmp; fi
     silent: true
 
   release_files:
-    desc: "🔨 Make sure to move these files to the root of the repository before a release"
+    desc: 🔨 Make sure to move these files to the root of the repository before a release
     cmds:
       - >-
-        echo "mkdir -p ./docs ./img && mv ./dr_mcp/docs/* ./docs/ && mv ./dr_mcp/img/* ./img/ && mv ./dr_mcp/.env.template
+        echo "mkdir -p ./docs ./img && mv ./dr_mcp/docs/* ./docs/ && mv ./dr_mcp/img/*
+        ./img/ && mv ./dr_mcp/.env.template
         ./.env.template && mv ./dr_mcp/README.md ./README.md"
     silent: true

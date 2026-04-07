@@ -33,10 +33,10 @@ header:
   paths:
     # do NOT modify the next line as it is used by the groovy script in the CI pipeline
     # INSERT_FILES_FROM_PULL_REQUEST_HERE
-    - ""
+    - ''
     # - You can temporarily list files below which will be checked when running the tool locally.
     # - 'new-file01.py'
-    - "**/*.py"
+    - '**/*.py'
 
   paths-ignore:
     # these files/directories should not be analyzed

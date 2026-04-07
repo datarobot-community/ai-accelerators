@@ -21,12 +21,10 @@ handle authentication setup with a default test user.
 """
 
 import datetime
-import uuid as uuidpkg
 from typing import Any, AsyncGenerator, Dict, Generator
 from unittest.mock import AsyncMock, MagicMock, patch
+import uuid as uuidpkg
 
-import litellm.exceptions
-import pytest
 from ag_ui.core import (
     BaseEvent,
     RunAgentInput,
@@ -34,6 +32,16 @@ from ag_ui.core import (
     RunStartedEvent,
     UserMessage,
 )
+from app.auth.ctx import (
+    AUTH_CTX_HEADER,
+    get_agent_headers,
+    get_auth_ctx_header,
+    VISITOR_SCOPED_API_KEY_HEADER,
+)
+from app.chats import Chat, ChatRepository
+from app.deps import Deps
+from app.messages import Message, Role
+from app.users.user import User
 from authlib.jose import jwt
 from datarobot.auth.identity import Identity
 from datarobot.auth.session import AuthCtx
@@ -42,17 +50,8 @@ from datarobot.auth.users import User as AuthUser
 from fastapi import Request
 from fastapi.testclient import TestClient
 from httpx_sse import connect_sse
-
-from app.auth.ctx import (
-    AUTH_CTX_HEADER,
-    VISITOR_SCOPED_API_KEY_HEADER,
-    get_agent_headers,
-    get_auth_ctx_header,
-)
-from app.chats import Chat, ChatRepository
-from app.deps import Deps
-from app.messages import Message, Role
-from app.users.user import User
+import litellm.exceptions
+import pytest
 
 
 # Fixtures
@@ -436,7 +435,7 @@ def test_get_agent_headers_with_empty_api_key(
     headers = get_agent_headers(request, sample_auth_ctx, session_secret_key)
 
     assert AUTH_CTX_HEADER in headers
-    assert VISITOR_SCOPED_API_KEY_HEADER not in headers, (
-        "Empty API key value should not be propagated"
-    )
+    assert (
+        VISITOR_SCOPED_API_KEY_HEADER not in headers
+    ), "Empty API key value should not be propagated"
     assert len(headers) == 1

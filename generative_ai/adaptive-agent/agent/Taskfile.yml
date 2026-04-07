@@ -19,13 +19,16 @@ tasks:
     cmds:
       - echo "Updating local dependencies for agent"
       - '{{.UV_CMD}} sync --extra dev'
-      - if [ -f pyproject.toml ] && [ -d docker_context ]; then cp pyproject.toml docker_context/pyproject.toml; fi
-      - if [ -f uv.lock ] && [ -d docker_context ]; then cp uv.lock docker_context/uv.lock; fi
+      - if [ -f pyproject.toml ] && [ -d docker_context ]; then cp pyproject.toml
+        docker_context/pyproject.toml; fi
+      - if [ -f uv.lock ] && [ -d docker_context ]; then cp uv.lock docker_context/uv.lock;
+        fi
     aliases: [req]
   update:
     # Hidden to avoid showing in task list, run `task --list-all` to see it
     # desc: 🛠️ Update local dependencies (refresh uv locks)
-    cmds: [echo "Updating local dependencies for agent", '{{.UV_CMD}} sync --extra dev -U']
+    cmds: [echo "Updating local dependencies for agent", '{{.UV_CMD}} sync --extra
+          dev -U']
     silent: true
   auth-check:
     silent: true
@@ -76,7 +79,8 @@ tasks:
     # desc: 🧪 Run tests with coverage
     cmds:
       - echo "Running pytest on tests"
-      - '{{.UV_CMD}} run pytest -vv --cov --cov-report=html --cov-report=term --cov-report xml:.coverage.xml ./tests/'
+      - '{{.UV_CMD}} run pytest -vv --cov --cov-report=html --cov-report=term --cov-report
+        xml:.coverage.xml ./tests/'
     silent: true
   cli:
     desc: 🖥️ Run the CLI with provided arguments
@@ -151,7 +155,8 @@ tasks:
     desc: 🛑 Stop the development server
     cmds:
       - echo "Stopping development server"
-      - pkill -f '{{.UV_CMD}} run python dev.py' 2>/dev/null || echo "No development server process found"
+      - pkill -f '{{.UV_CMD}} run python dev.py' 2>/dev/null || echo "No development
+        server process found"
   create-docker-context:
     desc: 🐳 Create the template for a local docker_context image
     vars:
@@ -186,7 +191,8 @@ tasks:
     cmds:
       - echo "Building Docker image"
       - cp pyproject.toml docker_context/pyproject.toml
-      - cd docker_context && docker build --platform linux/amd64 -f Dockerfile -t agent:latest .
+      - cd docker_context && docker build --platform linux/amd64 -f Dockerfile -t
+        agent:latest .
   build-docker-context:
     desc: 🐳 Build the Docker image
     cmds:

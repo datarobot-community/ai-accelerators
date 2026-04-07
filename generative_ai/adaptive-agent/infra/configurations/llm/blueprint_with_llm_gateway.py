@@ -19,13 +19,13 @@ and monitoring baked in.
 """
 
 import os
-import datarobot as dr
-import pulumi
-import pulumi_datarobot as datarobot
 
+import datarobot as dr
 from datarobot_pulumi_utils.pulumi import export
 from datarobot_pulumi_utils.pulumi.stack import PROJECT_NAME
 from datarobot_pulumi_utils.schema.exec_envs import RuntimeEnvironments
+import pulumi
+import pulumi_datarobot as datarobot
 
 from . import use_case
 from .libllm import (

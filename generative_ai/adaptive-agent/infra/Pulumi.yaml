@@ -1,5 +1,5 @@
 ---
-name: "agentic-application-starter"
+name: agentic-application-starter
 description: |-
   This application is a template for Generative AI agentic solutions
 runtime:
@@ -10,4 +10,4 @@ config:
   pulumi:tags:
     value:
       pulumi:template: python
-  datarobot:tracecontext: "agentic-application-starter"
+  datarobot:tracecontext: agentic-application-starter

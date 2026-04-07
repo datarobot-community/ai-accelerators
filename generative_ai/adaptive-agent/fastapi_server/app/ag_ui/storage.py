@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from dataclasses import dataclass
 import json
 import logging
-from dataclasses import dataclass
 from typing import AsyncGenerator, final
 from uuid import UUID, uuid4
 
@@ -23,7 +23,6 @@ from ag_ui.core import (
     BaseEvent,
     BaseMessage,
     RunAgentInput,
-    UserMessage,
     RunErrorEvent,
     RunFinishedEvent,
     RunStartedEvent,
@@ -43,8 +42,8 @@ from ag_ui.core import (
     ToolCallEndEvent,
     ToolCallResultEvent,
     ToolCallStartEvent,
+    UserMessage,
 )
-
 from app.ag_ui.base import AGUIAgent
 from app.ag_ui.error_codes import ErrorCodes
 from app.chats import Chat, ChatCreate, ChatRepository
@@ -153,8 +152,10 @@ class AGUIAgentWithStorage(AGUIAgent):
             )
 
         # Load existing conversation history from database
-        existing_messages = list(await self._message_repo.get_chat_messages(existing_chat.uuid))
-        
+        existing_messages = list(
+            await self._message_repo.get_chat_messages(existing_chat.uuid)
+        )
+
         for message in input.messages:
             existing_message = await self._message_repo.get_message_by_agui_id(
                 existing_chat.uuid, message.id
@@ -191,7 +192,7 @@ class AGUIAgentWithStorage(AGUIAgent):
         # Build full message history for the agent
         # Combine existing DB messages with new input messages
         all_messages: list[BaseMessage] = []
-        
+
         # Add existing messages from DB (excluding messages already in input)
         input_message_ids = {m.id for m in input.messages}
         for db_msg in existing_messages:
@@ -217,10 +218,10 @@ class AGUIAgentWithStorage(AGUIAgent):
                         name=db_msg.name or None,
                     )
                 )
-        
+
         # Add new input messages
         all_messages.extend(input.messages)
-        
+
         # Create new input with full history
         input_with_history = RunAgentInput(
             thread_id=input.thread_id,
@@ -231,7 +232,7 @@ class AGUIAgentWithStorage(AGUIAgent):
             state=input.state,
             forwarded_props=input.forwarded_props,
         )
-        
+
         logger.info(
             f"[STORAGE] Sending {len(all_messages)} messages to agent (thread_id={input.thread_id}, existing={len(existing_messages)}, new={len(input.messages)})"
         )

@@ -8,7 +8,7 @@ on:
       - '**Dockerfile.*'
     branches:
       - main
-      - 'release/*'
+      - release/*
   pull_request:
     paths:
       - '**Dockerfile'

@@ -15,15 +15,11 @@ import json
 import os
 from typing import Any
 
+from agent import Config
 import click
 from datarobot_genai.core.cli import AgentEnvironment
 from openai import Stream
-from openai.types.chat import (
-    ChatCompletion,
-    ChatCompletionChunk,
-)
-
-from agent import Config
+from openai.types.chat import ChatCompletion, ChatCompletionChunk
 
 pass_environment = click.make_pass_decorator(AgentEnvironment)
 

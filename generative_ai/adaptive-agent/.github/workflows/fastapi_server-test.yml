@@ -3,28 +3,28 @@ name: Test fastapi_server
 
 on:
   push:
-    branches: ["main"]
+    branches: [main]
     paths:
-      - 'fastapi_server/**.py'
+      - fastapi_server/**.py
 
   pull_request:
-    branches: ["main"]
+    branches: [main]
     paths:
-      - 'fastapi_server/**.py'
+      - fastapi_server/**.py
 
 jobs:
   tests:
-    name: "FastAPI: fastapi_server ${{ matrix.python-version }}"
-    runs-on: "ubuntu-latest"
+    name: 'FastAPI: fastapi_server ${{ matrix.python-version }}'
+    runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: fastapi_server
     strategy:
       matrix:
-        python-version: ["3.11", "3.12", "3.13"]
+        python-version: ['3.11', '3.12', '3.13']
 
     steps:
-      - uses: "actions/checkout@v6"
+      - uses: actions/checkout@v6
 
       # Ref: https://docs.astral.sh/uv/guides/integration/github/#installation
       - name: Setup uv
@@ -32,7 +32,7 @@ jobs:
         with:
           working-directory: fastapi_server
           enable-cache: true
-          cache-dependency-glob: "uv.lock"
+          cache-dependency-glob: uv.lock
           python-version: ${{ matrix.python-version }}
 
       - name: Install Taskfile

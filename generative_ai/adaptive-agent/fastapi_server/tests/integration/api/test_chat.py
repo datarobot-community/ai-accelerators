@@ -11,10 +11,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import uuid as uuidpkg
 from typing import Any, AsyncGenerator
+import uuid as uuidpkg
 
-import pytest
 from ag_ui.core import (
     BaseEvent,
     RunAgentInput,
@@ -22,6 +21,9 @@ from ag_ui.core import (
     RunStartedEvent,
     UserMessage,
 )
+from app import create_app, Deps
+from app.auth.ctx import AUTH_CTX_HEADER, get_auth_ctx
+from app.users.user import User, UserCreate
 from authlib.jose import jwt
 from datarobot.auth.identity import Identity
 from datarobot.auth.session import AuthCtx
@@ -30,10 +32,8 @@ from datarobot.auth.users import User as AuthUser
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from httpx_sse import connect_sse
+import pytest
 
-from app import Deps, create_app
-from app.auth.ctx import AUTH_CTX_HEADER, get_auth_ctx
-from app.users.user import User, UserCreate
 from tests.conftest import dep
 
 
@@ -146,9 +146,9 @@ async def test_chat_endpoint_includes_auth_header(
     # Verify the agent was called with headers
     agent_headers = mock_agent_runner["headers"]
     assert agent_headers is not None, "Expected agent to be called with headers dict"
-    assert isinstance(agent_headers, dict), (
-        f"Expected headers to be a dict, but got {type(agent_headers)}"
-    )
+    assert isinstance(
+        agent_headers, dict
+    ), f"Expected headers to be a dict, but got {type(agent_headers)}"
 
     # Verify the auth context header is present in the headers passed to the agent
     assert AUTH_CTX_HEADER in agent_headers, (
@@ -168,7 +168,7 @@ async def test_chat_endpoint_includes_auth_header(
 
     # Verify metadata contains the DataRobot context
     assert "metadata" in decoded, "JWT should contain metadata"
-    assert "dr_ctx" in decoded["metadata"], (
-        "JWT metadata should contain DataRobot context"
-    )
+    assert (
+        "dr_ctx" in decoded["metadata"]
+    ), "JWT metadata should contain DataRobot context"
     assert decoded["metadata"]["dr_ctx"]["email"] == test_chat_user.email

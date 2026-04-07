@@ -11,11 +11,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import sys
 import os
 from pathlib import Path
+import sys
+from unittest.mock import MagicMock, patch, PropertyMock
+
 import pytest
-from unittest.mock import patch, MagicMock, PropertyMock
 
 # Ensure the test directory is in sys.path for proper imports
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -108,6 +109,7 @@ def test_execution_environment_not_set_and_docker_context(monkeypatch):
     monkeypatch.delenv("DATAROBOT_DEFAULT_EXECUTION_ENVIRONMENT", raising=False)
 
     import importlib
+
     import infra.agent as agent_infra
 
     # Reset the mock to clear calls from the initial import
@@ -149,6 +151,7 @@ def test_execution_environment_not_set_with_docker_image(monkeypatch):
     monkeypatch.setattr("os.path.exists", mock_exists)
 
     import importlib
+
     import infra.agent as agent_infra
 
     # Reset the mock to clear calls from the initial import
@@ -185,6 +188,7 @@ def test_execution_environment_default_set(monkeypatch):
     )
 
     import importlib
+
     import infra.agent as agent_infra
 
     importlib.reload(agent_infra)
@@ -221,6 +225,7 @@ def test_execution_environment_pinned_set(monkeypatch):
     )
 
     import importlib
+
     import infra.agent as agent_infra
 
     importlib.reload(agent_infra)
@@ -252,6 +257,7 @@ def test_execution_environment_custom_set(monkeypatch):
     )
 
     import importlib
+
     import infra.agent as agent_infra
 
     importlib.reload(agent_infra)
@@ -282,6 +288,7 @@ def test_reset_environment_between_tests():
     assert os.environ.get("DATAROBOT_DEFAULT_EXECUTION_ENVIRONMENT") is None
 
     import importlib
+
     import infra.agent as agent_infra
 
     importlib.reload(agent_infra)
@@ -296,6 +303,7 @@ def test_custom_model_created(monkeypatch):
     monkeypatch.delenv("DATAROBOT_DEFAULT_EXECUTION_ENVIRONMENT", raising=False)
 
     import importlib
+
     import infra.agent as agent_infra
 
     # Reset the mock to clear calls from the initial import
@@ -346,6 +354,7 @@ def test_custom_model_created_pinned_version_id(monkeypatch):
     )
 
     import importlib
+
     import infra.agent as agent_infra
 
     # Reset the mock to clear calls from the initial import
@@ -370,6 +379,7 @@ def test_agentic_playground_and_blueprint_created(monkeypatch):
     monkeypatch.setenv("DATAROBOT_ENDPOINT", "https://example.datarobot.com/api/v2")
 
     import importlib
+
     import infra.agent as agent_infra
 
     # Reset the mocks to clear calls from the initial import
@@ -418,6 +428,7 @@ def test_agent_deployment_created_when_env(monkeypatch):
     monkeypatch.delenv("DATAROBOT_DEFAULT_EXECUTION_ENVIRONMENT", raising=False)
 
     import importlib
+
     import infra.agent as agent_infra
 
     # Reset mocks to clear calls from the initial import
@@ -444,6 +455,7 @@ def test_agent_deployment_not_created_when_env_zero(monkeypatch):
     monkeypatch.delenv("DATAROBOT_DEFAULT_EXECUTION_ENVIRONMENT", raising=False)
 
     import importlib
+
     import infra.agent as agent_infra
 
     # Reset mocks to clear calls from the initial import

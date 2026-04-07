@@ -11,19 +11,18 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import json
-import logging
-import uuid as uuidpkg
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, Sequence, cast
-
-from sqlalchemy import Column, DateTime, ForeignKey, desc
-from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import selectinload
-from sqlmodel import Field, Index, Relationship, SQLModel, UniqueConstraint, select
+import json
+import logging
+from typing import Any, cast, Sequence
+import uuid as uuidpkg
 
 from app.db import DBCtx
+from sqlalchemy import Column, DateTime, desc, ForeignKey
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import selectinload
+from sqlmodel import Field, Index, Relationship, select, SQLModel, UniqueConstraint
 
 logger = logging.getLogger(__name__)
 

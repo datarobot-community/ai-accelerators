@@ -3,26 +3,26 @@
 version: 2
 updates:
   # Maintain dependencies for GitHub Actions.
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: github-actions
+    directory: /
     schedule:
-      interval: "weekly"
+      interval: weekly
     open-pull-requests-limit: 5
     labels:
-      - "dependencies"
-      - "github-actions"
+      - dependencies
+      - github-actions
 
   # Maintain dependencies for Python packages.
-  - package-ecosystem: "pip"
+  - package-ecosystem: pip
     insecure-external-code-execution: allow
-    directory: "/"
+    directory: /
     schedule:
-      interval: "daily"
+      interval: daily
     pull-request-branch-name:
-      separator: "/"
+      separator: /
     open-pull-requests-limit: 1
-    versioning-strategy: "increase-if-necessary"
-    target-branch: "main"
+    versioning-strategy: increase-if-necessary
+    target-branch: main
     labels:
-      - "dependencies"
-      - "python"
+      - dependencies
+      - python

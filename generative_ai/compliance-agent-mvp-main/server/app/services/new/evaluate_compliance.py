@@ -1,8 +1,8 @@
 import argparse
 import json
 import os
-import sys
 from pathlib import Path
+import sys
 from typing import List, Optional, Tuple
 
 from server.services.new.json_schema import get_json_schema
@@ -40,7 +40,9 @@ def read_markdown_files(directory: Path) -> List[Tuple[str, str]]:
     return files
 
 
-def truncate_corpus(pairs: List[Tuple[str, str]], max_chars: int) -> List[Tuple[str, str]]:
+def truncate_corpus(
+    pairs: List[Tuple[str, str]], max_chars: int
+) -> List[Tuple[str, str]]:
     total = 0
     kept: List[Tuple[str, str]] = []
     for name, content in pairs:
@@ -51,9 +53,6 @@ def truncate_corpus(pairs: List[Tuple[str, str]], max_chars: int) -> List[Tuple[
         kept.append((name, snippet))
         total += len(snippet)
     return kept
-
-
- 
 
 
 def _extract_json_from_text(text: str) -> Optional[object]:
@@ -177,9 +176,13 @@ def generate_compliance_report(
     """
 
     if OpenAI is None:
-        raise RuntimeError("openai package is required. Please install dependencies from requirements.txt")
+        raise RuntimeError(
+            "openai package is required. Please install dependencies from requirements.txt"
+        )
     if dr is None:
-        raise RuntimeError("datarobot package is required. Please install dependencies from requirements.txt")
+        raise RuntimeError(
+            "datarobot package is required. Please install dependencies from requirements.txt"
+        )
 
     # Load .env for optional CHAT_COMPLETIONS_MODEL override
     if load_dotenv is not None:
@@ -199,7 +202,9 @@ def generate_compliance_report(
     suffix_lower = source_path.suffix.lower()
     if suffix_lower != ".md":
         if file_to_markdown is None:
-            raise RuntimeError("file_to_markdown dependency is required for non-Markdown inputs. Please install dependencies from requirements.txt")
+            raise RuntimeError(
+                "file_to_markdown dependency is required for non-Markdown inputs. Please install dependencies from requirements.txt"
+            )
         # Convert supported formats; let file_to_markdown raise with its own error message for unsupported types
         converted_path_str = file_to_markdown(source_path)
         input_markdown_path = Path(converted_path_str)
@@ -207,7 +212,9 @@ def generate_compliance_report(
     input_md = input_markdown_path.read_text(encoding="utf-8")
     regs = read_markdown_files(database_dir)
     if not regs:
-        raise RuntimeError(f"No markdown files found in database directory: {database_dir}")
+        raise RuntimeError(
+            f"No markdown files found in database directory: {database_dir}"
+        )
 
     regs_trunc = truncate_corpus(regs, max_corpus_chars)
     messages = build_prompt(regs_trunc, input_md)
@@ -230,32 +237,37 @@ def generate_compliance_report(
     # Use OpenAI-compatible client pointed at DR LLM Gateway
     client = OpenAI(base_url=llm_gateway_base_url, api_key=dr_api_token)
     print(f"Using model: {model}")
-    
+
     # Try structured output with JSON schema - handle different API formats
     response = None
     format_attempts = [
-        {"type": "json_object", "json_schema": json_schema},   # Meta Llama format
-        {"type": "json_object", "schema": json_schema},        # Alternative format
-        {"type": "json_object"},                               # Basic JSON mode
+        {"type": "json_object", "json_schema": json_schema},  # Meta Llama format
+        {"type": "json_object", "schema": json_schema},  # Alternative format
+        {"type": "json_object"},  # Basic JSON mode
     ]
-    
+
     for attempt, format_param in enumerate(format_attempts):
         try:
             response = client.chat.completions.create(
                 model=model,
                 messages=messages,
                 temperature=0.1,
-                response_format=format_param
+                response_format=format_param,
             )
             if attempt > 0:
-                print(f"Info: Using response_format attempt {attempt + 1}", file=sys.stderr)
+                print(
+                    f"Info: Using response_format attempt {attempt + 1}",
+                    file=sys.stderr,
+                )
             break
         except Exception as e:
             if attempt < len(format_attempts) - 1:
                 continue  # Try next format
             else:
-                raise RuntimeError(f"Failed to create chat completion with all response_format attempts. Last error: {e}")
-    
+                raise RuntimeError(
+                    f"Failed to create chat completion with all response_format attempts. Last error: {e}"
+                )
+
     if response is None:
         raise RuntimeError("Failed to get response from API")
 
@@ -288,7 +300,9 @@ def generate_compliance_report(
             if isinstance(parsed_local, list):
                 return parsed_local
             if isinstance(parsed_local, dict):
-                if "compliance_report" in parsed_local and isinstance(parsed_local["compliance_report"], list):
+                if "compliance_report" in parsed_local and isinstance(
+                    parsed_local["compliance_report"], list
+                ):
                     return parsed_local["compliance_report"]
                 for value in parsed_local.values():
                     if isinstance(value, list):
@@ -307,7 +321,11 @@ def generate_compliance_report(
                 messages=messages,
                 temperature=0.0,
             )
-            fallback_content = fallback_response.choices[0].message.content if fallback_response.choices else ""
+            fallback_content = (
+                fallback_response.choices[0].message.content
+                if fallback_response.choices
+                else ""
+            )
             report_items = _normalize_and_extract(fallback_content)
         except Exception as e:
             print(f"Fallback request failed: {e}", file=sys.stderr)
@@ -323,11 +341,36 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="Evaluate product compliance against a Markdown regulations database using an LLM."
     )
-    parser.add_argument("--database", type=Path, default=default_db, help=f"Path to knowledge base directory (default: {default_db})")
-    parser.add_argument("--input", type=Path, default=default_input, help=f"Path to input Markdown sample (default: {default_input})")
-    parser.add_argument("--model", type=str, default=None, help="Model to use (default: from CHAT_COMPLETIONS_MODEL in .env, or gpt-4o-mini)")
-    parser.add_argument("--output", type=Path, default=None, help="Optional path to write the compliance report as JSON")
-    parser.add_argument("--max-corpus-chars", type=int, default=300_000, help="Max total characters from regulations corpus")
+    parser.add_argument(
+        "--database",
+        type=Path,
+        default=default_db,
+        help=f"Path to knowledge base directory (default: {default_db})",
+    )
+    parser.add_argument(
+        "--input",
+        type=Path,
+        default=default_input,
+        help=f"Path to input Markdown sample (default: {default_input})",
+    )
+    parser.add_argument(
+        "--model",
+        type=str,
+        default=None,
+        help="Model to use (default: from CHAT_COMPLETIONS_MODEL in .env, or gpt-4o-mini)",
+    )
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=None,
+        help="Optional path to write the compliance report as JSON",
+    )
+    parser.add_argument(
+        "--max-corpus-chars",
+        type=int,
+        default=300_000,
+        help="Max total characters from regulations corpus",
+    )
 
     args = parser.parse_args()
 
@@ -355,5 +398,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
-

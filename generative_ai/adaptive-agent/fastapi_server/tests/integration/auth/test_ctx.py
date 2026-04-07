@@ -13,15 +13,14 @@
 # limitations under the License.
 from unittest.mock import AsyncMock
 
-import pytest
-from fastapi import Request
-from fastapi.exceptions import HTTPException
-
 from app import Deps
 from app.auth.api_key import DRUser
 from app.auth.ctx import AUTH_SESS_KEY, DRAppCtx, get_auth_ctx, get_datarobot_ctx
 from app.users.identity import AuthSchema, IdentityCreate, ProviderType
 from app.users.user import UserCreate
+from fastapi import Request
+from fastapi.exceptions import HTTPException
+import pytest
 
 
 async def test__get_auth_ctx__new_visit__dr_user(

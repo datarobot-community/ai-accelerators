@@ -15,16 +15,15 @@
 import os
 import re
 import textwrap
-from typing import Sequence, Final
+from typing import Final, Sequence
 
-import pulumi
-import pulumi_datarobot
 import datarobot as dr
 from datarobot_pulumi_utils.pulumi.stack import PROJECT_NAME
 from datarobot_pulumi_utils.schema.exec_envs import RuntimeEnvironments
+import pulumi
+import pulumi_datarobot
 
 from . import project_dir, use_case
-
 from .mcp_server_user_params import MCP_USER_RUNTIME_PARAMETERS
 
 DEFAULT_EXECUTION_ENVIRONMENT = "Python 3.11 GenAI Agents"

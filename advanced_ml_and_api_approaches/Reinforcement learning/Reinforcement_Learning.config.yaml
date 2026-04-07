@@ -1,7 +1,8 @@
 ---
-description: In this notebook, we implement a very simple model based on the Q-learning algorithm. This
-  notebook is intend to show a basic form of RL that doesn't require a deep understanding of neural networks
-  or advanced mathematics and how one might deploy such a model in DataRobot.
+description: In this notebook, we implement a very simple model based on the Q-learning
+  algorithm. This notebook is intend to show a basic form of RL that doesn't require
+  a deep understanding of neural networks or advanced mathematics and how one might
+  deploy such a model in DataRobot.
 file_name: Reinforcement_Learning.ipynb
 languages:
   - python

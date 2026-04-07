@@ -3,20 +3,20 @@ name: Test frontend_web
 
 on:
   push:
-    branches: ["main"]
+    branches: [main]
     paths:
-      - 'frontend_web/**'
+      - frontend_web/**
 
   pull_request:
-    branches: ["main"]
+    branches: [main]
     paths:
-      - 'frontend_web/**'
+      - frontend_web/**
 
   workflow_dispatch:
 
 jobs:
   tests:
-    name: "React: frontend_web node: ${{ matrix.node-version }}"
+    name: 'React: frontend_web node: ${{ matrix.node-version }}'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -24,7 +24,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: ["20", "22", "24"]
+        node-version: ['20', '22', '24']
 
     steps:
       - name: Checkout code

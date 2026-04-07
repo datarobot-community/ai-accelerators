@@ -17,7 +17,6 @@ import os
 from types import TracebackType
 from typing import cast
 
-import datarobot as dr
 from alembic import command
 from alembic.config import Config
 from core.persistent_fs.dr_file_system import all_env_variables_present
@@ -25,6 +24,7 @@ from core.persistent_fs.kv_custom_app_implementattion import (
     KeyValue,
     KeyValueEntityType,
 )
+import datarobot as dr
 
 MIGRATION_LOCK_NAME = "alembic_migration_lock"
 

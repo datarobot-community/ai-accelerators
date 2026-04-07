@@ -11,14 +11,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from contextlib import asynccontextmanager
 import json
 import logging
 import os
-import warnings
-from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import AsyncGenerator
+import warnings
 
+from app.api import router as api_router
+from app.config import Config
+from app.deps import create_deps, Deps
 from core.telemetry import configure_uvicorn_logging, init_logging
 from datarobot_asgi_middleware import DataRobotASGIMiddleware
 from fastapi import APIRouter, FastAPI, Request
@@ -26,10 +29,6 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
-
-from app.api import router as api_router
-from app.config import Config
-from app.deps import Deps, create_deps
 
 base_router = APIRouter()
 

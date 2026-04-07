@@ -1,6 +1,6 @@
 ---
-description: Take in the controller file from the first notebook, deploy the top models in each project,
-  and add a "deployment" column to the controller.
+description: Take in the controller file from the first notebook, deploy the top models
+  in each project, and add a "deployment" column to the controller.
 file_name: Create_Deployments.ipynb
 languages:
   - python

@@ -11,28 +11,25 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import logging
 from dataclasses import dataclass
 from datetime import datetime
+import logging
 from typing import AsyncIterator
 
 from ag_ui.core import RunAgentInput
 from ag_ui.encoder import EventEncoder
+from app.ag_ui.translate import ExtendedBaseMessage, translate_messages
+from app.auth.ctx import get_agent_headers, must_get_auth_ctx
+from app.chats import Chat, ChatBase, ChatRepository
+from app.deps import Deps
+from app.messages import MessageRepository
+from app.users.user import User, UserRepository
 from datarobot.auth.session import AuthCtx
 from datarobot.auth.typing import Metadata
 from datarobot.core import getenv
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
-
-from app.ag_ui.translate import ExtendedBaseMessage, translate_messages
-from app.auth.ctx import get_agent_headers, must_get_auth_ctx
-from app.chats import Chat, ChatBase, ChatRepository
-from app.deps import Deps
-from app.messages import (
-    MessageRepository,
-)
-from app.users.user import User, UserRepository
 
 logger = logging.getLogger(__name__)
 chat_router = APIRouter(tags=["Chat"])
@@ -83,9 +80,9 @@ async def get_list_of_chats(
         last_message = last_messages.get(chat.uuid)
         chats_with_update_time.append(
             ChatWithUpdateTime(
-                update_time=last_message.created_at
-                if last_message
-                else chat.created_at,
+                update_time=(
+                    last_message.created_at if last_message else chat.created_at
+                ),
                 **chat.model_dump(),
             )
         )

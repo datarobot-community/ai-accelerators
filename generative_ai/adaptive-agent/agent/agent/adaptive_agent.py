@@ -12,21 +12,23 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any
 
+from agent.config import Config
+from agent.reflection_service import ReflectionResult, ReflectionService
 from datarobot_genai.core.agents import make_system_prompt
 from datarobot_genai.langgraph.agent import LangGraphAgent
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_litellm.chat_models import ChatLiteLLM
-from langgraph.graph import END, START, MessagesState, StateGraph
+from langgraph.graph import END, MessagesState, START, StateGraph
 from langgraph.prebuilt import create_react_agent
-
-from agent.config import Config
-from agent.reflection_service import ReflectionResult, ReflectionService
 
 
 @dataclass
 class AdaptiveState:
     """Tracks the adaptive agent's state across conversation turns."""
-    think_mode: bool = False  # True = use main_model (GPT-4o), False = use fast_model (GPT-4o-mini)
+
+    think_mode: bool = (
+        False  # True = use main_model (GPT-4o), False = use fast_model (GPT-4o-mini)
+    )
     history: list[dict[str, Any]] = field(default_factory=list)
     last_reflection: ReflectionResult | None = None
     turn_count: int = 0
@@ -69,7 +71,7 @@ class AdaptiveAgent(LangGraphAgent):
     """
     Adaptive customer support agent that dynamically switches between models
     based on detected user corrections in conversation history.
-    
+
     When corrections are detected by the reflection model (gpt-4o-mini),
     the agent switches to GPT-4o for more thorough reasoning.
     When the conversation flows smoothly, it uses GPT-4o-mini for faster responses.
@@ -79,16 +81,20 @@ class AdaptiveAgent(LangGraphAgent):
         super().__init__(**kwargs)
         self.adaptive_config = Config()
         self.adaptive_state = AdaptiveState()
-        
+
         self.reflection_service = ReflectionService(
             api_base=self.litellm_api_base(self.adaptive_config.llm_deployment_id),
             api_key=self.api_key,
             model=self.adaptive_config.reflection_model,
         )
-        
+
         # Model configuration for adaptive switching
-        self._main_model = self.adaptive_config.main_model      # GPT-4o for complex reasoning
-        self._fast_model = self.adaptive_config.fast_model      # GPT-4o-mini for quick responses
+        self._main_model = (
+            self.adaptive_config.main_model
+        )  # GPT-4o for complex reasoning
+        self._fast_model = (
+            self.adaptive_config.fast_model
+        )  # GPT-4o-mini for quick responses
         self.adaptive_state.current_model = self._fast_model
 
     @property
@@ -105,9 +111,11 @@ class AdaptiveAgent(LangGraphAgent):
     @property
     def prompt_template(self) -> ChatPromptTemplate:
         """Simple prompt that passes user message directly."""
-        return ChatPromptTemplate.from_messages([
-            ("user", "{question}"),
-        ])
+        return ChatPromptTemplate.from_messages(
+            [
+                ("user", "{question}"),
+            ]
+        )
 
     @property
     def support_agent(self) -> Any:
@@ -133,17 +141,21 @@ class AdaptiveAgent(LangGraphAgent):
     ) -> ChatLiteLLM:
         """Returns the ChatLiteLLM configured for the current adaptive state."""
         api_base = self.litellm_api_base(self.adaptive_config.llm_deployment_id)
-        
+
         # Use adaptive model selection
         model = self._get_current_model()
-        
+
         # Track which model we're using
         self.adaptive_state.current_model = model
-            
+
         if self.verbose:
-            mode_str = "THINKING (GPT-4o)" if self.adaptive_state.think_mode else "FAST (GPT-4o-mini)"
+            mode_str = (
+                "THINKING (GPT-4o)"
+                if self.adaptive_state.think_mode
+                else "FAST (GPT-4o-mini)"
+            )
             print(f"[ADAPTIVE] Using model: {model} | Mode: {mode_str}")
-            
+
         return ChatLiteLLM(
             model=model,
             api_base=api_base,
@@ -164,26 +176,33 @@ class AdaptiveAgent(LangGraphAgent):
 
     def _update_history(self, role: str, content: str) -> None:
         """Add a message to the conversation history."""
-        self.adaptive_state.history.append({
-            "role": role,
-            "content": content,
-            "timestamp": datetime.now().isoformat(),
-        })
+        self.adaptive_state.history.append(
+            {
+                "role": role,
+                "content": content,
+                "timestamp": datetime.now().isoformat(),
+            }
+        )
         self.adaptive_state.turn_count += 1
 
     async def _push_state_to_backend(self) -> None:
         """Push adaptive state to the FastAPI backend for UI display."""
         import aiohttp
+
         try:
             state_data = {
                 "think_mode": self.adaptive_state.think_mode,
                 "current_model": self.adaptive_state.current_model,
                 "turn_count": self.adaptive_state.turn_count,
-                "last_reflection": {
-                    "needs_thinking": self.adaptive_state.last_reflection.needs_thinking,
-                    "reason": self.adaptive_state.last_reflection.reason,
-                    "confidence": self.adaptive_state.last_reflection.confidence,
-                } if self.adaptive_state.last_reflection else None,
+                "last_reflection": (
+                    {
+                        "needs_thinking": self.adaptive_state.last_reflection.needs_thinking,
+                        "reason": self.adaptive_state.last_reflection.reason,
+                        "confidence": self.adaptive_state.last_reflection.confidence,
+                    }
+                    if self.adaptive_state.last_reflection
+                    else None
+                ),
             }
             async with aiohttp.ClientSession() as session:
                 async with session.post(
@@ -203,18 +222,18 @@ class AdaptiveAgent(LangGraphAgent):
     ) -> Any:
         """Main invocation method with adaptive model switching."""
         messages = completion_create_params.get("messages", [])
-        
+
         if self.verbose:
             print(f"[ADAPTIVE] Received {len(messages)} messages from backend")
             for i, m in enumerate(messages):
                 role = m.get("role", "unknown")
                 content = str(m.get("content", ""))[:50]
                 print(f"[ADAPTIVE]   [{i}] {role}: {content}...")
-        
+
         # Count turns from the actual messages passed in (more reliable than tracking)
         user_messages = [m for m in messages if m.get("role") == "user"]
         turn_count = len(user_messages)
-        
+
         # Build history from messages for reflection
         self.adaptive_state.history = [
             {"role": m.get("role"), "content": m.get("content", "")}
@@ -222,45 +241,51 @@ class AdaptiveAgent(LangGraphAgent):
             if m.get("role") in ("user", "assistant")
         ]
         self.adaptive_state.turn_count = turn_count
-        
+
         user_message = ""
         for msg in reversed(messages):
             if msg.get("role") == "user":
                 user_message = msg.get("content", "")
                 break
-        
+
         if self.verbose:
-            print(f"[ADAPTIVE] Turn count: {turn_count}, History length: {len(self.adaptive_state.history)}")
-        
+            print(
+                f"[ADAPTIVE] Turn count: {turn_count}, History length: {len(self.adaptive_state.history)}"
+            )
+
         # Perform reflection after we have enough history (3+ user messages)
         if turn_count >= 3:
             reflection = await self._reflect_on_history()
             old_mode = self.adaptive_state.think_mode
             self.adaptive_state.think_mode = reflection.needs_thinking
-            
+
             # Update current_model based on new think_mode
             self.adaptive_state.current_model = self._get_current_model()
-            
+
             if self.verbose:
                 print(f"[ADAPTIVE] Reflection result: {reflection}")
                 if old_mode != self.adaptive_state.think_mode:
                     old_model = self._main_model if old_mode else self._fast_model
-                    new_model = self._main_model if self.adaptive_state.think_mode else self._fast_model
+                    new_model = (
+                        self._main_model
+                        if self.adaptive_state.think_mode
+                        else self._fast_model
+                    )
                     print(f"[ADAPTIVE] Model switched: {old_model} -> {new_model}")
         else:
             # First 2 turns - always use fast model
             self.adaptive_state.think_mode = False
             self.adaptive_state.current_model = self._fast_model
-        
+
         # Push state to backend for UI
         await self._push_state_to_backend()
-        
+
         # Invoke parent workflow
         result = await super().invoke(completion_create_params, **kwargs)
-        
+
         # Push updated state after response
         await self._push_state_to_backend()
-        
+
         return result
 
     def get_adaptive_state(self) -> dict[str, Any]:
@@ -269,9 +294,13 @@ class AdaptiveAgent(LangGraphAgent):
             "think_mode": self.adaptive_state.think_mode,
             "current_model": self.adaptive_state.current_model,
             "turn_count": self.adaptive_state.turn_count,
-            "last_reflection": {
-                "needs_thinking": self.adaptive_state.last_reflection.needs_thinking,
-                "reason": self.adaptive_state.last_reflection.reason,
-                "confidence": self.adaptive_state.last_reflection.confidence,
-            } if self.adaptive_state.last_reflection else None,
+            "last_reflection": (
+                {
+                    "needs_thinking": self.adaptive_state.last_reflection.needs_thinking,
+                    "reason": self.adaptive_state.last_reflection.reason,
+                    "confidence": self.adaptive_state.last_reflection.confidence,
+                }
+                if self.adaptive_state.last_reflection
+                else None
+            ),
         }

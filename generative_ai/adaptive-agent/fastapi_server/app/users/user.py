@@ -11,17 +11,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import uuid as uuidpkg
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING
+import uuid as uuidpkg
 
+from app.db import DBCtx
 from datarobot.auth.session import AuthCtx
 from datarobot.auth.typing import Metadata
 from datarobot.auth.users import User as UserData
 from sqlalchemy import Column, DateTime
-from sqlmodel import Field, Relationship, SQLModel, select
-
-from app.db import DBCtx
+from sqlmodel import Field, Relationship, select, SQLModel
 
 if TYPE_CHECKING:
     from app.users.identity import Identity

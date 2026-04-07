@@ -104,7 +104,9 @@ def generate_summaries(texts):
     )
 
     # create the summarize prompt
-    prompt_template: str = """この文章を要約してください : {question}"""  # if you use english, you can input [Please summarize the following text briefly]
+    prompt_template: str = (
+        """この文章を要約してください : {question}"""  # if you use english, you can input [Please summarize the following text briefly]
+    )
     prompt = PromptTemplate.from_template(template=prompt_template)
 
     texts_list = split_text(texts)

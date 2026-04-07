@@ -5,13 +5,14 @@ Utility for validating document relevance using LLM gatekeeper.
 import json
 import re
 import sys
+
 from app.utils.llm_client import create_llm_client
 
 
 def get_gatekeeper_json_schema() -> dict:
     """
     Define JSON schema for gatekeeper validation output.
-    
+
     Returns:
         Dict: JSON schema for LLM structured output
     """
@@ -21,31 +22,31 @@ def get_gatekeeper_json_schema() -> dict:
             "status": {
                 "type": "string",
                 "enum": ["VALID", "INVALID"],
-                "description": "Whether the document is relevant to telecom/domain compliance"
+                "description": "Whether the document is relevant to telecom/domain compliance",
             },
             "confidence": {
                 "type": "integer",
                 "minimum": 0,
                 "maximum": 100,
-                "description": "Confidence level (0-100) in the validation decision"
+                "description": "Confidence level (0-100) in the validation decision",
             },
             "reason": {
                 "type": "string",
-                "description": "A single sentence explaining the validation decision"
-            }
+                "description": "A single sentence explaining the validation decision",
+            },
         },
         "required": ["status", "confidence", "reason"],
-        "additionalProperties": False
+        "additionalProperties": False,
     }
 
 
 def build_gatekeeper_prompt(file_content: str) -> list[dict]:
     """
     Build the prompt messages for gatekeeper validation.
-    
+
     Args:
         file_content: Markdown content of the document to validate
-    
+
     Returns:
         List of message dicts for LLM API
     """
@@ -96,118 +97,132 @@ def build_gatekeeper_prompt(file_content: str) -> list[dict]:
 def validate_document_relevance(file_content: str) -> dict:
     """
     Validate if a document is relevant to telecom/domain compliance using LLM gatekeeper.
-    
+
     Args:
         file_content: Markdown content of the document to validate
-    
+
     Returns:
         Dict with keys: status ("VALID" or "INVALID"), confidence (0-100), reason (str)
-    
+
     Raises:
         RuntimeError: If LLM call fails or response is malformed
     """
     # Create LLM client (same as compliance evaluation)
     client, model = create_llm_client()
-    
+
     # Build prompt
     messages = build_gatekeeper_prompt(file_content)
-    
+
     # Get JSON schema
     json_schema = get_gatekeeper_json_schema()
-    
+
     # Try structured output with JSON schema - handle different API formats
     response = None
     format_attempts = [
-        {"type": "json_object", "schema": json_schema},             # Alternative format
-        {"type": "json_schema", "json_schema": {"name": "compliance_report", "schema": json_schema}},
-        {"type": "json_schema", "json_schema": {"schema": json_schema}},    # OpenAI-style JSON Schema format (strict)
-        {"type": "json_object", "json_schema": json_schema},        # Meta Llama format
-        {"type": "json_object"},                                    # Basic JSON mode
+        {"type": "json_object", "schema": json_schema},  # Alternative format
+        {
+            "type": "json_schema",
+            "json_schema": {"name": "compliance_report", "schema": json_schema},
+        },
+        {
+            "type": "json_schema",
+            "json_schema": {"schema": json_schema},
+        },  # OpenAI-style JSON Schema format (strict)
+        {"type": "json_object", "json_schema": json_schema},  # Meta Llama format
+        {"type": "json_object"},  # Basic JSON mode
     ]
-    
+
     for attempt, format_param in enumerate(format_attempts):
         try:
             response = client.chat.completions.create(
                 model=model,
                 messages=messages,
                 temperature=0.1,
-                response_format=format_param
+                response_format=format_param,
             )
             if attempt > 0:
-                print(f"Info: Gatekeeper - Using response_format attempt {attempt + 1}", file=sys.stderr)
+                print(
+                    f"Info: Gatekeeper - Using response_format attempt {attempt + 1}",
+                    file=sys.stderr,
+                )
             break
         except Exception as e:
             if attempt < len(format_attempts) - 1:
                 continue  # Try next format
             else:
-                raise RuntimeError(f"Failed to create gatekeeper chat completion with all response_format attempts. Last error: {e}")
-    
+                raise RuntimeError(
+                    f"Failed to create gatekeeper chat completion with all response_format attempts. Last error: {e}"
+                )
+
     if response is None:
         raise RuntimeError("Failed to get response from gatekeeper API")
-    
+
     # Parse the JSON response
     content = response.choices[0].message.content if response.choices else ""
-    
+
     def _normalize_and_extract(content_text: str) -> dict:
         """Normalize content and extract validation result from JSON."""
         if not content_text or not content_text.strip():
             raise RuntimeError("Gatekeeper returned empty response")
-        
+
         try:
             # Remove markdown code blocks using regex (handles BOM, whitespace, case variations)
-            bom_char = '\ufeff'
+            bom_char = "\ufeff"
             content_clean = re.sub(
-                rf'^\s*{bom_char}?\s*```\s*(?:json\s*)?',
-                '',
+                rf"^\s*{bom_char}?\s*```\s*(?:json\s*)?",
+                "",
                 content_text,
-                flags=re.IGNORECASE | re.DOTALL
+                flags=re.IGNORECASE | re.DOTALL,
             )
-            content_clean = re.sub(
-                r'```\s*$',
-                '',
-                content_clean,
-                flags=re.DOTALL
-            )
+            content_clean = re.sub(r"```\s*$", "", content_clean, flags=re.DOTALL)
             content_clean = content_clean.strip()
-            
+
             if not content_clean:
                 raise RuntimeError("Gatekeeper response is empty after cleaning")
-            
+
             # Parse JSON
             parsed = json.loads(content_clean)
-            
+
             # Validate structure
             if not isinstance(parsed, dict):
-                raise RuntimeError(f"Gatekeeper response is not a JSON object: {type(parsed)}")
-            
+                raise RuntimeError(
+                    f"Gatekeeper response is not a JSON object: {type(parsed)}"
+                )
+
             # Check required fields
             required_fields = ["status", "confidence", "reason"]
             missing_fields = [field for field in required_fields if field not in parsed]
             if missing_fields:
-                raise RuntimeError(f"Gatekeeper response missing required fields: {missing_fields}")
-            
+                raise RuntimeError(
+                    f"Gatekeeper response missing required fields: {missing_fields}"
+                )
+
             # Validate status
             if parsed["status"] not in ["VALID", "INVALID"]:
-                raise RuntimeError(f"Gatekeeper response has invalid status: {parsed['status']}")
-            
+                raise RuntimeError(
+                    f"Gatekeeper response has invalid status: {parsed['status']}"
+                )
+
             # Validate confidence
             confidence = parsed["confidence"]
             if not isinstance(confidence, int) or confidence < 0 or confidence > 100:
-                raise RuntimeError(f"Gatekeeper response has invalid confidence: {confidence}")
-            
+                raise RuntimeError(
+                    f"Gatekeeper response has invalid confidence: {confidence}"
+                )
+
             # Validate reason
             if not isinstance(parsed["reason"], str) or not parsed["reason"].strip():
                 raise RuntimeError("Gatekeeper response has invalid or empty reason")
-            
+
             return parsed
-            
+
         except json.JSONDecodeError as e:
             raise RuntimeError(f"Gatekeeper response is not valid JSON: {e}")
         except RuntimeError:
             raise  # Re-raise our custom errors
         except Exception as e:
             raise RuntimeError(f"Unexpected error parsing gatekeeper response: {e}")
-    
+
     # Try to parse the initial response
     try:
         validation_result = _normalize_and_extract(content)
@@ -219,16 +234,24 @@ def validate_document_relevance(file_content: str) -> dict:
                 messages=messages,
                 temperature=0.1,
             )
-            fallback_content = fallback_response.choices[0].message.content if fallback_response else ""
+            fallback_content = (
+                fallback_response.choices[0].message.content
+                if fallback_response
+                else ""
+            )
             validation_result = _normalize_and_extract(fallback_content)
         except Exception as e:
-            raise RuntimeError(f"Gatekeeper validation failed after fallback attempt: {e}")
-    
+            raise RuntimeError(
+                f"Gatekeeper validation failed after fallback attempt: {e}"
+            )
+
     # Log gatekeeper validation result
     status = validation_result.get("status", "UNKNOWN")
     confidence = validation_result.get("confidence", 0)
     reason = validation_result.get("reason", "")
-    print(f"Info: Gatekeeper validation - Status: {status}, Confidence: {confidence}, Reason: {reason}", file=sys.stderr)
-    
-    return validation_result
+    print(
+        f"Info: Gatekeeper validation - Status: {status}, Confidence: {confidence}, Reason: {reason}",
+        file=sys.stderr,
+    )
 
+    return validation_result

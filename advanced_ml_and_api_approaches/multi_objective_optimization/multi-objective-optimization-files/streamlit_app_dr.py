@@ -336,7 +336,9 @@ def run_optimization(
     return trial_all, trial_pareto, study, reliability_stats
 
 
-def calculate_reliability_stats(pareto_params_df: pd.DataFrame, param_cols: list) -> pd.DataFrame:
+def calculate_reliability_stats(
+    pareto_params_df: pd.DataFrame, param_cols: list
+) -> pd.DataFrame:
     """
     Calculate reliability statistics for Pareto optimal parameters.
 
@@ -357,19 +359,25 @@ def calculate_reliability_stats(pareto_params_df: pd.DataFrame, param_cols: list
         stats_data = []
         for col in param_cols:
             if col in pareto_params_df.columns:
-                val = pareto_params_df[col].iloc[0] if len(pareto_params_df) > 0 else np.nan
-                stats_data.append({
-                    "Parameter": col,
-                    "Mean": val,
-                    "Std": 0.0,
-                    "CV": 0.0,
-                    "CI_lower": val,
-                    "CI_upper": val,
-                    "Min": val,
-                    "Max": val,
-                    "Range": 0.0,
-                    "Stability_Score": 1.0,
-                })
+                val = (
+                    pareto_params_df[col].iloc[0]
+                    if len(pareto_params_df) > 0
+                    else np.nan
+                )
+                stats_data.append(
+                    {
+                        "Parameter": col,
+                        "Mean": val,
+                        "Std": 0.0,
+                        "CV": 0.0,
+                        "CI_lower": val,
+                        "CI_upper": val,
+                        "Min": val,
+                        "Max": val,
+                        "Range": 0.0,
+                        "Stability_Score": 1.0,
+                    }
+                )
         return pd.DataFrame(stats_data)
 
     stats_data = []
@@ -403,18 +411,20 @@ def calculate_reliability_stats(pareto_params_df: pd.DataFrame, param_cols: list
         else:
             ci_lower = ci_upper = mean_val
 
-        stats_data.append({
-            "Parameter": col,
-            "Mean": mean_val,
-            "Std": std_val,
-            "CV": cv,
-            "CI_lower": ci_lower,
-            "CI_upper": ci_upper,
-            "Min": min_val,
-            "Max": max_val,
-            "Range": range_val,
-            "Stability_Score": 0.0,  # Will be calculated after
-        })
+        stats_data.append(
+            {
+                "Parameter": col,
+                "Mean": mean_val,
+                "Std": std_val,
+                "CV": cv,
+                "CI_lower": ci_lower,
+                "CI_upper": ci_upper,
+                "Min": min_val,
+                "Max": max_val,
+                "Range": range_val,
+                "Stability_Score": 0.0,  # Will be calculated after
+            }
+        )
 
     # Calculate Stability Score (normalized CV, inverted so higher = more stable)
     if cv_values and max(cv_values) > 0:
@@ -678,23 +688,29 @@ with tab2:
         if os.path.isfile("reliability_stats.csv"):
             st.markdown("---")
             st.markdown(f"### {_('Parameter Reliability Statistics')}")
-            st.caption(_("Shows how consistently each parameter appears in Pareto optimal solutions"))
+            st.caption(
+                _(
+                    "Shows how consistently each parameter appears in Pareto optimal solutions"
+                )
+            )
 
             reliability_stats = pd.read_csv("reliability_stats.csv")
 
             # Display statistics table
             st.dataframe(
-                reliability_stats.style.format({
-                    "Mean": "{:.4f}",
-                    "Std": "{:.4f}",
-                    "CV": "{:.4f}",
-                    "CI_lower": "{:.4f}",
-                    "CI_upper": "{:.4f}",
-                    "Min": "{:.4f}",
-                    "Max": "{:.4f}",
-                    "Range": "{:.4f}",
-                    "Stability_Score": "{:.4f}",
-                }),
+                reliability_stats.style.format(
+                    {
+                        "Mean": "{:.4f}",
+                        "Std": "{:.4f}",
+                        "CV": "{:.4f}",
+                        "CI_lower": "{:.4f}",
+                        "CI_upper": "{:.4f}",
+                        "Min": "{:.4f}",
+                        "Max": "{:.4f}",
+                        "Range": "{:.4f}",
+                        "Stability_Score": "{:.4f}",
+                    }
+                ),
                 use_container_width=True,
             )
 

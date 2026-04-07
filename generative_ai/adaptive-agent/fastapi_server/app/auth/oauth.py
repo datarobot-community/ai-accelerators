@@ -11,17 +11,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import logging
 from enum import Enum
+import logging
 from typing import TYPE_CHECKING
 
+from app.users.auth import box_user_info_mapper
+from app.users.identity import ProviderType
 from datarobot.auth.authlib.oauth import AsyncOAuth as AuthlibOAuth
 from datarobot.auth.authlib.oauth import OAuthProviderConfig
 from datarobot.auth.datarobot.oauth import AsyncOAuth as DatarobotOAuth
 from datarobot.auth.oauth import AsyncOAuthComponent
-
-from app.users.auth import box_user_info_mapper
-from app.users.identity import ProviderType
 
 if TYPE_CHECKING:
     from app import Config

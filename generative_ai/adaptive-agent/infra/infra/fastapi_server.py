@@ -17,20 +17,20 @@ import textwrap
 from typing import Any, Final, Optional, Sequence
 
 import datarobot
+from datarobot_pulumi_utils.pulumi.stack import PROJECT_NAME
+from datarobot_pulumi_utils.schema.apps import (
+    ApplicationSourceArgs,
+    CustomAppResourceBundles,
+)
+from datarobot_pulumi_utils.schema.exec_envs import RuntimeEnvironments
 import pulumi
 import pulumi_datarobot
-from datarobot_pulumi_utils.schema.apps import ApplicationSourceArgs
-from datarobot_pulumi_utils.schema.apps import CustomAppResourceBundles
-from datarobot_pulumi_utils.schema.exec_envs import RuntimeEnvironments
-from datarobot_pulumi_utils.pulumi.stack import PROJECT_NAME
-
 
 from . import project_dir, use_case
+from .agent import agent_app_runtime_parameters
 from .frontend_web import frontend_web
 from .llm import app_runtime_parameters as llm_app_runtime_parameters
 from .oauth import app_runtime_parameters as oauth_app_runtime_parameters
-from .agent import agent_app_runtime_parameters
-
 
 SESSION_SECRET_KEY: Final[str] = "SESSION_SECRET_KEY"
 session_secret_key = os.environ.get(SESSION_SECRET_KEY)

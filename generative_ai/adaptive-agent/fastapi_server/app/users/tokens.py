@@ -13,10 +13,9 @@
 # limitations under the License.
 import logging
 
+from app.users.identity import IdentityRepository, IdentityUpdate
 from datarobot.auth.identity import Identity as IdentityData
 from datarobot.auth.oauth import AsyncOAuthComponent, OAuthToken
-
-from app.users.identity import IdentityRepository, IdentityUpdate
 
 logger = logging.getLogger(__name__)
 
