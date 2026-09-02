@@ -1,0 +1,171 @@
+---
+seed: 42
+target: Tc
+paths:
+  input: input/
+  model: model/
+
+  # Artifact file names. train.ipynb writes them, deploy.ipynb uploads
+  # artifact_name. NOTE: custom.py inside the DRUM container loads
+  # "smiles_model.pth" by (hard-coded) name - it cannot read this file -
+  # so if you rename artifact_name, update deploy/custom.py to match.
+  artifact_name: smiles_model.pth
+  stage1_artifact_name: smiles_model_stage1.pth
+data:
+  smiles_column: SMILES
+  # START + SMILES + END must fit. train.csv has a 166-char SMILES (168 tokens);
+  # 150 would silently truncate it in sequence models.
+  max_length: 200
+
+  # Stage 1 of train.ipynb carves a holdout out of input/train.csv at this
+  # ratio (0.2 -> 4:1 train/valid) purely to locate the best epoch count.
+  # Stage 2 then refits on all of train.csv for that many epochs.
+  valid_ratio: 0.2
+# model.type: dmpnn | lstm | cnn | transformer
+# lstm/cnn/transformer can be combined with "+", e.g. lstm+cnn, lstm+transformer, lstm+cnn+transformer
+model:
+  type: dmpnn
+  hidden_dim: 300
+  dropout: 0.1
+
+  # pooling: graph models  -> mean | max | sum | attention | global_attention | set2set
+  #          sequence models -> mean | max | last
+  #          (lstm, cnn, and transformer each honor all three; transformer
+  #          `mean` is a masked-mean query into a second attention layer)
+  # One key serves both pipelines, so a value the selected pipeline does not
+  # know falls back to mean and says so.
+  pooling: mean
+
+  # DMPNN-specific parameters
+  dmpnn:
+    depth: 2
+    activation: PReLU
+    # Tie the two directed copies of each bond together (ChemProp's
+    # --undirected). Graphs are bidirectional either way; this only controls
+    # whether the pair shares one message state.
+    undirected: false
+    ffn_hidden_size: 300
+    ffn_num_layers: 3
+    use_layer_norm: false
+    use_batch_norm: false
+    use_message_residual: true
+    use_ffn_residual: false
+
+  # Sequence-model (lstm/cnn/transformer) specific parameters
+  sequence:
+    embedding_dim: 128
+    num_layers: 1
+    num_heads: 4
+    cnn_kernels:
+      - 3
+training:
+  epochs: 400
+  batch_size_train: 16
+  batch_size_valid: 64
+  batch_size_test: 128
+  lr: 0.001
+  scheduler:
+    factor: 0.5
+    patience: 20
+    min_lr: 1.0e-6
+  early_stopping:
+    patience: 200
+    min_delta: 0.00001
+  criterion: L1Loss
+# Scoring settings (read by predict.ipynb)
+predict:
+  # CSV to score through the deployment; DR_SCORING_CSV overrides at runtime.
+  scoring_csv: input/test.csv
+  # Limit the number of rows scored (empty = all).
+  row_limit: null
+# DataRobot deployment settings (read by deploy.ipynb)
+deploy:
+  # Shown as the model description in the Workshop / Registry.
+  model_description: SMILES -> Tc regression (DMPNN / sequence NN) served through DRUM.
+
+  # Base execution environment: substring match on the environment name,
+  # or pin an id directly to skip the search.
+  base_environment_search: pytorch
+  base_environment_id: null
+
+  # Version bump on re-upload: true -> v2.0, false -> v1.1
+  is_major_update: true
+
+  # Seconds to wait for the dependency image build (rdkit + PyG take a while).
+  dependency_build_max_wait: 3600
+
+  # Smoke test through the deployment (section 13 of deploy.ipynb).
+  scoring_sample_csv: input/test.csv
+  scoring_sample_rows: 20
+
+  # Default step toggles for deploy.ipynb. Environment variables still win:
+  # e.g. DR_RUN_MODEL_TEST=0 overrides run_model_test at runtime.
+  steps:
+    rebuild_model_lib: true  # DR_REBUILD_MODEL_LIB
+    create_new_version: true  # DR_CREATE_NEW_VERSION
+    build_dependencies: true  # DR_BUILD_DEPENDENCIES
+    run_model_test: true  # DR_RUN_MODEL_TEST
+    register_and_deploy: true  # DR_REGISTER_AND_DEPLOY
+    run_prediction_test: true  # DR_RUN_PREDICTION_TEST
+
+  # instance: cpu | gpu
+  #   cpu -> pick only from CPU bundles; gpu -> pick only from GPU-enabled bundles
+  instance: cpu
+
+  # Requested resources. The smallest bundle that satisfies all three is selected.
+  cpu_cores: 2  # number of CPU cores
+  memory_gb: 6  # memory (GB)
+  gpu_count: 0  # number of GPUs (must be >= 1 when instance: gpu)
+  replicas: 1  # number of replicas
+
+  # Optional: pin a bundle id directly and skip auto-selection (empty = auto)
+  resource_bundle_id: null
+
+  # Where the deployment runs. Leave BOTH empty to auto-pick: deploy.ipynb tries
+  # dr.PredictionServer.list() first, then falls back to a customModel-capable
+  # dr.PredictionEnvironment (serverless preferred). Set one to pin it.
+  # Runtime overrides: DR_PREDICTION_ENVIRONMENT_ID / DR_PREDICTION_SERVER_ID.
+  prediction_environment_id: null
+  prediction_server_id: null
+
+  # Name of the custom model AND the label of its deployment. This - not an id -
+  # is what identifies the model across clusters: deploy.ipynb creates/reuses a
+  # deployment with this label, and predict.ipynb looks it up by the same label
+  # on whichever cluster it is connected to.
+  model_name: smiles_deep_learning_regression
+
+  # Optional cache of the last deployment id, purely to skip the label lookup.
+  # It is CLUSTER-SPECIFIC (the value below is from app.datarobot.com); on any
+  # other cluster - app.jp.datarobot.com, on-prem, ... - it simply does not
+  # resolve and predict.ipynb falls back to the label lookup automatically.
+  # Safe to leave stale, safe to blank out. Override with DR_DEPLOYMENT_ID.
+  deployment_id: 6a6815228635495938d294e0
+
+  # ---- Available options (app.datarobot.com, use_case=customModel) ----
+  # Bundle ids can differ per cluster; section 6 of deploy.ipynb prints the
+  # authoritative list for whichever cluster you are connected to.
+  # CPU  bundle id       name   cores  memory GB
+  #   cpu.nano           XXS      1    0.1
+  #   cpu.micro          XS       1    0.2
+  #   cpu.small          S        1    0.5
+  #   cpu.medium         M        1    1
+  #   cpu.large          L        2    1.5
+  #   cpu.xlarge         XL       2    2
+  #   cpu.2xlarge        XXL      2    3
+  #   cpu.3xlarge        3XL      2    4
+  #   cpu.4xlarge        4XL      2    6
+  #   cpu.5xlarge        5XL      2    8
+  #   cpu.6xlarge        6XL      2    10
+  #   cpu.7xlarge        7XL      2    12
+  #   cpu.8xlarge        8XL      2    14
+  #   cpu.16xlarge       16XL     4    28
+  # GPU  bundle id                          name       cores  memory GB  GPU
+  #   DRAWS_g4dn.xlarge_frac1_regular       GPU - S      3     10    1 x 16GB
+  #   DRAWS_g4dn.2xlarge_frac1_regular      GPU - M      7     26    1 x 16GB
+  #   DRAWS_g5.2xlarge_frac1_regular        GPU - L      7     26    1 x 24GB
+  #   DRAWS_g6e.xlarge_frac1_regular        GPU - XL     3     26    1 x 48GB
+  #   DRAWS_g5.12xlarge_frac1_regular       GPU - XXL   47    186    4 x 96GB
+  #   DRAWS_g6e.12xlarge_frac1_regular      GPU - 3XL   47    378    4 x 192GB
+  #   DRAWS_g5.48xlarge_frac1_regular       GPU - 4XL  191    762    8 x 192GB
+  #   DRAWS_g6e.48xlarge_frac1_regular      GPU - 5XL  191   1530    8 x 384GB
+  # The authoritative list is the one printed by section 6 of deploy.ipynb.

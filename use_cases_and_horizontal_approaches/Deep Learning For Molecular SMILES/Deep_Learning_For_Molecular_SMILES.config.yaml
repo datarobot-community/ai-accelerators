@@ -1,0 +1,14 @@
+---
+title: 'Deep learning for molecular SMILES: train and deploy on DataRobot'
+file_name: train.ipynb
+description: |-
+  SMILES (Simplified molecular input line entry system) is a textual representation of molecular structures. Instead of engineering tabular features up front, this accelerator learns the representation end-to-end with a PyTorch model that reads the molecule directly - either as a molecular graph (DMPNN over RDKit-built graphs) or as a character sequence (LSTM / CNN / Transformer over a SMILES tokenizer). Both halves of the lifecycle run on DataRobot: the model is trained in a DataRobot codespace or on DataRobot Notebooks, then packaged as a custom inference model, registered in the Model Registry, and deployed to a DataRobot deployment where it is governed, monitored, and scored through the standard prediction API. Architecture, training hyper-parameters, and deployment compute are all driven by a single config file. It is recommended to run this notebook in a DataRobot codespace; a GPU environment speeds up training but is not required.
+languages:
+  - python
+maintainers:
+  - Senkin Zhan
+maintainers_email:
+  - senkin.zhan@datarobot.com
+smoke_test:
+  run_smoke_test: false
+tags: []

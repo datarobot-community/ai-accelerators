@@ -1,0 +1,13 @@
+---
+# Custom Inference Model for SMILES regression.
+# Inspired by task_templates/3_pipelines/11_python3_pytorch_regression
+# in datarobot/datarobot-user-models, but deployed as an inference model
+# (type: inference) rather than a training task.
+#
+# `typeSchema.input_requirements` is intentionally omitted: that block is
+# validated for custom tasks inside a blueprint, not for inference models.
+name: smiles_deep_learning_regression
+type: inference
+targetType: regression
+inferenceModel:
+  targetName: Tc

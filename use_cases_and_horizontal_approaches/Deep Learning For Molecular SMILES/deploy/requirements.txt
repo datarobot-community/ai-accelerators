@@ -1,0 +1,21 @@
+# Extra packages pip-installed into the DataRobot Python PyTorch drop-in env.
+# numpy, pandas and scikit-learn are already provided by the base image.
+#
+# DataRobot's dependency manager parses this file itself and accepts ONLY
+# `name` + version-constraint lines. pip options are rejected outright:
+#
+#   422: Error in "requirements.txt" on line 20: `--find-links https://data.pyg.org/
+#        whl/torch-2.12.1+cu130.html` does not contain a valid package name for python
+#
+# So torch-scatter cannot be installed here. It publishes no wheels on PyPI (sdist
+# only), and its prebuilt wheels live behind exactly the --find-links index that
+# this file may not reference - listing it unqualified would trigger a from-source
+# CUDA compile inside the dependency image.
+#
+# Nothing breaks: src/models/_scatter.py provides scatter_add with a three-level
+# fallback - torch_scatter, then torch_geometric.utils.scatter(reduce="sum"), then
+# a pure-torch scatter_add_ - all numerically identical. See README section 7.
+torch==2.12.1
+rdkit
+torch-geometric
+PyYAML
