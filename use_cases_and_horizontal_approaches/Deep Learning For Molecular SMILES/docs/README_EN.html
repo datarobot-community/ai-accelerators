@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deep learning for molecular SMILES: train and deploy on DataRobot</title>
+<style>
+
+
+:root {
+  --fg: #1f2328;
+  --muted: #57606a;
+  --bg: #ffffff;
+  --border: #d0d7de;
+  --code-bg: #f6f8fa;
+  --link: #0969da;
+  --ok: #1a7f37;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+  max-width: 900px;
+  font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans",
+               "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo",
+               "Noto Sans CJK JP", sans-serif;
+  font-size: 16px;
+  line-height: 1.8;
+  color: var(--fg);
+  background: var(--bg);
+  word-wrap: break-word;
+}
+h1 { font-size: 1.8rem; padding-bottom: .4em; border-bottom: 2px solid var(--border); }
+h2 { font-size: 1.35rem; margin-top: 2.2em; padding-bottom: .3em; border-bottom: 1px solid var(--border); }
+h3 { font-size: 1.08rem; margin-top: 1.6em; }
+p, ul, ol { margin: .7em 0; }
+li { margin: .25em 0; }
+a { color: var(--link); text-decoration: none; }
+a:hover { text-decoration: underline; }
+code {
+  font-family: "SF Mono", Menlo, Consolas, monospace;
+  font-size: .88em; background: var(--code-bg);
+  padding: .12em .35em; border-radius: 4px;
+}
+pre {
+  background: var(--code-bg); border: 1px solid var(--border);
+  border-radius: 6px; padding: .9em 1.1em; overflow-x: auto;
+  line-height: 1.6; font-size: .85em;
+}
+pre code { background: transparent; padding: 0; font-size: 1em; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; font-size: .93em; }
+th, td { border: 1px solid var(--border); padding: .45em .8em; text-align: left; vertical-align: top; }
+th { background: var(--code-bg); font-weight: 600; }
+tr:nth-child(even) td { background: #fafbfc; }
+blockquote {
+  margin: 1em 0; padding: .3em 1em;
+  border-left: 4px solid var(--border); color: var(--muted);
+}
+details {
+  border: 1px solid var(--border); border-radius: 6px;
+  padding: .5em .9em; margin: .6em 0; background: #fcfcfd;
+}
+details summary { cursor: pointer; font-weight: 600; }
+details[open] summary { margin-bottom: .5em; }
+.lead { font-size: 1.05rem; }
+.flow {
+  background: var(--code-bg); border: 1px solid var(--border);
+  border-radius: 6px; padding: 1em 1.2em; font-size: .85em;
+  font-family: "SF Mono", Menlo, Consolas, monospace; white-space: pre; overflow-x: auto;
+}
+.note { background: #fff8c5; border: 1px solid #d4a72c55; border-radius: 6px; padding: .6em 1em; margin: 1em 0; }
+.ok { color: var(--ok); font-weight: 600; }
+.toc { background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px;
+       padding: .6em 1.2em; margin: 1.5em 0; font-size: .93em; }
+.toc ul { margin: .4em 0; padding-left: 1.2em; }
+.footer { margin-top: 3.5em; padding-top: 1em; border-top: 1px solid var(--border);
+          font-size: .85em; color: var(--muted); text-align: center; }
+
+
+</style>
+</head>
+<body>
+<p style="margin:0 0 1.5rem;font-size:.9em;color:#57606a">English &nbsp;|&nbsp; <a href="README_JP.html">日本語</a> &nbsp;|&nbsp; <a href="../README.md">README.md</a></p>
+<h1>Deep learning for molecular SMILES: train and deploy on DataRobot</h1>
+<p><strong>Author:</strong> senkin.zhan@datarobot.com</p>
+<p><a href="../input/train.csv">Example data</a> · <a href="../input/test.csv">held-out test set</a> — polymer SMILES strings
+labelled with the target property <code>Tc</code>.</p>
+<h2>Problem framing</h2>
+<p>SMILES (Simplified Molecular Input Line Entry System) is a textual representation of molecular
+structures. The companion accelerator
+<a href="https://github.com/datarobot-community/ai-accelerators/tree/main/use_cases_and_horizontal_approaches/Feature%20Engineering%20For%20Molecular%20SMILES">Feature engineering for molecular SMILES</a>
+turns those strings into tabular features (descriptors, fingerprints, TF-IDF, pretrained
+embeddings) and hands them to DataRobot Autopilot.</p>
+<p>This accelerator takes the other route: rather than engineering features up front, it learns the
+representation end-to-end with a PyTorch model that reads the molecule directly — either as a
+<strong>molecular graph</strong> (DMPNN over RDKit-built graphs) or as a <strong>character sequence</strong>
+(LSTM / CNN / Transformer over a SMILES tokenizer).</p>
+<p>The point is that <strong>both halves run on DataRobot</strong>. A custom deep learning architecture normally
+lives outside the platform, which means training it somewhere else and hand-rolling a serving
+stack. Here the whole lifecycle stays in one place:</p>
+<ul>
+<li><strong>Train on DataRobot</strong> — the notebooks run as-is in a DataRobot codespace or on DataRobot
+Notebooks, on CPU or on a GPU environment.</li>
+<li><strong>Deploy on DataRobot</strong> — the trained PyTorch model is packaged as a <strong>custom inference model</strong>,
+registered in the Model Registry, and deployed to a DataRobot deployment, where it is governed,
+monitored, and scored through the standard prediction API like any DataRobot model.</li>
+</ul>
+<h2>Accelerator overview</h2>
+<p>Everything is driven by a single config file, <a href="../config/config.yaml"><code>config/config.yaml</code></a> — model
+architecture, training hyper-parameters, <strong>and</strong> the deployment compute. Switch <code>model.type</code>
+between <code>dmpnn</code>, <code>lstm</code>, <code>cnn</code>, <code>transformer</code> (or a <code>+</code>-joined combination such as
+<code>lstm+cnn+transformer</code>) and rerun — no code changes. It is recommended to run these notebooks in a
+DataRobot codespace; a GPU environment speeds up training but is not required.</p>
+<pre><code>train.ipynb                        deploy.ipynb                     predict.ipynb
+─────────────                      ────────────                     ─────────────
+input/*.csv  ──►  model/smiles_model.pth  ──►  Registry → Workshop  ──►  Deployment
+  (data)          src/**  ──►  deploy/model_lib.py   (custom model)      (batch scoring)
+                  (rebuilt by deploy.ipynb §3)
+</code></pre>
+<p>This accelerator's workflow is summarized below.</p>
+<ol>
+<li>Featurize SMILES with RDKit — either into PyTorch Geometric molecular graphs with
+chemistry-aware atom and bond features, or into token sequences with a character-level
+SMILES tokenizer.</li>
+<li>Train the selected architecture in two stages: hold out 20 % of <code>train.csv</code> to locate the
+epoch at which validation MAE bottoms out, then refit on the full training set for exactly
+that many epochs.</li>
+<li>Save a self-contained <strong>bundle artifact</strong> — weights plus the config, atom map, and tokenizer
+vocabulary — so inference never depends on the training CSVs and the vocabulary cannot drift.</li>
+<li>Flatten the inference subset of <code>src/</code> into a single <code>deploy/model_lib.py</code> and package it with
+the DRUM hooks in <code>deploy/custom.py</code>.</li>
+<li>Upload to the DataRobot Custom Model Workshop, build dependencies, run the built-in custom
+model test, and register the model version.</li>
+<li>Deploy the registered version onto a resource bundle chosen from the config, then score the
+held-out test set through the deployment and compare it against local predictions.</li>
+</ol>
+<hr />
+<h2>1. Repository layout</h2>
+<table>
+<thead>
+<tr>
+  <th>Path</th>
+  <th>What it is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>config/config.yaml</code></td>
+  <td>Single source of truth: target, model architecture, training hyper-parameters, <strong>and deployment compute</strong></td>
+</tr>
+<tr>
+  <td><code>input/</code></td>
+  <td>Pre-materialized <code>train.csv</code> / <code>test.csv</code> (columns: <code>SMILES</code>, <code>Tc</code>). The old <code>valid.csv</code> was merged into <code>train.csv</code>; <code>train.ipynb</code> carves its own holdout.</td>
+</tr>
+<tr>
+  <td><code>model/</code></td>
+  <td>Training output: <code>smiles_model.pth</code> (bundle) and <code>test_preds_*.csv</code></td>
+</tr>
+<tr>
+  <td><code>src/</code></td>
+  <td>Library code — data, models, trainer (see below)</td>
+</tr>
+<tr>
+  <td><code>train.ipynb</code></td>
+  <td>Train + save the best model bundle</td>
+</tr>
+<tr>
+  <td><code>predict.ipynb</code></td>
+  <td><strong>Score through the DataRobot deployment</strong> (no torch needed)</td>
+</tr>
+<tr>
+  <td><code>deploy.ipynb</code></td>
+  <td>Rebuild <code>model_lib.py</code> → upload → build deps → test → register → deploy → verify predictions</td>
+</tr>
+<tr>
+  <td><code>deploy/</code></td>
+  <td>Exactly what gets uploaded: <code>custom.py</code>, <code>model_lib.py</code>, <code>model-metadata.yaml</code>, <code>requirements.txt</code></td>
+</tr>
+<tr>
+  <td><code>Deep_Learning_For_Molecular_SMILES.config.yaml</code></td>
+  <td>AI Accelerator metadata (title, entry notebook, maintainers)</td>
+</tr>
+<tr>
+  <td><code>docs/</code></td>
+  <td>Standalone HTML renderings of this README — <a href="README_EN.html">English</a> / <a href="README_JP.html">日本語</a></td>
+</tr>
+</tbody>
+</table>
+<h3><code>src/</code> modules</h3>
+<pre><code>src/config.py               load_config (YAML path or dict passthrough)
+src/utils.py                seed_everything
+src/data/loader.py          load_split / load_or_split, split_train_valid,
+                            build_atom_map, build_tokenizer
+                            + in-memory variants used by custom.fit
+src/data/smiles_data.py     SMILESTokenizer, SMILESDataset
+src/data/graph_features.py  smiles_to_graph + chemistry-aware atom/bond features
+src/models/_scatter.py      torch_scatter-independent scatter_add (see §8)
+src/models/dmpnn.py         EnhancedChemPropDMPNN; create_enhanced_chemprop_dmpnn
+                            is the factory _build_model uses
+src/models/sequence.py      SequenceNN (lstm / cnn / transformer, combinable)
+src/models/pooling.py       attention / global_attention / set2set graph readouts
+src/training/trainer.py     _parse_model_type, _build_model, _build_bundle,
+                            run_train, run_train_full, load_bundle, predict
+</code></pre>
+<hr />
+<h2>2. Environments</h2>
+<p>A DataRobot codespace is the intended environment for all three notebooks.</p>
+<table>
+<thead>
+<tr>
+  <th>Notebook</th>
+  <th>Needs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>train.ipynb</code></td>
+  <td>torch (preinstalled on the PyTorch image); the first cell installs <code>rdkit</code>, <code>torch-geometric</code> and <code>PyYAML</code> from <code>deploy/requirements.txt</code></td>
+</tr>
+<tr>
+  <td><code>deploy.ipynb</code>, <code>predict.ipynb</code></td>
+  <td><code>datarobot&gt;=3.4</code>, pandas, numpy, PyYAML — nothing is trained or scored locally, so no torch or rdkit</td>
+</tr>
+</tbody>
+</table>
+<h3>DataRobot credentials</h3>
+<p>Read in this order by both notebooks:</p>
+<ol>
+<li><code>DATAROBOT_ENDPOINT</code> / <code>DATAROBOT_API_TOKEN</code> environment variables</li>
+<li><code>~/.config/datarobot/drconfig.yaml</code></li>
+</ol>
+<pre><code class="language-yaml"># ~/.config/datarobot/drconfig.yaml
+endpoint: https://app.datarobot.com/api/v2
+token: &lt;your API key&gt;
+</code></pre>
+<blockquote>
+<p>The endpoint must match the cluster the key was issued on. A key from another cluster
+returns <code>401 {&quot;message&quot;: &quot;Invalid Authorization header&quot;}</code>, which looks identical to an
+expired key. Keys are managed at <code>&lt;app&gt;/account/developer-tools</code>.</p>
+</blockquote>
+<hr />
+<h2>3. Configuration reference (<code>config/config.yaml</code>)</h2>
+<pre><code class="language-yaml">seed: 42
+target: Tc
+
+paths:
+  input: input/
+  model: model/
+  artifact_name: smiles_model.pth          # what train.ipynb writes / deploy.ipynb uploads
+  stage1_artifact_name: smiles_model_stage1.pth
+
+data:
+  smiles_column: SMILES
+  max_length: 200          # sequence models: max token length (START+SMILES+END)
+  valid_ratio: 0.2         # stage-1 holdout carved out of train.csv (0.2 -&gt; 4:1)
+
+model:
+  type: lstm               # dmpnn | lstm | cnn | transformer, or &quot;+&quot;-joined: lstm+cnn+transformer
+  hidden_dim: 300
+  dropout: 0.1
+  pooling: mean
+  dmpnn: {...}             # depth, activation, ffn_*, norms, residuals
+  sequence: {...}          # embedding_dim, num_layers, num_heads, cnn_kernels
+
+training:
+  epochs: 400
+  batch_size_train: 16
+  lr: 0.001
+  scheduler: {factor: 0.5, patience: 20, min_lr: 1.0e-6}   # ReduceLROnPlateau on valid MAE
+  early_stopping: {patience: 200, min_delta: 0.00001}
+  criterion: L1Loss
+
+predict:                   # read by predict.ipynb
+  scoring_csv: input/test.csv   # DR_SCORING_CSV overrides
+  row_limit:               # empty = all rows
+
+deploy:                    # read by deploy.ipynb / predict.ipynb
+  model_name: smiles_deep_learning_regression   # custom model name = deployment label
+  model_description: SMILES -&gt; Tc regression ...
+  base_environment_search: pytorch   # substring match; or pin base_environment_id
+  is_major_update: true    # version bump on re-upload: v2.0 vs v1.1
+  dependency_build_max_wait: 3600
+  scoring_sample_csv: input/test.csv   # smoke test through the deployment
+  scoring_sample_rows: 20
+  steps: {rebuild_model_lib: true, create_new_version: true, ...}  # DR_* env vars override
+  instance: cpu            # cpu | gpu
+  cpu_cores: 2             # minimum cores
+  memory_gb: 6             # minimum memory
+  gpu_count: 0             # &gt;= 1 when instance: gpu
+  replicas: 1
+  resource_bundle_id:      # optional: pin a bundle and skip auto-selection
+  deployment_id: 6a68...   # cache written back by hand; label lookup is the fallback
+</code></pre>
+<p>Every tunable the notebooks use lives here — the notebooks define no parameters of
+their own beyond code layout (<code>deploy/</code>, <code>model/</code>, <code>config/config.yaml</code> paths).</p>
+<p><code>model.type</code> decides <strong>both</strong> the model and the data pipeline
+(<code>trainer._parse_model_type</code> → PyG <code>DataLoader</code> for graphs, plain <code>DataLoader</code> for sequences).
+The notebooks branch on the same flag; no code changes are needed to switch.</p>
+<p><code>deploy.instance</code> + <code>cpu_cores</code> + <code>memory_gb</code> + <code>gpu_count</code> are treated as <strong>minimums</strong> —
+deploy.ipynb picks the <em>smallest</em> DataRobot resource bundle that satisfies all of them.
+The full bundle catalogue is listed as comments at the bottom of <code>config/config.yaml</code>
+and printed live by section 7 of the notebook.</p>
+<hr />
+<h2>4. Step 1 — Train (<code>train.ipynb</code>)</h2>
+<p>Training runs in <strong>two stages</strong>. <code>input/test.csv</code> is never touched.</p>
+<ol>
+<li><code>load_split(cfg)</code> reads <code>input/{train,test}.csv</code>, then <code>split_train_valid(train_df, cfg)</code>
+carves a 4:1 holdout out of <code>train.csv</code> (<code>data.valid_ratio</code>, seeded by <code>seed</code>).</li>
+<li>Builds the featurizer from <strong><code>train.csv</code> only</strong> — held-out <code>test.csv</code> never
+contributes atom types or characters. Unseen symbols at score time land on a
+zero one-hot / <code>&lt;UNK&gt;</code>:<ul>
+<li>graph models → <code>build_atom_map</code> → <code>smiles_to_graph</code></li>
+<li>sequence models → <code>build_tokenizer</code> → <code>SMILESDataset</code></li>
+</ul>
+</li>
+<li><strong>Stage 1</strong> — <code>run_train(...)</code> trains on the 80 % sub-train with <code>L1Loss</code>,
+<code>ReduceLROnPlateau</code> on holdout MAE and early stopping. It returns <code>best_epoch</code> (the epoch
+where holdout MAE bottomed out) plus <code>lr_history</code>; its checkpoint goes to
+<code>model/smiles_model_stage1.pth</code> so it does not clobber the deployable artifact.</li>
+<li><strong>Stage 2</strong> — <code>run_train_full(...)</code> retrains from scratch on <strong>all</strong> of <code>train.csv</code> for
+exactly <code>best_epoch</code> epochs, replaying stage 1's per-epoch learning rate via
+<code>lr_schedule=</code>. No validation set, so no early stopping: the weights at the final epoch
+are saved to <code>model/smiles_model.pth</code>.</li>
+</ol>
+<blockquote>
+<p>The epoch count carries over as-is. The full set is ~25 % larger than stage 1's sub-train,
+so each stage-2 epoch is ~25 % more gradient steps.</p>
+</blockquote>
+<h3>The artifact is a bundle, not bare weights</h3>
+<pre><code class="language-python">{
+  &quot;state_dict&quot;: ...,        # model weights
+  &quot;cfg&quot;: ...,               # the config used for training
+  &quot;target&quot;: &quot;Tc&quot;,
+  &quot;smiles_col&quot;: &quot;SMILES&quot;,
+  &quot;atom_map&quot;: {...},        # graph models
+  &quot;tokenizer_vocab&quot;: {...}, # sequence models
+}
+</code></pre>
+<p>Because the featurizer state travels inside the artifact, inference never needs the
+training CSVs and vocabulary drift is impossible. Built by <code>trainer._build_bundle</code>,
+loaded by <code>trainer.load_bundle</code>. The DRUM <code>fit</code> hook writes the exact same shape.</p>
+<p>Local inference, without going through DataRobot (still supported):</p>
+<pre><code class="language-python">from src.training.trainer import predict
+preds = predict([&quot;*CC(*)C(=O)c1ccc(C)cc1&quot;], &quot;model/smiles_model.pth&quot;)
+</code></pre>
+<hr />
+<h2>5. Step 2 — Build the deployment bundle</h2>
+<p>DataRobot custom model uploads don't reliably preserve subdirectories, so <code>src/**</code> is
+concatenated into one flat module. <strong>This runs automatically in section 3 of
+<code>deploy.ipynb</code></strong> — there is no separate build script to remember.</p>
+<p>The generated <code>deploy/model_lib.py</code>:</p>
+<ul>
+<li>concatenates the modules listed in <code>MODEL_LIB_SOURCES</code> <strong>in topological order</strong>,</li>
+<li>strips intra-package imports (<code>from .pooling import ...</code>, <code>from src... import ...</code>)
+since everything ends up in one namespace,</li>
+<li>preserves every external import and every class/function body verbatim,</li>
+<li>rewrites legacy <code>torch_scatter</code> imports to the PyG-based fallback,</li>
+<li>prepends an env prelude (<code>USER</code> / <code>HOME</code> / <code>TORCHINDUCTOR_CACHE_DIR</code>) because the DRUM
+container runs under a uid with no <code>/etc/passwd</code> entry, while <code>torch._dynamo</code> calls
+<code>getpass.getuser()</code> at import time.</li>
+</ul>
+<p>The rebuilt file is syntax-checked before upload. Set <code>DR_REBUILD_MODEL_LIB=0</code> to upload
+the existing <code>deploy/model_lib.py</code> untouched.</p>
+<p><code>deploy/</code> — the complete upload set:</p>
+<table>
+<thead>
+<tr>
+  <th>File</th>
+  <th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>custom.py</code></td>
+  <td>DRUM hooks: <code>fit</code>, <code>load_model(code_dir)</code>, <code>score(data, model)</code></td>
+</tr>
+<tr>
+  <td><code>model_lib.py</code></td>
+  <td>Generated flat library (~70 KB)</td>
+</tr>
+<tr>
+  <td><code>model-metadata.yaml</code></td>
+  <td><code>type: inference</code>, <code>targetType: regression</code>, <code>targetName: Tc</code></td>
+</tr>
+<tr>
+  <td><code>requirements.txt</code></td>
+  <td><code>torch==2.12.1</code>, <code>rdkit</code>, <code>torch-geometric</code>, <code>PyYAML</code> (numpy/pandas/sklearn come from the base image; <code>torch-scatter</code> deliberately omitted — see §8)</td>
+</tr>
+</tbody>
+</table>
+<p>There is <strong>no <code>.pth</code> in <code>deploy/</code></strong> — the notebook always uploads the freshest artifact
+from <code>model/smiles_model.pth</code> and prints its mtime.</p>
+<p><code>load_model</code> is registered because the artifact is a dict bundle; without it DRUM's
+default <code>.pth</code> autoloader would try to call it as a <code>nn.Module</code>. <code>score()</code> delegates to
+<code>trainer._predict_with_bundle</code>, i.e. the identical inference path used locally.</p>
+<h3>Optional: test DRUM locally</h3>
+<pre><code class="language-bash">drum fit --code-dir . --input input/train.csv --target-type regression \
+         --target Tc --output /tmp/drum_out
+</code></pre>
+<p><code>fit</code> uses the same splitter as <code>train.ipynb</code> (<code>split_train_valid</code>, seeded
+permutation, <code>data.valid_ratio</code> default 0.2 → 80/20) and the same two-stage
+schedule: holdout to locate <code>best_epoch</code>, then a full-data refit for that many
+epochs replaying stage 1's learning-rate trajectory. The deployable bundle is
+written to DRUM's output dir as <code>smiles_model.pth</code>.</p>
+<hr />
+<h2>6. Step 3 — Deploy (<code>deploy.ipynb</code>)</h2>
+<p>Sections:</p>
+<table>
+<thead>
+<tr>
+  <th>§</th>
+  <th>Step</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td>Connect (prints SDK version, endpoint, app root)</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td>Settings — names, target, compute read from <code>config/config.yaml</code>, step toggles</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><strong>Rebuild <code>deploy/model_lib.py</code> from <code>src/</code></strong> (see §5)</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td>Collect files — code from <code>deploy/</code> (any <code>.pth</code> skipped) + <code>model/smiles_model.pth</code></td>
+</tr>
+<tr>
+  <td>5</td>
+  <td>Pick base execution environment (<code>[DataRobot] Python 3.12 PyTorch Drop-In</code>)</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><strong>Pick the compute</strong> — smallest resource bundle satisfying the config minimums</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td>Create <em>or reuse</em> the custom model <code>smiles_deep_learning_regression</code></td>
+</tr>
+<tr>
+  <td>8</td>
+  <td>Upload the files as a new version (with <code>resourceBundleId</code> + <code>replicas</code>)</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td>Build the dependency image from <code>requirements.txt</code> (skipped if already built)</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td>Print the workshop URL</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td>Custom model test (the same checks as the workshop <em>Test</em> tab)</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td>Register in the Registry + deploy (model replacement on re-run)</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td>Final test — real predictions through the deployment, MAE vs. ground truth</td>
+</tr>
+</tbody>
+</table>
+<h3>Step toggles</h3>
+<p>Defaults come from <code>deploy.steps</code> in <code>config/config.yaml</code>; each can still be
+overridden at runtime with an environment variable (<code>1/true/yes</code> = on):</p>
+<table>
+<thead>
+<tr>
+  <th>Variable</th>
+  <th>Default</th>
+  <th>Effect when <code>0</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>DR_REBUILD_MODEL_LIB</code></td>
+  <td>on</td>
+  <td>Upload <code>deploy/model_lib.py</code> as-is instead of regenerating it from <code>src/</code></td>
+</tr>
+<tr>
+  <td><code>DR_CREATE_NEW_VERSION</code></td>
+  <td>on</td>
+  <td>Reuse the latest existing version instead of uploading a new one</td>
+</tr>
+<tr>
+  <td><code>DR_BUILD_DEPENDENCIES</code></td>
+  <td>on</td>
+  <td>Skip the dependency image build</td>
+</tr>
+<tr>
+  <td><code>DR_RUN_MODEL_TEST</code></td>
+  <td>on</td>
+  <td>Skip the workshop test</td>
+</tr>
+<tr>
+  <td><code>DR_REGISTER_AND_DEPLOY</code></td>
+  <td>on</td>
+  <td>Stop after the workshop (no registry / deployment)</td>
+</tr>
+<tr>
+  <td><code>DR_RUN_PREDICTION_TEST</code></td>
+  <td>on</td>
+  <td>Skip the final scoring check</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-bash"># resume after a transient network failure without stacking a new version
+export DR_CREATE_NEW_VERSION=0     # then re-run deploy.ipynb
+</code></pre>
+<h3>Compute selection</h3>
+<pre><code>instance: cpu → only CPU bundles;  instance: gpu → only bundles with GPUs
+filter: cores &gt;= cpu_cores AND memory &gt;= memory_gb AND gpus &gt;= gpu_count
+pick:   the smallest remaining bundle (prints every candidate)
+</code></pre>
+<p>With <code>cpu / 2 cores / 6 GB</code> the notebook selects <code>cpu.4xlarge</code> (4XL: 2 cores, 6 GB).
+If nothing matches, it raises an error listing every available bundle.</p>
+<p>Bundles come from <code>datarobot.models.resource_bundle.ResourceBundle.list()</code> filtered on
+<code>&quot;customModel&quot; in use_cases</code>. The SDK's <code>create_clean()</code> has no <code>resource_bundle_id</code>
+parameter, so the notebook passes it through <code>CustomModelVersion._create(..., extra_upload_data=[(&quot;resourceBundleId&quot;, ...)])</code>
+and falls back to <code>create_clean</code> + <code>PATCH</code> if that private API changes.
+Without an explicit bundle DataRobot defaults to <code>cpu.medium</code> (1 core / 1 GB), which is
+too small for torch + rdkit.</p>
+<h3>Idempotency</h3>
+<ul>
+<li>The custom model is looked up by name and reused.</li>
+<li>On re-run the existing deployment (matched by label) gets a <strong>model replacement</strong>
+instead of a second deployment.</li>
+<li>An already-built dependency image is detected and not rebuilt.</li>
+</ul>
+<hr />
+<h2>7. Step 4 — Predict (<code>predict.ipynb</code>)</h2>
+<p>Scores through the deployment, so it needs <strong>no torch / rdkit / <code>src.training</code></strong> —
+only the DataRobot SDK.</p>
+<table>
+<thead>
+<tr>
+  <th>§</th>
+  <th>Step</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td>Connect</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td>Settings from <code>config/config.yaml</code> (<code>target</code>, <code>data.smiles_column</code>, <code>deploy.model_name</code>)</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td>Resolve the deployment <strong>on the connected cluster</strong> (id hint → label lookup), print label / status / model / console URL</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td>Load scoring data (default <code>input/test.csv</code>)</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>BatchPredictionJob.score_pandas</code> → picks the <code>*_PREDICTION</code> column automatically</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td>Metrics: MAE / RMSE / R² + <code>describe()</code></td>
+</tr>
+<tr>
+  <td>7</td>
+  <td>Save <code>model/test_preds_{model_type}.csv</code></td>
+</tr>
+</tbody>
+</table>
+<p>Defaults come from the <code>predict:</code> block in <code>config/config.yaml</code> (<code>scoring_csv</code>,
+<code>row_limit</code>); <code>DR_SCORING_CSV</code> and <code>DR_DEPLOYMENT_ID</code> override at runtime.</p>
+<p><strong>Cluster-independent by design.</strong> The deployment is identified by its <strong>label</strong>
+(<code>deploy.model_name</code>, default <code>smiles_deep_learning_regression</code>), which <code>deploy.ipynb</code> sets
+when it creates the deployment. <code>deploy.deployment_id</code> is only a cache to skip the lookup —
+ids belong to one cluster, so a value from <code>app.datarobot.com</code> will not resolve on
+<code>app.jp.datarobot.com</code>, and the notebook silently falls back to the label lookup instead of
+failing. Only when no deployment carries that label on the connected cluster does it stop and
+tell you to run <code>deploy.ipynb</code> there first.</p>
+<hr />
+<h2>8. Running the training on DataRobot Notebooks</h2>
+<p>This folder is self-contained (<code>config/</code>, <code>input/</code>, <code>src/</code>, <code>train.ipynb</code>,
+<code>predict.ipynb</code>, <code>deploy.ipynb</code>, <code>deploy/</code>). Upload it to a DataRobot Notebook session or
+open it in a codespace and run <code>train.ipynb</code> there — no other setup is required.</p>
+<p>Two portability fixes make the same code run locally and on DataRobot:</p>
+<ol>
+<li><p><strong><code>torch_scatter</code> is optional, and cannot be installed via <code>requirements.txt</code>.</strong>
+<code>src/models/_scatter.py</code> provides <code>scatter_add</code> with a three-level fallback —
+<code>torch_scatter</code> → <code>torch_geometric.utils.scatter(reduce=&quot;sum&quot;)</code> → pure-torch
+<code>scatter_add_</code>. A mismatched <code>torch_scatter</code> wheel raises <strong><code>OSError</code></strong> when loading
+<code>_scatter_cuda.so</code> (not <code>ImportError</code>), so both are caught. Verified to be numerically
+identical to the reference implementation.</p>
+<blockquote>
+<p>DataRobot's dependency manager parses <code>requirements.txt</code> itself and accepts only
+<code>name</code> + version-constraint lines; a <code>--find-links</code> line fails the build with
+<code>422 ... does not contain a valid package name for python</code>. Since <code>torch-scatter</code>
+ships <strong>no wheels on PyPI</strong> (sdist only) and its prebuilt wheels live behind exactly
+that index, it is left out of the file entirely. To get the compiled fast path anyway,
+build a <strong>custom environment</strong> (a Dockerfile, where arbitrary <code>pip</code> flags are allowed)
+instead of relying on dependency management.</p>
+</blockquote>
+</li>
+<li><p><strong>No <code>verbose=</code> on <code>ReduceLROnPlateau</code>.</strong> That argument was deprecated in torch 2.2 and
+removed later (<code>TypeError</code> on DataRobot Notebooks). <code>trainer.py</code> now compares the LR
+before/after <code>scheduler.step()</code> and prints <code>LR reduced: ... -&gt; ...</code> itself.</p>
+</li>
+</ol>
+<hr />
+<h2>9. Common workflows</h2>
+<pre><code class="language-bash"># A. Change architecture and retrain
+#    edit config/config.yaml -&gt; model.type: dmpnn
+#    run train.ipynb
+#    run deploy.ipynb   (§3 rebuilds model_lib.py, then uploads + replaces the deployed model)
+#    run predict.ipynb  (scores input/test.csv through the deployment)
+
+# B. Only bump the deployment compute
+#    edit config/config.yaml -&gt; deploy.instance / cpu_cores / memory_gb / gpu_count
+#    run deploy.ipynb
+
+# C. Score a different file
+#    export DR_SCORING_CSV=input/test.csv, then run predict.ipynb
+</code></pre>
+<blockquote>
+<p>Switching <code>deploy.instance</code> to <code>gpu</code> selects a GPU bundle, but the base execution
+environment stays the same — confirm the drop-in image ships a CUDA-enabled torch
+before relying on GPU inference.</p>
+</blockquote>
+
+</body>
+</html>

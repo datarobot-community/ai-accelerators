@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>分子 SMILES のためのディープラーニング — DataRobot 上での学習とデプロイ</title>
+<style>
+
+:root {
+  --fg: #1f2328;
+  --muted: #57606a;
+  --bg: #ffffff;
+  --border: #d0d7de;
+  --code-bg: #f6f8fa;
+  --link: #0969da;
+  --ok: #1a7f37;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+  max-width: 900px;
+  font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans",
+               "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo",
+               "Noto Sans CJK JP", sans-serif;
+  font-size: 16px;
+  line-height: 1.8;
+  color: var(--fg);
+  background: var(--bg);
+  word-wrap: break-word;
+}
+h1 { font-size: 1.8rem; padding-bottom: .4em; border-bottom: 2px solid var(--border); }
+h2 { font-size: 1.35rem; margin-top: 2.2em; padding-bottom: .3em; border-bottom: 1px solid var(--border); }
+h3 { font-size: 1.08rem; margin-top: 1.6em; }
+p, ul, ol { margin: .7em 0; }
+li { margin: .25em 0; }
+a { color: var(--link); text-decoration: none; }
+a:hover { text-decoration: underline; }
+code {
+  font-family: "SF Mono", Menlo, Consolas, monospace;
+  font-size: .88em; background: var(--code-bg);
+  padding: .12em .35em; border-radius: 4px;
+}
+pre {
+  background: var(--code-bg); border: 1px solid var(--border);
+  border-radius: 6px; padding: .9em 1.1em; overflow-x: auto;
+  line-height: 1.6; font-size: .85em;
+}
+pre code { background: transparent; padding: 0; font-size: 1em; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; font-size: .93em; }
+th, td { border: 1px solid var(--border); padding: .45em .8em; text-align: left; vertical-align: top; }
+th { background: var(--code-bg); font-weight: 600; }
+tr:nth-child(even) td { background: #fafbfc; }
+blockquote {
+  margin: 1em 0; padding: .3em 1em;
+  border-left: 4px solid var(--border); color: var(--muted);
+}
+details {
+  border: 1px solid var(--border); border-radius: 6px;
+  padding: .5em .9em; margin: .6em 0; background: #fcfcfd;
+}
+details summary { cursor: pointer; font-weight: 600; }
+details[open] summary { margin-bottom: .5em; }
+.lead { font-size: 1.05rem; }
+.flow {
+  background: var(--code-bg); border: 1px solid var(--border);
+  border-radius: 6px; padding: 1em 1.2em; font-size: .85em;
+  font-family: "SF Mono", Menlo, Consolas, monospace; white-space: pre; overflow-x: auto;
+}
+.note { background: #fff8c5; border: 1px solid #d4a72c55; border-radius: 6px; padding: .6em 1em; margin: 1em 0; }
+.ok { color: var(--ok); font-weight: 600; }
+.toc { background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px;
+       padding: .6em 1.2em; margin: 1.5em 0; font-size: .93em; }
+.toc ul { margin: .4em 0; padding-left: 1.2em; }
+.footer { margin-top: 3.5em; padding-top: 1em; border-top: 1px solid var(--border);
+          font-size: .85em; color: var(--muted); text-align: center; }
+
+</style>
+</head>
+<body>
+<p style="margin:0 0 1.5rem;font-size:.9em;color:#57606a"><a href="README_EN.html">English</a> &nbsp;|&nbsp; 日本語 &nbsp;|&nbsp; <a href="../README.md">README.md</a></p>
+<h1>分子 SMILES のためのディープラーニング — DataRobot 上での学習とデプロイ</h1>
+<p><strong>作成者:</strong> senkin.zhan@datarobot.com</p>
+<p><a href="../input/train.csv">サンプルデータ</a> · <a href="../input/test.csv">ホールドアウトのテストセット</a> — 目的変数 <code>Tc</code> を付与したポリマーの SMILES 文字列。</p>
+<h2>課題設定</h2>
+<p>SMILES（Simplified Molecular Input Line Entry System）は分子構造をテキストで表現したものです。姉妹アクセラレータである
+<a href="https://github.com/datarobot-community/ai-accelerators/tree/main/use_cases_and_horizontal_approaches/Feature%20Engineering%20For%20Molecular%20SMILES">Feature engineering for molecular SMILES</a>
+は、この文字列を表形式の特徴量（記述子、フィンガープリント、TF-IDF、学習済み埋め込み）へ変換し、DataRobot の Autopilot に渡します。</p>
+<p>本アクセラレータはもう一方のアプローチを取ります。特徴量を事前に設計するのではなく、分子を直接読み込む PyTorch モデルで表現そのものを end-to-end に学習します。入力の扱い方は 2 通りあります。</p>
+<ul>
+<li><strong>分子グラフ</strong> — RDKit で構築したグラフ上の DMPNN</li>
+<li><strong>文字列シーケンス</strong> — SMILES トークナイザを通した LSTM / CNN / Transformer</li>
+</ul>
+<p>重要なのは、<strong>学習とデプロイの両方が DataRobot 上で完結する</strong>という点です。独自のディープラーニングアーキテクチャは通常プラットフォームの外側に置かれ、別の場所で学習し、推論基盤を自前で用意することになります。本アクセラレータではライフサイクル全体が 1 か所に収まります。</p>
+<ul>
+<li><strong>DataRobot で学習</strong> — ノートブックは DataRobot のコードスペースまたは DataRobot Notebooks でそのまま動作します。CPU でも GPU 環境でも構いません。</li>
+<li><strong>DataRobot でデプロイ</strong> — 学習済みの PyTorch モデルを<strong>カスタム推論モデル</strong>としてパッケージ化し、モデルレジストリに登録してデプロイします。デプロイ後は他の DataRobot モデルと同様に、ガバナンス・監視の対象となり、標準の予測 API 経由でスコアリングできます。</li>
+</ul>
+<h2>アクセラレータの概要</h2>
+<p>すべては 1 つの設定ファイル <a href="../config/config.yaml"><code>config/config.yaml</code></a> で制御されます。モデルアーキテクチャ、学習ハイパーパラメータ、<strong>そしてデプロイ時の計算リソース</strong>まで含まれます。<code>model.type</code> を <code>dmpnn</code> / <code>lstm</code> / <code>cnn</code> / <code>transformer</code>（<code>lstm+cnn+transformer</code> のように <code>+</code> で連結した組み合わせも可）に切り替えて再実行するだけで、コード変更は不要です。実行環境は DataRobot のコードスペースを推奨します。GPU 環境があれば学習は速くなりますが、必須ではありません。</p>
+<pre><code>train.ipynb                        deploy.ipynb                     predict.ipynb
+─────────────                      ────────────                     ─────────────
+input/*.csv  ──►  model/smiles_model.pth  ──►  Registry → Workshop  ──►  Deployment
+  (データ)         src/**  ──►  deploy/model_lib.py   (カスタムモデル)      (バッチ推論)
+                  (deploy.ipynb §3 で再生成)
+</code></pre>
+<p>本アクセラレータのワークフローは以下のとおりです。</p>
+<ol>
+<li>RDKit で SMILES を特徴量化します。化学的な意味を持つ原子・結合特徴を備えた PyTorch Geometric の分子グラフか、文字単位の SMILES トークナイザによるトークン列のいずれかです。</li>
+<li>選択したアーキテクチャを <strong>2 段階</strong>で学習します。まず <code>train.csv</code> の 20 % をホールドアウトして検証 MAE が最小となるエポックを特定し、次に学習データ全体でちょうどそのエポック数だけ再学習します。</li>
+<li><strong>バンドル成果物</strong>を保存します。重みに加えて設定・原子マップ・トークナイザ語彙を同梱するため、推論時に学習用 CSV は不要で、語彙のズレも起こりません。</li>
+<li><code>src/</code> の推論に必要な部分を 1 つの <code>deploy/model_lib.py</code> にフラット化し、<code>deploy/custom.py</code> の DRUM フックと合わせてパッケージ化します。</li>
+<li>DataRobot のカスタムモデルワークショップへアップロードし、依存関係をビルドし、組み込みのカスタムモデルテストを実行してモデルバージョンを登録します。</li>
+<li>設定から選ばれたリソースバンドル上に登録済みバージョンをデプロイし、ホールドアウトのテストセットをデプロイメント経由でスコアリングして、ローカルの予測値と照合します。</li>
+</ol>
+<hr />
+<h2>1. ディレクトリ構成</h2>
+<table>
+<thead>
+<tr>
+  <th>パス</th>
+  <th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>config/config.yaml</code></td>
+  <td>唯一の設定源。目的変数・モデルアーキテクチャ・学習ハイパーパラメータ、<strong>およびデプロイ時の計算リソース</strong></td>
+</tr>
+<tr>
+  <td><code>input/</code></td>
+  <td>用意済みの <code>train.csv</code> / <code>test.csv</code>（列は <code>SMILES</code>, <code>Tc</code>）。旧 <code>valid.csv</code> は <code>train.csv</code> に統合済みで、<code>train.ipynb</code> が自前でホールドアウトを切り出します</td>
+</tr>
+<tr>
+  <td><code>model/</code></td>
+  <td>学習の出力。<code>smiles_model.pth</code>（バンドル）と <code>test_preds_*.csv</code></td>
+</tr>
+<tr>
+  <td><code>src/</code></td>
+  <td>ライブラリコード — データ、モデル、トレーナー（下記参照）</td>
+</tr>
+<tr>
+  <td><code>train.ipynb</code></td>
+  <td>学習してベストモデルのバンドルを保存</td>
+</tr>
+<tr>
+  <td><code>predict.ipynb</code></td>
+  <td><strong>DataRobot デプロイメント経由でスコアリング</strong>（torch 不要）</td>
+</tr>
+<tr>
+  <td><code>deploy.ipynb</code></td>
+  <td><code>model_lib.py</code> 再生成 → アップロード → 依存ビルド → テスト → 登録 → デプロイ → 予測検証</td>
+</tr>
+<tr>
+  <td><code>deploy/</code></td>
+  <td>アップロードされる一式：<code>custom.py</code>, <code>model_lib.py</code>, <code>model-metadata.yaml</code>, <code>requirements.txt</code></td>
+</tr>
+<tr>
+  <td><code>Deep_Learning_For_Molecular_SMILES.config.yaml</code></td>
+  <td>AI アクセラレータのメタデータ（タイトル、入口ノートブック、メンテナ）</td>
+</tr>
+<tr>
+  <td><code>docs/</code></td>
+  <td>この README の単体 HTML 版 — <a href="README_EN.html">English</a> / <a href="README_JP.html">日本語</a></td>
+</tr>
+</tbody>
+</table>
+<h3><code>src/</code> のモジュール</h3>
+<pre><code>src/config.py               load_config (YAML パスまたは dict をそのまま)
+src/utils.py                seed_everything
+src/data/loader.py          load_split / load_or_split, split_train_valid,
+                            build_atom_map, build_tokenizer
+                            + custom.fit が使うインメモリ版
+src/data/smiles_data.py     SMILESTokenizer, SMILESDataset
+src/data/graph_features.py  smiles_to_graph + 化学的特徴を含む原子/結合の特徴量
+src/models/_scatter.py      torch_scatter に依存しない scatter_add（§8 参照）
+src/models/dmpnn.py         EnhancedChemPropDMPNN。_build_model が使うのは create_enhanced_chemprop_dmpnn
+src/models/sequence.py      SequenceNN（lstm / cnn / transformer、組み合わせ可）
+src/models/pooling.py       attention / global_attention / set2set のグラフ読み出し
+src/training/trainer.py     _parse_model_type, _build_model, _build_bundle,
+                            run_train, load_bundle, predict, _predict_with_bundle
+</code></pre>
+<p>設定から到達できるのは <code>dmpnn</code>（<code>create_enhanced_chemprop_dmpnn</code> 経由）と <code>SequenceNN</code> のみです。その他の GNN 実装はライブラリコードとして同梱されています。</p>
+<hr />
+<h2>2. 実行環境</h2>
+<p>3 つのノートブックはいずれも DataRobot のコードスペースでの実行を想定しています。</p>
+<table>
+<thead>
+<tr>
+  <th>ノートブック</th>
+  <th>必要なもの</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>train.ipynb</code></td>
+  <td>torch（PyTorch イメージにプリインストール済み）。最初のセルが <code>rdkit</code>, <code>torch-geometric</code>, <code>PyYAML</code> を <code>deploy/requirements.txt</code> から導入します</td>
+</tr>
+<tr>
+  <td><code>deploy.ipynb</code>, <code>predict.ipynb</code></td>
+  <td><code>datarobot&gt;=3.4</code>, pandas, numpy, PyYAML — ローカルで学習も推論も行わないため、torch も rdkit も不要です</td>
+</tr>
+</tbody>
+</table>
+<h3>DataRobot の認証情報</h3>
+<p>両方のノートブックが以下の順で読み込みます。</p>
+<ol>
+<li>環境変数 <code>DATAROBOT_ENDPOINT</code> / <code>DATAROBOT_API_TOKEN</code></li>
+<li><code>~/.config/datarobot/drconfig.yaml</code></li>
+</ol>
+<pre><code class="language-yaml"># ~/.config/datarobot/drconfig.yaml
+endpoint: https://app.datarobot.com/api/v2
+token: &lt;API キー&gt;
+</code></pre>
+<blockquote>
+<p>エンドポイントは、そのキーが発行されたクラスタと一致している必要があります。別クラスタのキーを使うと <code>401 {&quot;message&quot;: &quot;Invalid Authorization header&quot;}</code> が返り、これは期限切れのキーと見分けがつきません。キーは <code>&lt;app&gt;/account/developer-tools</code> で管理します。</p>
+</blockquote>
+<hr />
+<h2>3. 設定リファレンス（<code>config/config.yaml</code>）</h2>
+<p>すべての設定は 1 つのファイルにまとまっています。主なブロックは次のとおりです。</p>
+<table>
+<thead>
+<tr>
+  <th>ブロック</th>
+  <th>役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>target</code> / <code>seed</code></td>
+  <td>目的変数の列名と乱数シード</td>
+</tr>
+<tr>
+  <td><code>paths</code></td>
+  <td><code>input</code> / <code>model</code> ディレクトリ、<code>artifact_name</code> / <code>stage1_artifact_name</code>（学習成果物のファイル名）</td>
+</tr>
+<tr>
+  <td><code>data</code></td>
+  <td><code>smiles_column</code>, <code>max_length</code>, <code>valid_ratio</code>（ステージ 1 のホールドアウト比率。0.2 → 4:1）</td>
+</tr>
+<tr>
+  <td><code>model</code></td>
+  <td><code>type</code>（アーキテクチャ選択）, <code>hidden_dim</code>, <code>dropout</code>, <code>pooling</code>, および <code>dmpnn</code> / <code>sequence</code> 個別のパラメータ</td>
+</tr>
+<tr>
+  <td><code>training</code></td>
+  <td><code>epochs</code>, バッチサイズ, <code>lr</code>, <code>scheduler</code>, <code>early_stopping</code>, <code>criterion</code></td>
+</tr>
+<tr>
+  <td><code>predict</code></td>
+  <td><code>scoring_csv</code>（スコアリング対象。<code>DR_SCORING_CSV</code> で上書き可）, <code>row_limit</code></td>
+</tr>
+<tr>
+  <td><code>deploy</code></td>
+  <td><code>model_name</code> / <code>model_description</code>, <code>base_environment_search</code>, <code>is_major_update</code>, <code>dependency_build_max_wait</code>, <code>scoring_sample_csv</code> / <code>scoring_sample_rows</code>, <code>steps</code>（ステップの既定 ON/OFF）, <code>instance</code>, <code>cpu_cores</code>, <code>memory_gb</code>, <code>gpu_count</code>, <code>replicas</code>, 各種 ID</td>
+</tr>
+</tbody>
+</table>
+<p>ノートブックが使う調整可能なパラメータはすべてこのファイルにあります。ノートブック側にはコード配置（<code>deploy/</code>, <code>model/</code> などのパス）以外のパラメータ定義はありません。</p>
+<p><code>deploy.instance</code> と <code>cpu_cores</code> / <code>memory_gb</code> / <code>gpu_count</code> は<strong>最小要件</strong>として扱われ、<code>deploy.ipynb</code> はそれを満たす<strong>最小の</strong>リソースバンドルを選択します。バンドル一覧は <code>config/config.yaml</code> 末尾のコメントにあり、接続中のクラスタにおける正式な一覧は <code>deploy.ipynb</code> のセクション 6 が実行時に出力します。</p>
+<hr />
+<h2>4. ステップ 1 — 学習（<code>train.ipynb</code>）</h2>
+<p>学習は <strong>2 段階</strong>で行われます。<code>input/test.csv</code> には一切触れません。</p>
+<ol>
+<li><code>load_split(cfg)</code> が <code>input/{train,test}.csv</code> を読み込み、続いて <code>split_train_valid(train_df, cfg)</code> が <code>train.csv</code> から 4:1 のホールドアウトを切り出します（<code>data.valid_ratio</code>、<code>seed</code> で再現可能）。</li>
+<li>特徴量化器は <strong><code>train.csv</code> のみ</strong>から構築します。ホールドアウトの <code>test.csv</code> は原子種にも文字種にも寄与しません。推論時に未見の記号はゼロ one-hot / <code>&lt;UNK&gt;</code> になります。<ul>
+<li>グラフ系モデル → <code>build_atom_map</code> → <code>smiles_to_graph</code></li>
+<li>シーケンス系モデル → <code>build_tokenizer</code> → <code>SMILESDataset</code></li>
+</ul>
+</li>
+<li><strong>ステージ 1</strong> — <code>run_train(...)</code> が 80 % のサブ学習データで <code>L1Loss</code>、ホールドアウト MAE に対する <code>ReduceLROnPlateau</code>、早期終了を用いて学習します。戻り値にはホールドアウト MAE が最小となった <code>best_epoch</code> と <code>lr_history</code> が含まれます。チェックポイントは <code>model/smiles_model_stage1.pth</code> に書かれ、デプロイ用の成果物を上書きしません。</li>
+<li><strong>ステージ 2</strong> — <code>run_train_full(...)</code> が <code>train.csv</code> <strong>全体</strong>を使ってゼロから <code>best_epoch</code> エポックだけ再学習します。<code>lr_schedule=</code> によりステージ 1 のエポックごとの学習率を再現します。検証セットがないため早期終了はなく、最終エポック時点の重みが <code>model/smiles_model.pth</code> に保存されます。</li>
+</ol>
+<blockquote>
+<p>エポック数はそのまま引き継がれます。全体データはステージ 1 のサブ学習データより約 25 % 大きいため、ステージ 2 の 1 エポックあたりの勾配更新回数も約 25 % 増えます。</p>
+</blockquote>
+<h3>成果物は重みだけでなくバンドル</h3>
+<pre><code class="language-python">{
+  &quot;state_dict&quot;: ...,        # モデルの重み
+  &quot;cfg&quot;: ...,               # 学習に使った設定
+  &quot;target&quot;: &quot;Tc&quot;,
+  &quot;smiles_col&quot;: &quot;SMILES&quot;,
+  &quot;atom_map&quot;: {...},        # グラフ系モデル
+  &quot;tokenizer_vocab&quot;: {...}, # シーケンス系モデル
+}
+</code></pre>
+<p>特徴量化器の状態が成果物の内部に同梱されるため、推論時に学習用 CSV は不要で、語彙のズレも原理的に起こりません。生成は <code>trainer._build_bundle</code>、読み込みは <code>trainer.load_bundle</code> が担当します。DRUM の <code>fit</code> フックもまったく同じ形式で書き出します。</p>
+<p>DataRobot を介さずローカルで推論することも引き続き可能です。</p>
+<pre><code class="language-python">from src.training.trainer import predict
+preds = predict([&quot;*CC(*)C(=O)c1ccc(C)cc1&quot;], &quot;model/smiles_model.pth&quot;)
+</code></pre>
+<hr />
+<h2>5. ステップ 2 — デプロイ用バンドルの構築</h2>
+<p>DataRobot のカスタムモデルのアップロードではサブディレクトリが確実には保持されないため、<code>src/**</code> を 1 つのフラットなモジュールへ連結します。<strong>この処理は <code>deploy.ipynb</code> のセクション 3 で自動実行される</strong>ので、別途ビルドスクリプトを覚えておく必要はありません。</p>
+<p>生成される <code>deploy/model_lib.py</code> は次のように作られます。</p>
+<ul>
+<li><code>MODEL_LIB_SOURCES</code> に列挙されたモジュールを<strong>トポロジカル順</strong>に連結する</li>
+<li>すべてが 1 つの名前空間に入るため、パッケージ内 import（<code>from .pooling import ...</code>、<code>from src... import ...</code>）を除去する</li>
+<li>外部 import とクラス／関数の本体はそのまま保持する</li>
+<li>旧来の <code>torch_scatter</code> import を PyG ベースのフォールバックへ書き換える</li>
+<li>環境変数のプリアンブル（<code>USER</code> / <code>HOME</code> / <code>TORCHINDUCTOR_CACHE_DIR</code>）を先頭に付与する。DRUM コンテナは <code>/etc/passwd</code> にエントリのない uid で動作する一方、<code>torch._dynamo</code> は import 時に <code>getpass.getuser()</code> を呼ぶため</li>
+</ul>
+<p>再生成されたファイルはアップロード前に構文チェックされます。<code>DR_REBUILD_MODEL_LIB=0</code> を設定すると、既存の <code>deploy/model_lib.py</code> をそのままアップロードします。</p>
+<p><code>deploy/</code> — アップロードされる一式:</p>
+<table>
+<thead>
+<tr>
+  <th>ファイル</th>
+  <th>役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>custom.py</code></td>
+  <td>DRUM フック: <code>fit</code>, <code>load_model(code_dir)</code>, <code>score(data, model)</code></td>
+</tr>
+<tr>
+  <td><code>model_lib.py</code></td>
+  <td>生成されたフラットライブラリ（約 70 KB）</td>
+</tr>
+<tr>
+  <td><code>model-metadata.yaml</code></td>
+  <td><code>type: inference</code>, <code>targetType: regression</code>, <code>targetName: Tc</code></td>
+</tr>
+<tr>
+  <td><code>requirements.txt</code></td>
+  <td><code>torch==2.12.1</code>, <code>rdkit</code>, <code>torch-geometric</code>, <code>PyYAML</code>（numpy/pandas/sklearn はベースイメージに同梱。<code>torch-scatter</code> は意図的に除外 — §8 参照）</td>
+</tr>
+</tbody>
+</table>
+<p><code>deploy/</code> に <strong><code>.pth</code> は置きません</strong>。ノートブックは常に <code>model/smiles_model.pth</code> の最新版をアップロードし、その更新時刻を表示します。</p>
+<p>成果物が dict 形式のバンドルであるため <code>load_model</code> を登録しています。これがないと DRUM 既定の <code>.pth</code> オートローダーが <code>nn.Module</code> として呼び出そうとして失敗します。<code>score()</code> は <code>trainer._predict_with_bundle</code> に委譲しており、コードスペースで使う推論経路とまったく同一です。</p>
+<h3>補足: ローカルで DRUM を試す</h3>
+<pre><code class="language-bash">drum fit --code-dir . --input input/train.csv --target-type regression \
+         --target Tc --output /tmp/drum_out
+</code></pre>
+<p><code>fit</code> は <code>train.ipynb</code> と同じ分割（<code>split_train_valid</code>、seed 付き permutation、<code>data.valid_ratio</code> 既定 0.2 → 80/20）と、同じ 2 段階スケジュールを使います。ホールドアウトで <code>best_epoch</code> を求め、そのエポック数だけ全量を再学習し、ステージ 1 の学習率軌跡を再現します。デプロイ用バンドルは DRUM の出力ディレクトリへ <code>smiles_model.pth</code> として書き出されます。</p>
+<hr />
+<h2>6. ステップ 3 — デプロイ（<code>deploy.ipynb</code>）</h2>
+<p>セクション構成:</p>
+<table>
+<thead>
+<tr>
+  <th>§</th>
+  <th>ステップ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td>接続（SDK バージョン、エンドポイント、アプリのルートを表示）</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td>設定 — 名前、目的変数、計算リソースを <code>config/config.yaml</code> から読み込み、ステップの ON/OFF</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><strong><code>src/</code> から <code>deploy/model_lib.py</code> を再生成</strong>（§5 参照）</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td>ファイル収集 — <code>deploy/</code> のコード（<code>.pth</code> は除外）+ <code>model/smiles_model.pth</code></td>
+</tr>
+<tr>
+  <td>5</td>
+  <td>ベース実行環境の選択（<code>[DataRobot] Python 3.12 PyTorch Drop-In</code>）</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><strong>計算リソースの選択</strong> — 設定の最小要件を満たす最小のリソースバンドル</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td>カスタムモデル <code>smiles_deep_learning_regression</code> を作成 <em>または再利用</em></td>
+</tr>
+<tr>
+  <td>8</td>
+  <td>新バージョンとしてファイルをアップロード（<code>resourceBundleId</code> + <code>replicas</code> 付き）</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>requirements.txt</code> から依存イメージをビルド（既にビルド済みならスキップ）</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td>ワークショップの URL を表示</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td>カスタムモデルテスト（ワークショップの <em>Test</em> タブと同じ検査）</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td>レジストリへ登録 + デプロイ（再実行時はモデル置換）</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td>最終確認 — デプロイメント経由の実予測と正解値との MAE</td>
+</tr>
+</tbody>
+</table>
+<h3>ステップの ON/OFF</h3>
+<p>既定値は <code>config/config.yaml</code> の <code>deploy.steps</code> から読み込まれ、実行時には環境変数（<code>1/true/yes</code> が ON）が優先されます。</p>
+<table>
+<thead>
+<tr>
+  <th>変数</th>
+  <th>既定</th>
+  <th><code>0</code> にしたときの動作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>DR_REBUILD_MODEL_LIB</code></td>
+  <td>ON</td>
+  <td><code>src/</code> から再生成せず、既存の <code>deploy/model_lib.py</code> をアップロード</td>
+</tr>
+<tr>
+  <td><code>DR_CREATE_NEW_VERSION</code></td>
+  <td>ON</td>
+  <td>新バージョンを作らず、既存の最新バージョンを再利用</td>
+</tr>
+<tr>
+  <td><code>DR_BUILD_DEPENDENCIES</code></td>
+  <td>ON</td>
+  <td>依存イメージのビルドをスキップ</td>
+</tr>
+<tr>
+  <td><code>DR_RUN_MODEL_TEST</code></td>
+  <td>ON</td>
+  <td>ワークショップのテストをスキップ</td>
+</tr>
+<tr>
+  <td><code>DR_REGISTER_AND_DEPLOY</code></td>
+  <td>ON</td>
+  <td>ワークショップまでで停止（登録・デプロイなし）</td>
+</tr>
+<tr>
+  <td><code>DR_RUN_PREDICTION_TEST</code></td>
+  <td>ON</td>
+  <td>最後のスコアリング確認をスキップ</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-bash"># 一時的なネットワーク障害の後、新バージョンを重ねずに再開する
+export DR_CREATE_NEW_VERSION=0     # その後 deploy.ipynb を実行
+</code></pre>
+<h3>計算リソースの選択ロジック</h3>
+<pre><code>instance: cpu → CPU バンドルのみ;  instance: gpu → GPU 付きバンドルのみ
+絞り込み: cores &gt;= cpu_cores かつ memory &gt;= memory_gb かつ gpus &gt;= gpu_count
+選択:    残った中で最小のバンドル（候補はすべて表示）
+</code></pre>
+<p><code>cpu / 2 コア / 6 GB</code> の場合は <code>cpu.4xlarge</code>（4XL: 2 コア, 6 GB）が選ばれます。条件を満たすものがなければ、利用可能な全バンドルを列挙したエラーになります。</p>
+<p>バンドルは <code>datarobot.models.resource_bundle.ResourceBundle.list()</code> を <code>&quot;customModel&quot; in use_cases</code> で絞り込んで取得します。SDK の <code>create_clean()</code> には <code>resource_bundle_id</code> 引数がないため、ノートブックは <code>CustomModelVersion._create(..., extra_upload_data=[(&quot;resourceBundleId&quot;, ...)])</code> 経由で渡し、この private API が変わった場合は <code>create_clean</code> + <code>PATCH</code> にフォールバックします。バンドルを明示しないと DataRobot は既定の <code>cpu.medium</code>（1 コア / 1 GB）を使いますが、これは torch + rdkit には小さすぎます。</p>
+<h3>冪等性</h3>
+<ul>
+<li>カスタムモデルは名前で検索して再利用します。</li>
+<li>再実行時は、ラベルで一致した既存デプロイメントに対して<strong>モデル置換</strong>を行い、2 つ目のデプロイメントは作りません。</li>
+<li>ビルド済みの依存イメージは検出され、再ビルドされません。</li>
+</ul>
+<hr />
+<h2>7. ステップ 4 — 予測（<code>predict.ipynb</code>）</h2>
+<p>デプロイメント経由でスコアリングするため、<strong>torch / rdkit / <code>src.training</code> は不要</strong>で、DataRobot SDK だけで動きます。</p>
+<table>
+<thead>
+<tr>
+  <th>§</th>
+  <th>ステップ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td>接続</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>config/config.yaml</code> から設定を読み込み（<code>target</code>, <code>data.smiles_column</code>, <code>deploy.model_name</code>）</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><strong>接続中のクラスタ上で</strong>デプロイメントを解決（ID ヒント → ラベル検索）し、ラベル / ステータス / モデル / コンソール URL を表示</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td>スコアリング対象データの読み込み（既定は <code>input/test.csv</code>）</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>BatchPredictionJob.score_pandas</code> → <code>*_PREDICTION</code> 列を自動選択</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td>指標: MAE / RMSE / R² と <code>describe()</code></td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>model/test_preds_{model_type}.csv</code> を保存</td>
+</tr>
+</tbody>
+</table>
+<p>既定値は <code>config/config.yaml</code> の <code>predict:</code> ブロック（<code>scoring_csv</code>, <code>row_limit</code>）から読み込まれ、実行時には <code>DR_SCORING_CSV</code> / <code>DR_DEPLOYMENT_ID</code> が優先されます。</p>
+<p><strong>クラスタ非依存な設計。</strong> デプロイメントは<strong>ラベル</strong>（<code>deploy.model_name</code>、既定は <code>smiles_deep_learning_regression</code>）で識別されます。このラベルは <code>deploy.ipynb</code> がデプロイメント作成時に設定します。<code>deploy.deployment_id</code> は検索を省くためのキャッシュにすぎません。ID はクラスタ固有なので、<code>app.datarobot.com</code> で得た値は <code>app.jp.datarobot.com</code> では解決できませんが、その場合ノートブックはエラーにせず黙ってラベル検索へフォールバックします。接続中のクラスタにそのラベルを持つデプロイメントが 1 つもない場合にのみ停止し、先に <code>deploy.ipynb</code> をそのクラスタで実行するよう促します。</p>
+<hr />
+<h2>8. DataRobot Notebooks で学習する場合</h2>
+<p>本フォルダは自己完結しています（<code>config/</code>, <code>input/</code>, <code>src/</code>, <code>train.ipynb</code>, <code>predict.ipynb</code>, <code>deploy.ipynb</code>, <code>deploy/</code>）。DataRobot の Notebook セッションへアップロードするか、コードスペースで開いて <code>train.ipynb</code> を実行するだけで、他の準備は不要です。</p>
+<p>同じコードをローカルでも DataRobot でも動かすために、移植性に関する対応を 2 点入れています。</p>
+<ol>
+<li><p><strong><code>torch_scatter</code> は任意であり、<code>requirements.txt</code> からはインストールできません。</strong>
+<code>src/models/_scatter.py</code> が 3 段階のフォールバック付きで <code>scatter_add</code> を提供します — <code>torch_scatter</code> → <code>torch_geometric.utils.scatter(reduce=&quot;sum&quot;)</code> → 純 torch の <code>scatter_add_</code>。ビルドが一致しない <code>torch_scatter</code> ホイールは <code>_scatter_cuda.so</code> の読み込み時に <code>ImportError</code> ではなく <strong><code>OSError</code></strong> を送出するため、両方を捕捉しています。参照実装と数値的に一致することを確認済みです。</p>
+<blockquote>
+<p>DataRobot の依存関係マネージャは <code>requirements.txt</code> を独自に解析し、<code>パッケージ名</code> + バージョン制約の行しか受け付けません。<code>--find-links</code> の行があるとビルドが <code>422 ... does not contain a valid package name for python</code> で失敗します。<code>torch-scatter</code> は PyPI に<strong>ホイールが存在せず</strong>（sdist のみ）、ビルド済みホイールはまさにその参照できないインデックス上にあるため、このファイルからは完全に除外しています。コンパイル済みの高速パスがどうしても必要な場合は、依存関係マネージャではなく<strong>カスタム環境</strong>（任意の <code>pip</code> オプションが使える Dockerfile）を構築してください。</p>
+</blockquote>
+</li>
+<li><p><strong><code>ReduceLROnPlateau</code> に <code>verbose=</code> を渡さない。</strong> この引数は torch 2.2 で非推奨となり、その後削除されました（DataRobot Notebooks では <code>TypeError</code>）。現在の <code>trainer.py</code> は <code>scheduler.step()</code> の前後で学習率を比較し、<code>LR reduced: ... -&gt; ...</code> を自前で出力します。</p>
+</li>
+</ol>
+<hr />
+<h2>9. よく使う操作</h2>
+<pre><code class="language-bash"># A. アーキテクチャを変えて再学習する
+#    config/config.yaml を編集 -&gt; model.type: dmpnn
+#    train.ipynb を実行
+#    deploy.ipynb を実行   (§3 で model_lib.py を再生成し、アップロード + デプロイ済みモデルを置換)
+#    predict.ipynb を実行  (input/test.csv をデプロイメント経由でスコアリング)
+
+# B. デプロイ時の計算リソースだけを変更する
+#    config/config.yaml を編集 -&gt; deploy.instance / cpu_cores / memory_gb / gpu_count
+#    deploy.ipynb を実行
+
+# C. 別のファイルをスコアリングする
+#    DR_SCORING_CSV=input/test.csv を設定して predict.ipynb を実行
+</code></pre>
+<blockquote>
+<p><code>deploy.instance</code> を <code>gpu</code> にすると GPU バンドルが選ばれますが、ベース実行環境自体は変わりません。GPU 推論に頼る前に、そのドロップイン環境が CUDA 対応の torch を同梱しているか確認してください。</p>
+</blockquote>
+
+</body>
+</html>
