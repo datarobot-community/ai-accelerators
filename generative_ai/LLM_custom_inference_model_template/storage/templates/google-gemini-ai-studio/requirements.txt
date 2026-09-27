@@ -1,0 +1,4 @@
+datarobot-drum >= 1.12.0
+pandas
+openai >= 1.44.0
+litellm >= 1.68.1

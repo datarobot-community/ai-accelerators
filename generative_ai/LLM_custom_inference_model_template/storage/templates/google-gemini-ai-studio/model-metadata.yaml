@@ -1,0 +1,15 @@
+---
+name: Google runtime parameters
+type: inference
+targetType: textgeneration
+runtimeParameterDefinitions:
+  - fieldName: GEMINI_API_KEY
+    type: credential
+    credentialType: api_token
+    description: Google API key
+  - fieldName: PROMPT_COLUMN_NAME
+    type: string
+    defaultValue: promptText
+  - fieldName: MODEL
+    type: string
+    defaultValue: gemini/gemini-2.5-pro-exp-03-25
